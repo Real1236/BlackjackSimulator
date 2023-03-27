@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Game {
@@ -43,6 +44,7 @@ public class Game {
     public void startRound() {
         // Deal two cards to each player and the dealer
         for (Player player : players) {
+            player.addHand();
             dealer.dealCard(player, deck);
             dealer.dealCard(player, deck);
         }
@@ -64,7 +66,6 @@ public class Game {
     private void takeTurn(Player player) {
         Scanner scanner = new Scanner(System.in);
         boolean hasStood = false;
-        boolean hasSplit = false;
 
         System.out.println("\nPlayer " + (players.indexOf(player) + 1) + "'s turn");
         System.out.println("Money: " + player.getMoney());
@@ -80,29 +81,45 @@ public class Game {
             System.out.println("\nYour cards: " + player.getHand());
             System.out.println("Your score: " + player.getHand().getTotal());
             System.out.println("Dealer's card: " + dealer.getHand().getCards().get(0));
-            System.out.println("Do you want to hit, stand, or split? (h/s/p)");
-            String choice = scanner.nextLine();
-            if (choice.equals("h")) {
-                dealer.dealCard(player, deck);
-            } else if (choice.equals("s")) {
-                hasStood = true;
-            } else if (choice.equals("p")) {
-//                if (player.canSplit()) {
-//                    hasSplit = true;
-//                    Player newPlayer = new Player();
-//                    newPlayer.receiveCard(player.getHand().get(1));
+
+            String choice;
+            if (player.canSplit()) {
+                System.out.println("Do you want to hit, stand, or split? (h/s/p)");
+                choice = scanner.nextLine();
+                while (!Objects.equals(choice, "h") && !Objects.equals(choice, "s") && !Objects.equals(choice, "p")) {
+                    System.out.println("Invalid choice, pick again:");
+                    choice = scanner.nextLine();
+                }
+            } else {
+                System.out.println("Do  you want to hit or stand? (h/s)");
+                choice = scanner.nextLine();
+                while (!Objects.equals(choice, "h") && !Objects.equals(choice, "s")) {
+                    System.out.println("Invalid choice, pick again:");
+                    choice = scanner.nextLine();
+                }
+            }
+
+            switch (choice) {
+                case "h":
+                    dealer.dealCard(player, deck);
+                    break;
+                case "s":
+                    hasStood = true;
+                    break;
+                case "p":
+                    Card temp = player.getHand().removeCard();
+                    dealer.dealCard(player, deck);
+                    player.addHand();
+                    player.getHand().addCard(temp);
+                    dealer.dealCard(player, deck);
 //                    player.receiveCard(deck.deal());
 //                    newPlayer.receiveCard(deck.deal());
 //                    players.add(players.indexOf(player) + 1, newPlayer);
 //                    takeTurn(player);
-//                } else {
-//                    System.out.println("You cannot split with these cards.");
-//                }
-            } else {
-                System.out.println("Invalid choice. Please choose 'h', 's', or 'p'.");
-            }
-            if (hasSplit) {
-                takeTurn(player);
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please choose 'h', 's', or 'p'.");
+                    break;
             }
         }
     }

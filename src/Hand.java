@@ -32,6 +32,10 @@ public class Hand {
         return cards;
     }
 
+    public Card removeCard() {
+        return cards.remove(cards.size() - 1);
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (Card card : cards) {

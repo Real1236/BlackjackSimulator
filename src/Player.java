@@ -1,5 +1,8 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Player {
-    private Hand hand;
+    private List<Hand> hands;
     private int money;
     private int bet;
 
@@ -7,7 +10,7 @@ public class Player {
     }
 
     public Player(int startingMoney) {
-        hand = new Hand();
+        hands = new ArrayList<>();
         money = startingMoney;
         bet = 0;
     }
@@ -34,11 +37,19 @@ public class Player {
     }
 
     public void addCard(Card card) {
-        hand.addCard(card);
+        this.getHand().addCard(card);
+    }
+
+    public List<Hand> getHands() {
+        return hands;
+    }
+
+    public void addHand() {
+        hands.add(new Hand());
     }
 
     public Hand getHand() {
-        return hand;
+        return hands.get(hands.size() - 1);
     }
 
     public int getMoney() {
@@ -50,11 +61,11 @@ public class Player {
     }
 
     public void clearHand() {
-        hand = new Hand();
+        hands.remove(hands.size() - 1);
     }
 
     public boolean canSplit() {
-        if (hand.getCards().size() == 2 && hand.getCards().get(0).getRank() == hand.getCards().get(1).getRank() && bet <= money) {
+        if (getHand().getCards().size() == 2 && getHand().getCards().get(0).getRank() == getHand().getCards().get(1).getRank() && bet <= money) {
             return true;
         } else {
             return false;

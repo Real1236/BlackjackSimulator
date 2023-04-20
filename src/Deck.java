@@ -7,7 +7,7 @@ public class Deck {
     private int numOfDecks;
 
     public Deck(int numOfDecks) {
-        cards = new ArrayList<Card>();
+        cards = new ArrayList<>();
         for (Rank rank : Rank.values()) {
             for (int i = 0; i < 4; i++) {
                 cards.add(new Card(rank));
@@ -18,14 +18,16 @@ public class Deck {
 
     public void shuffle() {
         Collections.shuffle(cards);
+
+        // Rigging deck for testing purposes
+        cards.add(new Card(Rank.TEN));
+        cards.add(new Card(Rank.TEN));
     }
 
     public Card dealCard() {
         if (cards.size() == 0) {
             return null;
         }
-        Card card = cards.get(0);
-        cards.remove(0);
-        return card;
+        return cards.remove(cards.size() - 1);
     }
 }

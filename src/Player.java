@@ -40,6 +40,10 @@ public class Player {
         this.getHand().addCard(card);
     }
 
+    public void addCard(Card card, int hand) {
+        this.getHand(hand).addCard(card);
+    }
+
     public List<Hand> getHands() {
         return hands;
     }
@@ -52,6 +56,14 @@ public class Player {
         return hands.get(hands.size() - 1);
     }
 
+    public Hand getHand(int hand) {
+        return hands.get(hand);
+    }
+
+    public int getNumOfHands() {
+        return hands.size();
+    }
+
     public int getMoney() {
         return money;
     }
@@ -60,16 +72,14 @@ public class Player {
         this.money = money;
     }
 
-    public void clearHand() {
-        hands.remove(hands.size() - 1);
+    public void clearHand(int index) {
+        hands.remove(index);
     }
 
     public boolean canSplit() {
-        if (getHand().getCards().size() == 2 && getHand().getCards().get(0).getRank() == getHand().getCards().get(1).getRank() && bet <= money) {
-            return true;
-        } else {
-            return false;
-        }
+        return getHand().getCards().size() == 2
+                && getHand().getCards().get(0).getRank().getValue() == getHand().getCards().get(1).getRank().getValue()
+                && bet <= money;
     }
 
     public void bet(int amount) {

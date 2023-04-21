@@ -13,11 +13,29 @@ public class Deck {
                 cards.add(new Card(rank));
             }
         }
+        List<Card> deck = new ArrayList<>(cards);
+        for (int i = 0; i < numOfDecks - 1; i++) {
+            cards.addAll(deck);
+        }
         this.numOfDecks = numOfDecks;
     }
 
     public void shuffle() {
         Collections.shuffle(cards);
+
+        // Rigging deck for testing purposes
+        // Dealer busts on this card
+        cards.add(new Card(Rank.TEN));
+        // Split Hands
+        cards.add(new Card(Rank.KING));
+        cards.add(new Card(Rank.KING));
+        cards.add(new Card(Rank.SIX));
+        // Dealer
+        cards.add(new Card(Rank.SIX));
+        cards.add(new Card(Rank.TEN));
+        // Initial Hand
+        cards.add(new Card(Rank.FIVE));
+        cards.add(new Card(Rank.FIVE));
     }
 
     public Card dealCard() {

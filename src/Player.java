@@ -5,19 +5,16 @@ public class Player {
     private int id;
     private List<Hand> hands;
     private int money;
-    private int bet;
 
     public Player(int id, int startingMoney) {
         this.id = id;
         hands = new ArrayList<>();
         money = startingMoney;
-        bet = 0;
     }
 
-    public void placeBet(int betAmount) {
-        if (betAmount <= money) {
-            bet = betAmount;
-            money -= betAmount;
+    public void placeBet(int hand) {
+        if (getHand(hand).getBet() <= money) {
+            money -= getHand(hand).getBet();
         } else {
             System.out.println("Error: not enough money to place bet.");
         }
@@ -27,16 +24,12 @@ public class Player {
         return id;
     }
 
-    public int getBet() {
-        return bet;
+    public void winBet(int hand) {
+        money += 2 * getHand(hand).getBet();
     }
 
-    public void winBet() {
-        money += 2 * bet;
-    }
-
-    public void pushBet() {
-        money += bet;
+    public void pushBet(int hand) {
+        money += getHand(hand).getBet();
     }
 
     public void addCard(Card card) {
@@ -53,6 +46,10 @@ public class Player {
 
     public void addHand() {
         hands.add(new Hand());
+    }
+
+    public void addHand(int bet) {
+        hands.add(new Hand(bet));
     }
 
     public Hand getHand() {
@@ -82,14 +79,10 @@ public class Player {
     public boolean canSplit(int hand) {
         return getHand(hand).getCards().size() == 2
                 && getHand(hand).getCards().get(0).getRank().getValue() == getHand(hand).getCards().get(1).getRank().getValue()
-                && bet <= money;
+                && getHand(hand).getBet() <= money;
     }
 
-    public void bet(int amount) {
-        money -= amount;
-    }
-
-    public void win(int bet) {
-        money += bet;
+    public boolean canDouble(int hand) {
+        return getHand(hand).getCards().size() == 2 && getHand(hand).getBet() <= money;
     }
 }

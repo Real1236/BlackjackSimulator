@@ -3,8 +3,14 @@ import java.util.List;
 
 public class Hand {
     private List<Card> cards;
+    private int bet;
 
     public Hand() {
+        cards = new ArrayList<>();
+    }
+
+    public Hand(int bet) {
+        this.bet = bet;
         cards = new ArrayList<>();
     }
 
@@ -34,6 +40,14 @@ public class Hand {
 
     public Card removeCard() {
         return cards.remove(cards.size() - 1);
+    }
+
+    public int getBet() {
+        return bet;
+    }
+
+    public void setBet(int bet) {
+        this.bet = bet;
     }
 
     public String toString() {

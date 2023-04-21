@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -37,7 +38,7 @@ public class Game {
 //        int startingBankroll = 1000;
 
         for (int i = 0; i < numOfPlayers; i++) {
-            players.add(new Player(startingBankroll));
+            players.add(new Player(i + 1, startingBankroll));
         }
 
         deck.shuffle();
@@ -73,7 +74,7 @@ public class Game {
 
     private void takeTurn(Player player) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("\nPlayer " + (players.indexOf(player) + 1) + "'s turn");
+        System.out.println("\nPlayer " + player.getId() + "'s turn");
         System.out.println("Money: " + player.getMoney());
         System.out.println("\nPlace your bet:");
         int bet = Integer.parseInt(scanner.nextLine());
@@ -134,27 +135,61 @@ public class Game {
 
     private void determineWinners() {
         System.out.println("\nDealer's cards: " + dealer.getHand());
-        System.out.println("Dealer's score: " + dealer.getHand().getTotal());
+        System.out.println("Dealer's score: " + dealer.getHand().getTotal() + "\n");
 
+        List<Player> playersToRemove = new ArrayList<>();
         for (Player player : players) {
-            int numOfHands = player.getNumOfHands();
-            for (int i = 1; i <= numOfHands; i++) {
-                System.out.println("Player " + (players.indexOf(player) + 1) + " - Hand " + i + ": " + player.getHand(0));
-                System.out.println("Player " + (players.indexOf(player) + 1) + " - Hand " + i + " score: " + player.getHand(0).getTotal());
-                if (player.getHand(0).getTotal() > 21) {
-                    System.out.println("Player " + (players.indexOf(player) + 1) + " - Hand " + i  + " busts!");
-                } else if (dealer.getHand().getTotal() > 21 || player.getHand(0).getTotal() > dealer.getHand().getTotal()) {
-                    System.out.println("Player " + (players.indexOf(player) + 1) + " - Hand " + i  + " wins!");
-                    player.winBet();
-                } else if (player.getHand(0).getTotal() == dealer.getHand().getTotal()) {
-                    System.out.println("Player " + (players.indexOf(player) + 1) + " - Hand " + i  + " pushes.");
-                    player.pushBet();
-                } else {
-                    System.out.println("Player " + (players.indexOf(player) + 1) + " - Hand " + i  + " loses.");
-                }
-                player.clearHand(0);
-            }
+            displayHands(player, playersToRemove);
+        }
+        while (!playersToRemove.isEmpty()) {
+            players.remove(playersToRemove.remove(playersToRemove.size() - 1));
         }
         dealer.clearHand();
+    }
+
+    private void displayHands(Player player, List<Player> playersToRemove) {
+        int numOfHands = player.getNumOfHands();
+
+        if (numOfHands > 1) {
+            for (int i = 1; i <= numOfHands; i++) {
+                System.out.println("Player " + player.getId() + " - Hand " + i + ": " + player.getHand(0));
+                System.out.println("Player " + player.getId() + " - Hand " + i + " score: " + player.getHand(0).getTotal());
+                if (player.getHand(0).getTotal() > 21) {
+                    System.out.println("Player " + player.getId() + " - Hand " + i  + " busts!");
+                } else if (dealer.getHand().getTotal() > 21 || player.getHand(0).getTotal() > dealer.getHand().getTotal()) {
+                    System.out.println("Player " + player.getId() + " - Hand " + i  + " wins!");
+                    player.winBet();
+                } else if (player.getHand(0).getTotal() == dealer.getHand().getTotal()) {
+                    System.out.println("Player " + player.getId() + " - Hand " + i  + " pushes.");
+                    player.pushBet();
+                } else {
+                    System.out.println("Player " + player.getId() + " - Hand " + i  + " loses.");
+                }
+                System.out.println();
+                player.clearHand(0);
+            }
+        } else {
+            System.out.println("Player " + player.getId() + ": " + player.getHand(0));
+            System.out.println("Player " + player.getId() + "'s score: " + player.getHand(0).getTotal());
+            if (player.getHand(0).getTotal() > 21) {
+                System.out.println("Player " + player.getId() + " busts!");
+            } else if (dealer.getHand().getTotal() > 21 || player.getHand(0).getTotal() > dealer.getHand().getTotal()) {
+                System.out.println("Player " + player.getId() + " wins!");
+                player.winBet();
+            } else if (player.getHand(0).getTotal() == dealer.getHand().getTotal()) {
+                System.out.println("Player " + player.getId() + " pushes.");
+                player.pushBet();
+            } else {
+                System.out.println("Player " + player.getId() + " loses.");
+            }
+            System.out.println();
+            player.clearHand(0);
+        }
+
+        if (player.getMoney() <= 0) {
+            System.out.println("Player " + player.getId() + " is out of money!");
+            System.out.println("Player " + player.getId() + " is eliminated from the game!\n");
+            playersToRemove.add(player);
+        }
     }
 }

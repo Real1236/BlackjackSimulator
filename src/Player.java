@@ -2,11 +2,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
+    private int id;
     private List<Hand> hands;
     private int money;
     private int bet;
 
-    public Player(int startingMoney) {
+    public Player(int id, int startingMoney) {
+        this.id = id;
         hands = new ArrayList<>();
         money = startingMoney;
         bet = 0;
@@ -19,6 +21,10 @@ public class Player {
         } else {
             System.out.println("Error: not enough money to place bet.");
         }
+    }
+
+    public int getId() {
+        return id;
     }
 
     public int getBet() {

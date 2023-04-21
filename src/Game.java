@@ -112,23 +112,17 @@ public class Game {
             }
 
             switch (choice) {
-                case "h":
-                    dealer.dealCard(player, hand, deck);
-                    break;
-                case "s":
-                    hasStood = true;
-                    break;
-                case "p":
+                case "h" -> dealer.dealCard(player, hand, deck);
+                case "s" -> hasStood = true;
+                case "p" -> {
                     Card temp = player.getHand(hand).removeCard();
                     dealer.dealCard(player, hand, deck);
                     player.addHand();
                     player.getHand().addCard(temp);
                     dealer.dealCard(player, deck);
                     playHand(player, player.getNumOfHands() - 1, bet);
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please choose 'h', 's', or 'p'.");
-                    break;
+                }
+                default -> System.out.println("Invalid choice. Please choose 'h', 's', or 'p'.");
             }
         }
     }

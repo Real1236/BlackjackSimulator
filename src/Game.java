@@ -18,23 +18,23 @@ public class Game {
         System.out.println("Starting a game of Blackjack!");
 
         // Have user initialize game
-//        System.out.println("How many decks do you want to play with?");
-//        deck = new Deck(Integer.parseInt(scanner.nextLine()));
-//
-//        System.out.println("What is the minimum bet?");
-//        minimumBet = Integer.parseInt(scanner.nextLine());
-//
-//        System.out.println("How many players are playing?");
-//        int numOfPlayers = Integer.parseInt(scanner.nextLine());
-//
-//        System.out.println("What is the starting bankroll?");
-//        int startingBankroll = Integer.parseInt(scanner.nextLine());
+        System.out.println("How many decks do you want to play with?");
+        deck = new Deck(Integer.parseInt(scanner.nextLine()));
 
-        // Default settings for testing
-        deck = new Deck(4);
-        minimumBet = 10;
-        int numOfPlayers = 1;
-        int startingBankroll = 1000;
+        System.out.println("What is the minimum bet?");
+        minimumBet = Integer.parseInt(scanner.nextLine());
+
+        System.out.println("How many players are playing?");
+        int numOfPlayers = Integer.parseInt(scanner.nextLine());
+
+        System.out.println("What is the starting bankroll?");
+        int startingBankroll = Integer.parseInt(scanner.nextLine());
+
+//        // Default settings for testing
+//        deck = new Deck(4);
+//        minimumBet = 10;
+//        int numOfPlayers = 1;
+//        int startingBankroll = 1000;
 
         for (int i = 0; i < numOfPlayers; i++) {
             players.add(new Player(startingBankroll));
@@ -94,7 +94,7 @@ public class Game {
             System.out.println("Dealer's card: " + dealer.getHand().getCards().get(0));
 
             String choice;
-            if (player.canSplit()) {
+            if (player.canSplit(hand)) {
                 System.out.println("Do you want to hit, stand, or split? (h/s/p)");
                 choice = scanner.nextLine();
                 while (!Objects.equals(choice, "h") && !Objects.equals(choice, "s") && !Objects.equals(choice, "p")) {
@@ -119,11 +119,11 @@ public class Game {
                     break;
                 case "p":
                     Card temp = player.getHand(hand).removeCard();
-                    dealer.dealCard(player, deck);
+                    dealer.dealCard(player, hand, deck);
                     player.addHand();
                     player.getHand().addCard(temp);
                     dealer.dealCard(player, deck);
-                    playHand(player, hand + 1, bet);
+                    playHand(player, player.getNumOfHands() - 1, bet);
                     break;
                 default:
                     System.out.println("Invalid choice. Please choose 'h', 's', or 'p'.");
@@ -131,7 +131,6 @@ public class Game {
             }
         }
     }
-
 
     private void determineWinners() {
         System.out.println("\nDealer's cards: " + dealer.getHand());

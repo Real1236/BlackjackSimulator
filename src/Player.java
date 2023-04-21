@@ -6,9 +6,6 @@ public class Player {
     private int money;
     private int bet;
 
-    public Player() {
-    }
-
     public Player(int startingMoney) {
         hands = new ArrayList<>();
         money = startingMoney;
@@ -76,9 +73,9 @@ public class Player {
         hands.remove(index);
     }
 
-    public boolean canSplit() {
-        return getHand().getCards().size() == 2
-                && getHand().getCards().get(0).getRank().getValue() == getHand().getCards().get(1).getRank().getValue()
+    public boolean canSplit(int hand) {
+        return getHand(hand).getCards().size() == 2
+                && getHand(hand).getCards().get(0).getRank().getValue() == getHand(hand).getCards().get(1).getRank().getValue()
                 && bet <= money;
     }
 

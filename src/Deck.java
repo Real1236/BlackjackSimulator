@@ -18,10 +18,6 @@ public class Deck {
 
     public void shuffle() {
         Collections.shuffle(cards);
-
-        // Rigging deck for testing purposes
-        cards.add(new Card(Rank.TEN));
-        cards.add(new Card(Rank.TEN));
     }
 
     public Card dealCard() {

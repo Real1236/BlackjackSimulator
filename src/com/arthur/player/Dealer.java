@@ -1,3 +1,9 @@
+package com.arthur.player;
+
+import com.arthur.component.Card;
+import com.arthur.component.Deck;
+import com.arthur.component.Hand;
+
 public class Dealer {
     private Hand hand;
 

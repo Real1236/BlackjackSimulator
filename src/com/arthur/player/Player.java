@@ -1,3 +1,8 @@
+package com.arthur.player;
+
+import com.arthur.component.Card;
+import com.arthur.component.Hand;
+
 import java.util.ArrayList;
 import java.util.List;
 

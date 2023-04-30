@@ -1,3 +1,10 @@
+package com.arthur;
+
+import com.arthur.component.Card;
+import com.arthur.component.Deck;
+import com.arthur.player.Dealer;
+import com.arthur.player.Player;
+
 import java.util.*;
 
 public class Game {
@@ -15,24 +22,24 @@ public class Game {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Starting a game of Blackjack!");
 
-//        // Have user initialize game
-//        System.out.println("How many decks do you want to play with?");
-//        deck = new Deck(Integer.parseInt(scanner.nextLine()));
-//
-//        System.out.println("What is the minimum bet?");
-//        minimumBet = Integer.parseInt(scanner.nextLine());
-//
-//        System.out.println("How many players are playing?");
-//        int numOfPlayers = Integer.parseInt(scanner.nextLine());
-//
-//        System.out.println("What is the starting bankroll?");
-//        int startingBankroll = Integer.parseInt(scanner.nextLine());
+        // Have user initialize game
+        System.out.println("How many decks do you want to play with?");
+        deck = new Deck(Integer.parseInt(scanner.nextLine()));
 
-        // Default settings for testing
-        deck = new Deck(4);
-        minimumBet = 10;
-        int numOfPlayers = 1;
-        int startingBankroll = 1000;
+        System.out.println("What is the minimum bet?");
+        minimumBet = Integer.parseInt(scanner.nextLine());
+
+        System.out.println("How many players are playing?");
+        int numOfPlayers = Integer.parseInt(scanner.nextLine());
+
+        System.out.println("What is the starting bankroll?");
+        int startingBankroll = Integer.parseInt(scanner.nextLine());
+
+//        // Default settings for testing
+//        deck = new Deck(4);
+//        minimumBet = 10;
+//        int numOfPlayers = 1;
+//        int startingBankroll = 1000;
 
         for (int i = 0; i < numOfPlayers; i++) {
             players.add(new Player(i + 1, startingBankroll));

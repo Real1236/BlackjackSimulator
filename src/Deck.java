@@ -7,25 +7,41 @@ public class Deck {
     private int numOfDecks;
 
     public Deck(int numOfDecks) {
-        cards = new ArrayList<Card>();
+        cards = new ArrayList<>();
         for (Rank rank : Rank.values()) {
             for (int i = 0; i < 4; i++) {
                 cards.add(new Card(rank));
             }
+        }
+        List<Card> deck = new ArrayList<>(cards);
+        for (int i = 0; i < numOfDecks - 1; i++) {
+            cards.addAll(deck);
         }
         this.numOfDecks = numOfDecks;
     }
 
     public void shuffle() {
         Collections.shuffle(cards);
+
+        // Rigging deck for testing purposes
+        // Dealer busts on this card
+        cards.add(new Card(Rank.TEN));
+        // Split Hands
+        cards.add(new Card(Rank.KING));
+        cards.add(new Card(Rank.KING));
+        cards.add(new Card(Rank.SIX));
+        // Dealer
+        cards.add(new Card(Rank.SIX));
+        cards.add(new Card(Rank.TEN));
+        // Initial Hand
+        cards.add(new Card(Rank.FIVE));
+        cards.add(new Card(Rank.FIVE));
     }
 
     public Card dealCard() {
         if (cards.size() == 0) {
             return null;
         }
-        Card card = cards.get(0);
-        cards.remove(0);
-        return card;
+        return cards.remove(cards.size() - 1);
     }
 }

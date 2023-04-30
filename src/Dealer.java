@@ -10,6 +10,11 @@ public class Dealer {
         player.addCard(card);
     }
 
+    public void dealCard(Player player, int hand, Deck deck) {
+        Card card = deck.dealCard();
+        player.addCard(card, hand);
+    }
+
     public void dealCardToDealer(Deck deck) {
         Card card = deck.dealCard();
         hand.addCard(card);

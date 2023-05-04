@@ -9,6 +9,7 @@ out/
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+.idea/
 
 ### Eclipse ###
 .apt_generated

@@ -33,6 +33,10 @@ public class Player {
         money += 2 * getHand(hand).getBet();
     }
 
+    public void winBlackjack(int hand) {
+        money += 2.5 * getHand(hand).getBet();
+    }
+
     public void pushBet(int hand) {
         money += getHand(hand).getBet();
     }

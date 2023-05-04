@@ -163,7 +163,7 @@ public class Game {
 
         List<Player> playersToRemove = new ArrayList<>();
         for (Player player : players) {
-            displayHands(player, playersToRemove);
+            payout(player, playersToRemove);
         }
         while (!playersToRemove.isEmpty()) {
             players.remove(playersToRemove.remove(playersToRemove.size() - 1));
@@ -171,14 +171,17 @@ public class Game {
         dealer.clearHand();
     }
 
-    private void displayHands(Player player, List<Player> playersToRemove) {
+    private void payout(Player player, List<Player> playersToRemove) {
         int numOfHands = player.getNumOfHands();
 
         if (numOfHands > 1) {
             for (int i = 1; i <= numOfHands; i++) {
                 System.out.println("Player " + player.getId() + " - Hand " + i + ": " + player.getHand(0));
                 System.out.println("Player " + player.getId() + " - Hand " + i + " score: " + player.getHand(0).getTotal());
-                if (player.getHand(0).getTotal() > 21) {
+                if (player.getHand(0).getTotal() == 21 && player.getHand(0).getCards().size() == 2) {
+                    System.out.println("Player " + player.getId() + " - Hand " + i  + " gets Blackjack!");
+                    player.winBlackjack(0);
+                } else if (player.getHand(0).getTotal() > 21) {
                     System.out.println("Player " + player.getId() + " - Hand " + i  + " busts!");
                 } else if (dealer.getHand().getTotal() > 21 || player.getHand(0).getTotal() > dealer.getHand().getTotal()) {
                     System.out.println("Player " + player.getId() + " - Hand " + i  + " wins!");
@@ -195,7 +198,10 @@ public class Game {
         } else {
             System.out.println("Player " + player.getId() + ": " + player.getHand(0));
             System.out.println("Player " + player.getId() + "'s score: " + player.getHand(0).getTotal());
-            if (player.getHand(0).getTotal() > 21) {
+            if (player.getHand(0).getTotal() == 21 && player.getHand(0).getCards().size() == 2) {
+                System.out.println("Player " + player.getId() + "gets Blackjack!");
+                player.winBlackjack(0);
+            } else if (player.getHand(0).getTotal() > 21) {
                 System.out.println("Player " + player.getId() + " busts!");
             } else if (dealer.getHand().getTotal() > 21 || player.getHand(0).getTotal() > dealer.getHand().getTotal()) {
                 System.out.println("Player " + player.getId() + " wins!");

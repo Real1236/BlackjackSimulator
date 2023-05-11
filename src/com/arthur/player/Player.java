@@ -1,3 +1,8 @@
+package com.arthur.player;
+
+import com.arthur.component.Card;
+import com.arthur.component.Hand;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +31,10 @@ public class Player {
 
     public void winBet(int hand) {
         money += 2 * getHand(hand).getBet();
+    }
+
+    public void winBlackjack(int hand) {
+        money += 2.5 * getHand(hand).getBet();
     }
 
     public void pushBet(int hand) {

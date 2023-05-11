@@ -1,3 +1,5 @@
+package com.arthur.component;
+
 public class Card {
     private final Rank rank;
 

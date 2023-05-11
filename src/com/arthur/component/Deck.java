@@ -1,3 +1,5 @@
+package com.arthur.component;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,20 +24,6 @@ public class Deck {
 
     public void shuffle() {
         Collections.shuffle(cards);
-
-        // Rigging deck for testing purposes
-        // Dealer busts on this card
-        cards.add(new Card(Rank.TEN));
-        // Split Hands
-        cards.add(new Card(Rank.KING));
-        cards.add(new Card(Rank.KING));
-        cards.add(new Card(Rank.SIX));
-        // Dealer
-        cards.add(new Card(Rank.SIX));
-        cards.add(new Card(Rank.TEN));
-        // Initial Hand
-        cards.add(new Card(Rank.FIVE));
-        cards.add(new Card(Rank.FIVE));
     }
 
     public Card dealCard() {

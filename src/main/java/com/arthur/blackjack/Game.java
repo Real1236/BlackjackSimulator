@@ -1,9 +1,9 @@
-package com.arthur;
+package com.arthur.blackjack;
 
-import com.arthur.component.Card;
-import com.arthur.component.Deck;
-import com.arthur.player.Dealer;
-import com.arthur.player.Player;
+import com.arthur.blackjack.component.Card;
+import com.arthur.blackjack.component.Deck;
+import com.arthur.blackjack.player.Dealer;
+import com.arthur.blackjack.player.Player;
 
 import java.util.*;
 

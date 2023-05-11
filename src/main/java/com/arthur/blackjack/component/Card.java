@@ -1,4 +1,4 @@
-package com.arthur.component;
+package com.arthur.blackjack.component;
 
 public class Card {
     private final Rank rank;

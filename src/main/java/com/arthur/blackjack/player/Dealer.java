@@ -1,8 +1,8 @@
-package com.arthur.player;
+package com.arthur.blackjack.player;
 
-import com.arthur.component.Card;
-import com.arthur.component.Deck;
-import com.arthur.component.Hand;
+import com.arthur.blackjack.component.Card;
+import com.arthur.blackjack.component.Deck;
+import com.arthur.blackjack.component.Hand;
 
 public class Dealer {
     private Hand hand;

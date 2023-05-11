@@ -1,14 +1,14 @@
-package com.arthur.player;
+package com.arthur.blackjack.player;
 
-import com.arthur.component.Card;
-import com.arthur.component.Hand;
+import com.arthur.blackjack.component.Card;
+import com.arthur.blackjack.component.Hand;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
-    private int id;
-    private List<Hand> hands;
+    private final int id;
+    private final List<Hand> hands;
     private int money;
 
     public Player(int id, int startingMoney) {

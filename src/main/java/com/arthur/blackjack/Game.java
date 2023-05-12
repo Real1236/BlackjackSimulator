@@ -45,8 +45,6 @@ public class Game {
             players.add(new Player(i + 1, startingBankroll));
         }
 
-        deck.shuffle();
-
         // Loop game until all players are bankrupt (they'll be deleted)
         while (players.size() > 0) {
             startRound();

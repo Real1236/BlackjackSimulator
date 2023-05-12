@@ -20,9 +20,6 @@ public class Deck {
             cards.addAll(deck);
         }
         this.numOfDecks = numOfDecks;
-    }
-
-    public void shuffle() {
         Collections.shuffle(cards);
     }
 

@@ -115,7 +115,7 @@ public class Player {
         }
     }
 
-    private String getPlayerChoice(int hand) {
+    public String getPlayerChoice(int hand) {
         Scanner scanner = new Scanner(System.in);
         Map<String, String> choices = getChoices(hand);
 
@@ -141,7 +141,7 @@ public class Player {
         return choices;
     }
 
-    private boolean performPlayerAction(String choice, int hand, Dealer dealer, Deck deck) {
+    public boolean performPlayerAction(String choice, int hand, Dealer dealer, Deck deck) {
         switch (choice) {
             case "h" -> dealer.dealCard(this, hand, deck);
             case "s" -> { return true; }

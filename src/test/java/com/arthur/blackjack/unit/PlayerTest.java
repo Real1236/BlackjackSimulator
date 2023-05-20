@@ -2,6 +2,7 @@ package com.arthur.blackjack.unit;
 
 import com.arthur.blackjack.component.Card;
 import com.arthur.blackjack.component.Deck;
+import com.arthur.blackjack.component.Hand;
 import com.arthur.blackjack.component.Rank;
 import com.arthur.blackjack.config.LoggerConfig;
 import com.arthur.blackjack.player.Dealer;
@@ -11,6 +12,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.ByteArrayInputStream;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
@@ -177,5 +180,75 @@ public class PlayerTest {
         Mockito.verify(spyPlayer, Mockito.atLeastOnce()).playHand(0, dealer, deck);
         assertEquals(Integer.parseInt(validInput), spyPlayer.getHand().getBet());
     }
+
+    @Test
+    public void testPlayHand() {
+        LOGGER.info("Testing playHand method.");
+
+        // Create a mock player, dealer, and deck
+        Player player = new Player(1, 100);
+        player.addHand();
+        player.addCard(new Card(Rank.TWO));
+        player.addCard(new Card(Rank.SEVEN));
+
+        // Mock dealer and deck
+        List<Card> mockCards = Arrays.asList(Mockito.mock(Card.class), Mockito.mock(Card.class));
+        Hand mockHand = Mockito.mock(Hand.class);
+        Mockito.doReturn(mockCards).when(mockHand).getCards();
+        Dealer mockDealer = Mockito.mock(Dealer.class);
+        Mockito.doReturn(mockHand).when(mockDealer).getHand();
+        Deck deck = Mockito.mock(Deck.class);
+
+        // Create a spy player to test the method
+        Player spyPlayer = Mockito.spy(player);
+
+        // Stub the necessary methods
+        Mockito.doReturn("h").doReturn("s").when(spyPlayer).getPlayerChoice(Mockito.anyInt());
+        Mockito.doReturn(false).doReturn(true).when(spyPlayer).performPlayerAction(Mockito.anyString(), Mockito.anyInt(), Mockito.any(Dealer.class), Mockito.any(Deck.class));
+
+        // Call the method
+        spyPlayer.playHand(0, mockDealer, deck);
+
+        // Verify that the necessary methods were called
+        Mockito.verify(spyPlayer, Mockito.times(2)).getPlayerChoice(0);
+        Mockito.verify(spyPlayer, Mockito.times(1)).performPlayerAction("h", 0, mockDealer, deck);
+        Mockito.verify(spyPlayer, Mockito.times(1)).performPlayerAction("s", 0, mockDealer, deck);
+    }
+
+    @Test
+    public void testPlayHandOver21() {
+        LOGGER.info("Testing playHand method.");
+
+        // Create a mock player, dealer, and deck
+        Player player = new Player(1, 100);
+        player.addHand();
+        player.addCard(new Card(Rank.TEN));
+        player.addCard(new Card(Rank.SEVEN));
+        player.addCard(new Card(Rank.SEVEN));
+
+        // Mock dealer and deck
+        List<Card> mockCards = Arrays.asList(Mockito.mock(Card.class), Mockito.mock(Card.class));
+        Hand mockHand = Mockito.mock(Hand.class);
+        Mockito.doReturn(mockCards).when(mockHand).getCards();
+        Dealer mockDealer = Mockito.mock(Dealer.class);
+        Mockito.doReturn(mockHand).when(mockDealer).getHand();
+        Deck deck = Mockito.mock(Deck.class);
+
+        // Create a spy player to test the method
+        Player spyPlayer = Mockito.spy(player);
+
+        // Stub the necessary methods
+        Mockito.doReturn("h").doReturn("s").when(spyPlayer).getPlayerChoice(Mockito.anyInt());
+        Mockito.doReturn(false).doReturn(true).when(spyPlayer).performPlayerAction(Mockito.anyString(), Mockito.anyInt(), Mockito.any(Dealer.class), Mockito.any(Deck.class));
+
+        // Call the method
+        spyPlayer.playHand(0, mockDealer, deck);
+
+        // Verify that the necessary methods were called
+        Mockito.verify(spyPlayer, Mockito.times(0)).getPlayerChoice(0);
+        Mockito.verify(spyPlayer, Mockito.times(0)).performPlayerAction("h", 0, mockDealer, deck);
+        Mockito.verify(spyPlayer, Mockito.times(0)).performPlayerAction("s", 0, mockDealer, deck);
+    }
+
 }
 

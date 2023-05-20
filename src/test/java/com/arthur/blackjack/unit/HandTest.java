@@ -47,6 +47,20 @@ public class HandTest {
     }
 
     @Test
+    public void testGetTotalMulipleAces() {
+        LOGGER.info("Running testGetHardTotal");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.THREE));
+        hand.addCard(new Card(Rank.FOUR));
+        hand.addCard(new Card(Rank.FIVE));
+        hand.addCard(new Card(Rank.ACE));
+        hand.addCard(new Card(Rank.NINE));
+        hand.addCard(new Card(Rank.TWO));
+        hand.addCard(new Card(Rank.FOUR));
+        assertEquals("The total value of the hand should be 28", 28, hand.getTotal());
+    }
+
+    @Test
     public void testRemoveCard() {
         LOGGER.info("Running testRemoveCard");
         Hand hand = new Hand();

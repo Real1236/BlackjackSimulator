@@ -23,7 +23,7 @@ public class CardTest {
         logger.info("Starting testAceValue");
         Card card = new Card(Rank.ACE);
         for (int i = 1; i <= 21; i++) {
-            int cardValue = card.getValue(i);
+            int cardValue = card.getValue();
             logger.info("Card value for " + i + " is " + cardValue);
             if (i <= 10)
                 Assert.assertEquals(cardValue, 11);

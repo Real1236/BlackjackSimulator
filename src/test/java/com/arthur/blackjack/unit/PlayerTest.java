@@ -250,5 +250,105 @@ public class PlayerTest {
         Mockito.verify(spyPlayer, Mockito.times(0)).performPlayerAction("s", 0, mockDealer, deck);
     }
 
+    @Test
+    public void testPerformPlayerActionHit() {
+        LOGGER.info("Testing player hitting.");
+
+        // Create a mock instance of the Dealer and Deck
+        Dealer dealer = Mockito.mock(Dealer.class);
+        Deck deck = Mockito.mock(Deck.class);
+
+        // Create a player with a hand and set up necessary objects
+        Player player = new Player(1, 100);
+        player.addHand();
+        player.getHand().setBet(10);
+
+        // Perform player action: Hit
+        boolean result = player.performPlayerAction("h", 0, dealer, deck);
+
+        // Verify that the dealCard method is called on the dealer with the correct arguments
+        Mockito.verify(dealer).dealCard(player, 0, deck);
+
+        // Ensure the result is false (player didn't stand)
+        assertFalse(result);
+    }
+
+    @Test
+    public void testPerformPlayerActionStand() {
+        LOGGER.info("Testing player standing.");
+
+        // Create a mock instance of the Dealer and Deck
+        Dealer dealer = Mockito.mock(Dealer.class);
+        Deck deck = Mockito.mock(Deck.class);
+
+        // Create a player with a hand and set up necessary objects
+        Player player = new Player(1, 100);
+        player.addHand();
+
+        // Perform player action: Stand
+        boolean result = player.performPlayerAction("s", 0, dealer, deck);
+
+        // Ensure the result is true (player stood)
+        assertTrue(result);
+    }
+
+    @Test
+    public void testPerformPlayerActionDouble() {
+        LOGGER.info("Testing player doubling down.");
+
+        // Create a mock instance of the Dealer and Deck
+        Dealer dealer = Mockito.mock(Dealer.class);
+        Deck deck = Mockito.mock(Deck.class);
+
+        // Create a player with a hand and set up necessary objects
+        Player player = new Player(1, 100);
+        player.addHand();
+        player.getHand().setBet(10);
+        int initialBet = player.getHand().getBet();
+
+        // Perform player action: Double
+        boolean result = player.performPlayerAction("d", 0, dealer, deck);
+
+        // Verify that the dealCard method is called on the dealer with the correct arguments
+        Mockito.verify(dealer).dealCard(player, 0, deck);
+
+        // Ensure the player's bet is doubled
+        assertEquals("Initial bet was not doubled", initialBet * 2, player.getHand().getBet());
+        assertEquals("Bet was not deducted from player's money", 100 - initialBet, player.getMoney());
+
+        // Ensure the result is true (player doubled and stood)
+        assertTrue(result);
+    }
+
+    @Test
+    public void testPerformPlayerActionSplit() {
+        LOGGER.info("Testing player splitting.");
+
+        // Create a mock instance of the Dealer and Deck
+        Dealer dealer = Mockito.mock(Dealer.class);
+        Deck deck = Mockito.mock(Deck.class);
+
+        // Create a player with a hand and set up necessary objects
+        Player player = new Player(1, 100);
+        player.addHand();
+        player.addCard(Mockito.mock(Card.class));
+        player.addCard(Mockito.mock(Card.class));
+        player.getHand().setBet(10);
+        int initialBet = player.getHand().getBet();
+
+        // Perform player action: Split
+        Player spyPlayer = Mockito.spy(player);
+        Mockito.doNothing().when(spyPlayer).playHand(1, dealer, deck);
+        spyPlayer.performPlayerAction("p", 0, dealer, deck);
+
+        // Verify that the dealCard method is called on the dealer twice (for each new hand)
+        Mockito.verify(dealer, Mockito.times(1)).dealCard(spyPlayer, 0, deck);
+        Mockito.verify(dealer, Mockito.times(1)).dealCard(spyPlayer, deck);
+
+        // Verify that the player's bet is added to the new hand, number of hands is 2, both hands have 2 cards
+        assertEquals(initialBet, player.getHand(player.getNumOfHands() - 1).getBet());
+        assertEquals(spyPlayer.getNumOfHands(), 2);
+    }
+
 }
 

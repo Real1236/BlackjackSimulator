@@ -21,9 +21,9 @@ public class DeckTest {
 
     @Test
     public void testDeckSize() {
-        Deck deck = new Deck(1);
+        Deck deck = new Deck(4);
         logger.log(Level.INFO, "Deck created with 1 deck.");
-        int expectedSize = 52;
+        int expectedSize = 208;
         assertEquals("Deck size is not correct.", expectedSize, deck.getCards().size());
         logger.log(Level.INFO, "testDeckSize passed.");
     }
@@ -39,12 +39,28 @@ public class DeckTest {
     }
 
     @Test
+    public void testCheckReshuffle() {
+        logger.info("Testing reshuffling at certain depth");
+        int numOfDecks = 4;
+        int depthToReshuffle = 37;
+        Deck deck = new Deck(numOfDecks);
+        deck.setDepthToReshuffle(depthToReshuffle);
+
+        int cardsNeededToAchieveDepth = (int) Math.ceil(52 * numOfDecks * ((double) depthToReshuffle/100));
+        for (int i = 0; i < cardsNeededToAchieveDepth; i++)
+            deck.dealCard();
+        assertEquals("Error with dealing cards", 52 * numOfDecks - cardsNeededToAchieveDepth, deck.getCards().size());
+        deck.checkReshuffle();
+        assertEquals("Depth was achieved but deck was not reshuffled", 52 * numOfDecks, deck.getCards().size());
+    }
+
+    @Test
     public void testShuffle() {
         Deck deck = new Deck(1);
         logger.log(Level.INFO, "Deck created with 1 deck.");
         Card firstCard = deck.getCards().get(0);
         for (int i = 0; i < 5; i++) {
-            deck.shuffle();
+            deck = new Deck(1);
             if (!deck.getCards().get(0).equals(firstCard))
                 break;
         }

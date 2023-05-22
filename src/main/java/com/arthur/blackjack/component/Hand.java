@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Hand {
-    private List<Card> cards;
+    private final List<Card> cards;
     private int bet;
 
     public Hand() {
@@ -16,6 +16,18 @@ public class Hand {
         cards = new ArrayList<>();
     }
 
+    public List<Card> getCards() {
+        return cards;
+    }
+
+    public int getBet() {
+        return bet;
+    }
+
+    public void setBet(int bet) {
+        this.bet = bet;
+    }
+
     public void addCard(Card card) {
         cards.add(card);
     }
@@ -24,7 +36,7 @@ public class Hand {
         int total = 0;
         int numAces = 0;
         for (Card card : cards) {
-            total += card.getValue(total);
+            total += card.getValue();
             if (card.getRank() == Rank.ACE) {
                 numAces++;
             }
@@ -36,20 +48,8 @@ public class Hand {
         return total;
     }
 
-    public List<Card> getCards() {
-        return cards;
-    }
-
     public Card removeCard() {
         return cards.remove(cards.size() - 1);
-    }
-
-    public int getBet() {
-        return bet;
-    }
-
-    public void setBet(int bet) {
-        this.bet = bet;
     }
 
     public String toString() {

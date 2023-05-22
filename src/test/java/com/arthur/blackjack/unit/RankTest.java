@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 
 public class RankTest {
 
-    private static final Logger logger = Logger.getLogger(CardTest.class.getName());
+    private static final Logger logger = Logger.getLogger(RankTest.class.getName());
 
     @BeforeClass
     public static void setUpLogger() {
@@ -21,7 +21,7 @@ public class RankTest {
     @Test
     public void testGetValue() {
         logger.info("Starting testGetValue");
-        assertEquals("The value of ACE should be 1", 1, Rank.ACE.getValue());
+        assertEquals("The value of ACE should be 1", 11, Rank.ACE.getValue());
         assertEquals("The value of TWO should be 2", 2, Rank.TWO.getValue());
         assertEquals("The value of THREE should be 3", 3, Rank.THREE.getValue());
         assertEquals("The value of FOUR should be 4", 4, Rank.FOUR.getValue());

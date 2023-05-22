@@ -1,4 +1,4 @@
-package com.arthur.component;
+package com.arthur.blackjack.component;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,9 +1,9 @@
-package com.arthur;
+package com.arthur.blackjack;
 
-import com.arthur.component.Card;
-import com.arthur.component.Deck;
-import com.arthur.player.Dealer;
-import com.arthur.player.Player;
+import com.arthur.blackjack.component.Card;
+import com.arthur.blackjack.component.Deck;
+import com.arthur.blackjack.player.Dealer;
+import com.arthur.blackjack.player.Player;
 
 import java.util.*;
 
@@ -44,8 +44,6 @@ public class Game {
         for (int i = 0; i < numOfPlayers; i++) {
             players.add(new Player(i + 1, startingBankroll));
         }
-
-        deck.shuffle();
 
         // Loop game until all players are bankrupt (they'll be deleted)
         while (players.size() > 0) {

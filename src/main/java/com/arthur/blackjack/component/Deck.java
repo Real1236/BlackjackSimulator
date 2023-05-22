@@ -1,11 +1,11 @@
-package com.arthur.component;
+package com.arthur.blackjack.component;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class Deck {
-    private List<Card> cards;
+    private final List<Card> cards;
     private int numOfDecks;
 
     public Deck(int numOfDecks) {
@@ -20,16 +20,16 @@ public class Deck {
             cards.addAll(deck);
         }
         this.numOfDecks = numOfDecks;
-    }
-
-    public void shuffle() {
         Collections.shuffle(cards);
     }
 
     public Card dealCard() {
-        if (cards.size() == 0) {
+        if (cards.size() == 0)
             return null;
-        }
         return cards.remove(cards.size() - 1);
+    }
+
+    public List<Card> getCards() {
+        return cards;
     }
 }

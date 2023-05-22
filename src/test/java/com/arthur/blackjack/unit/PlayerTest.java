@@ -350,5 +350,99 @@ public class PlayerTest {
         assertEquals(spyPlayer.getNumOfHands(), 2);
     }
 
+    @Test
+    public void testEvaluateHand_Blackjack() {
+        LOGGER.info("Testing evaluateHand method with a blackjack hand.");
+
+        Player player = new Player(1, 100);
+        player.addHand();
+        player.addCard(new Card(Rank.ACE));
+        player.addCard(new Card(Rank.KING));
+        player.getHand(0).setBet(20);
+
+        Dealer dealer = Mockito.mock(Dealer.class);
+        player.evaluateHand(0, dealer);
+
+        assertEquals(150, player.getMoney());
+    }
+
+    @Test
+    public void testEvaluateHand_Win() {
+        LOGGER.info("Testing evaluateHand method with a winning hand.");
+
+        Player player = new Player(1, 100);
+        player.addHand();
+        player.addCard(new Card(Rank.QUEEN));
+        player.addCard(new Card(Rank.NINE));
+        player.getHand(0).setBet(30);
+
+        Dealer dealer = Mockito.mock(Dealer.class);
+        Hand hand = Mockito.mock(Hand.class);
+        Mockito.when(hand.getTotal()).thenReturn(18);
+        Mockito.when(dealer.getHand()).thenReturn(hand);
+
+        player.evaluateHand(0, dealer);
+
+        assertEquals(160, player.getMoney());
+    }
+
+
+    @Test
+    public void testEvaluateHand_Bust() {
+        LOGGER.info("Testing evaluateHand method with a bust hand.");
+
+        Player player = new Player(1, 100);
+        player.addHand();
+        player.addCard(new Card(Rank.KING));
+        player.addCard(new Card(Rank.KING));
+        player.addCard(new Card(Rank.KING));
+        player.getHand(0).setBet(20);
+
+        Dealer dealer = Mockito.mock(Dealer.class);
+        player.evaluateHand(0, dealer);
+
+        assertEquals(100, player.getMoney());
+    }
+
+    @Test
+    public void testEvaluateHand_Push() {
+        LOGGER.info("Testing evaluateHand method with a push hand.");
+
+        Player player = new Player(1, 100);
+        player.addHand();
+        player.addCard(new Card(Rank.SEVEN));
+        player.addCard(new Card(Rank.EIGHT));
+        player.getHand(0).setBet(20);
+
+        Dealer dealer = Mockito.mock(Dealer.class);
+        Hand hand = Mockito.mock(Hand.class);
+        Mockito.when(hand.getTotal()).thenReturn(15);
+        Mockito.when(dealer.getHand()).thenReturn(hand);
+
+        player.evaluateHand(0, dealer);
+
+        assertEquals(120, player.getMoney());
+    }
+
+    @Test
+    public void testEvaluateHand_Loss() {
+        LOGGER.info("Testing evaluateHand method with a losing hand.");
+
+        Player player = new Player(1, 100);
+        player.addHand();
+        player.addCard(new Card(Rank.JACK));
+        player.addCard(new Card(Rank.FIVE));
+        player.getHand(0).setBet(20);
+
+        Dealer dealer = Mockito.mock(Dealer.class);
+        Hand hand = Mockito.mock(Hand.class);
+        Mockito.when(hand.getTotal()).thenReturn(17);
+        Mockito.when(dealer.getHand()).thenReturn(hand);
+
+        player.evaluateHand(0, dealer);
+
+        assertEquals(100, player.getMoney());
+    }
+
 }
 

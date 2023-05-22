@@ -44,6 +44,7 @@ public class DeckTest {
         logger.log(Level.INFO, "Deck created with 1 deck.");
         Card firstCard = deck.getCards().get(0);
         for (int i = 0; i < 5; i++) {
+            deck.shuffle();
             if (!deck.getCards().get(0).equals(firstCard))
                 break;
         }

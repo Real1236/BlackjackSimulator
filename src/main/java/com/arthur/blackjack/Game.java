@@ -4,6 +4,7 @@ import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.player.Dealer;
 import com.arthur.blackjack.player.Player;
 import com.arthur.blackjack.simulation.Action;
+import com.arthur.blackjack.simulation.ResultsTracker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +17,13 @@ public class Game {
     private final Dealer dealer;
     private final ArrayList<Player> players;
     private int minimumBet;
+    private int round;
     public static final Map<String, Map<Integer, Map<Integer, Action>>> strategyTable = readStrategyTable();
 
     public Game() {
         dealer = new Dealer();
         players = new ArrayList<>();
+        round = 0;
     }
 
     public void initializeGame() {
@@ -48,15 +51,26 @@ public class Game {
         deck.setDepthToReshuffle(50);
         minimumBet = 10;
         int numOfPlayers = 1;
-        int startingBankroll = 1000;
+        int startingBankroll = 10000;
 
         for (int i = 1; i <= numOfPlayers; i++)
             players.add(new Player(i, startingBankroll));
 
-        // Loop game until all players are bankrupt (they'll be deleted)
-        while (players.size() > 0)
-            startRound();
+        // Track results for player 1
+        ResultsTracker resultsTracker = new ResultsTracker();
+        resultsTracker.writeResults(0, players.get(0).getMoney());
 
+        // Loop game until all players are bankrupt (they'll be deleted)
+        while (players.size() > 0) {
+            round++;
+            startRound();
+            if (!players.isEmpty())
+                resultsTracker.writeResults(round, players.get(0).getMoney());
+            else
+                resultsTracker.writeResults(round, 0);
+        }
+
+        resultsTracker.saveExcel(round);
         System.out.println("GG");
     }
 

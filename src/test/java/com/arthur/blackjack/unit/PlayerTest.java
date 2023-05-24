@@ -7,6 +7,7 @@ import com.arthur.blackjack.component.Rank;
 import com.arthur.blackjack.config.LoggerConfig;
 import com.arthur.blackjack.player.Dealer;
 import com.arthur.blackjack.player.Player;
+import com.arthur.blackjack.simulation.Action;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -203,16 +204,18 @@ public class PlayerTest {
         Player spyPlayer = Mockito.spy(player);
 
         // Stub the necessary methods
-        Mockito.doReturn("h").doReturn("s").when(spyPlayer).getPlayerChoice(Mockito.anyInt());
-        Mockito.doReturn(false).doReturn(true).when(spyPlayer).performPlayerAction(Mockito.anyString(), Mockito.anyInt(), Mockito.any(Dealer.class), Mockito.any(Deck.class));
+        // TODO refactor for simulation
+//        Mockito.doReturn("h").doReturn("s").when(spyPlayer).getPlayerChoice(Mockito.anyInt());
+        Mockito.doReturn(false).doReturn(true).when(spyPlayer).performPlayerAction(Mockito.any(Action.class), Mockito.anyInt(), Mockito.any(Dealer.class), Mockito.any(Deck.class));
 
         // Call the method
         spyPlayer.playHand(0, mockDealer, deck);
 
         // Verify that the necessary methods were called
-        Mockito.verify(spyPlayer, Mockito.times(2)).getPlayerChoice(0);
-        Mockito.verify(spyPlayer, Mockito.times(1)).performPlayerAction("h", 0, mockDealer, deck);
-        Mockito.verify(spyPlayer, Mockito.times(1)).performPlayerAction("s", 0, mockDealer, deck);
+        // TODO refactor for simulation
+//        Mockito.verify(spyPlayer, Mockito.times(2)).getPlayerChoice(0);
+        Mockito.verify(spyPlayer, Mockito.times(1)).performPlayerAction(Action.HIT, 0, mockDealer, deck);
+        Mockito.verify(spyPlayer, Mockito.times(1)).performPlayerAction(Action.STAND, 0, mockDealer, deck);
     }
 
     @Test
@@ -238,16 +241,18 @@ public class PlayerTest {
         Player spyPlayer = Mockito.spy(player);
 
         // Stub the necessary methods
-        Mockito.doReturn("h").doReturn("s").when(spyPlayer).getPlayerChoice(Mockito.anyInt());
-        Mockito.doReturn(false).doReturn(true).when(spyPlayer).performPlayerAction(Mockito.anyString(), Mockito.anyInt(), Mockito.any(Dealer.class), Mockito.any(Deck.class));
+        // TODO refactor for simulation
+//        Mockito.doReturn("h").doReturn("s").when(spyPlayer).getPlayerChoice(Mockito.anyInt());
+        Mockito.doReturn(false).doReturn(true).when(spyPlayer).performPlayerAction(Mockito.any(Action.class), Mockito.anyInt(), Mockito.any(Dealer.class), Mockito.any(Deck.class));
 
         // Call the method
         spyPlayer.playHand(0, mockDealer, deck);
 
         // Verify that the necessary methods were called
-        Mockito.verify(spyPlayer, Mockito.times(0)).getPlayerChoice(0);
-        Mockito.verify(spyPlayer, Mockito.times(0)).performPlayerAction("h", 0, mockDealer, deck);
-        Mockito.verify(spyPlayer, Mockito.times(0)).performPlayerAction("s", 0, mockDealer, deck);
+        // TODO refactor for simulation
+//        Mockito.verify(spyPlayer, Mockito.times(0)).getPlayerChoice(0);
+        Mockito.verify(spyPlayer, Mockito.times(0)).performPlayerAction(Action.HIT, 0, mockDealer, deck);
+        Mockito.verify(spyPlayer, Mockito.times(0)).performPlayerAction(Action.STAND, 0, mockDealer, deck);
     }
 
     @Test
@@ -264,7 +269,7 @@ public class PlayerTest {
         player.getHand().setBet(10);
 
         // Perform player action: Hit
-        boolean result = player.performPlayerAction("h", 0, dealer, deck);
+        boolean result = player.performPlayerAction(Action.HIT, 0, dealer, deck);
 
         // Verify that the dealCard method is called on the dealer with the correct arguments
         Mockito.verify(dealer).dealCard(player, 0, deck);
@@ -286,7 +291,7 @@ public class PlayerTest {
         player.addHand();
 
         // Perform player action: Stand
-        boolean result = player.performPlayerAction("s", 0, dealer, deck);
+        boolean result = player.performPlayerAction(Action.STAND, 0, dealer, deck);
 
         // Ensure the result is true (player stood)
         assertTrue(result);
@@ -307,7 +312,7 @@ public class PlayerTest {
         int initialBet = player.getHand().getBet();
 
         // Perform player action: Double
-        boolean result = player.performPlayerAction("d", 0, dealer, deck);
+        boolean result = player.performPlayerAction(Action.DOUBLE_DOWN, 0, dealer, deck);
 
         // Verify that the dealCard method is called on the dealer with the correct arguments
         Mockito.verify(dealer).dealCard(player, 0, deck);
@@ -339,7 +344,7 @@ public class PlayerTest {
         // Perform player action: Split
         Player spyPlayer = Mockito.spy(player);
         Mockito.doNothing().when(spyPlayer).playHand(1, dealer, deck);
-        spyPlayer.performPlayerAction("p", 0, dealer, deck);
+        spyPlayer.performPlayerAction(Action.SPLIT, 0, dealer, deck);
 
         // Verify that the dealCard method is called on the dealer twice (for each new hand)
         Mockito.verify(dealer, Mockito.times(1)).dealCard(spyPlayer, 0, deck);

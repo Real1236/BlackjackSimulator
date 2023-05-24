@@ -1,8 +1,10 @@
 package com.arthur.blackjack.player;
 
+import com.arthur.blackjack.Game;
 import com.arthur.blackjack.component.Card;
 import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.component.Hand;
+import com.arthur.blackjack.simulation.Action;
 
 import java.util.*;
 
@@ -108,51 +110,73 @@ public class Player {
         while (this.getHand(hand).getTotal() < 21 && !hasStood) {
             System.out.println("\nYour cards: " + this.getHand(hand));
             System.out.println("Your score: " + this.getHand(hand).getTotal());
-            System.out.println("Dealer's upcard: " + dealer.getHand().getCards().get(0));
+            System.out.println("Dealer's upcard: " + dealer.getUpcard());
 
-            String choice = getPlayerChoice(hand);
+            Action choice = getPlayerChoice(hand, dealer.getUpcard().getValue());
             hasStood = performPlayerAction(choice, hand, dealer, deck);
         }
     }
 
-    public String getPlayerChoice(int hand) {
-        Scanner scanner = new Scanner(System.in);
-        Map<String, String> choices = getChoices(hand);
+    public Action getPlayerChoice(int handIndex, int upcardValue) {
+        Set<Action> choices = getChoices(handIndex);
+        Hand hand = this.getHand(handIndex);
 
         System.out.println("Choose an option: " + choices + "");
-        String choice = scanner.nextLine();
-
-        while (!choices.containsKey(choice)) {
-            System.out.println("Invalid choice, pick again:");
-            choice = scanner.nextLine();
+        Action choice = null;
+        if (choices.contains(Action.SPLIT)) {
+            Map<Integer, Map<Integer, Action>> splitTable = Game.strategyTable.get("Split");
+            int cardValue = hand.getCards().get(0).getValue();
+            choice = splitTable.get(cardValue).get(upcardValue);
+        }
+        if (choice == null) {
+            if (hand.isHard()) {
+                Map<Integer, Map<Integer, Action>> hardTable = Game.strategyTable.get("Hard");
+                choice = hardTable.get(hand.getTotal()).get(upcardValue);
+            } else {
+                Map<Integer, Map<Integer, Action>> softTable = Game.strategyTable.get("Soft");
+                choice = softTable.get(hand.getTotal()).get(upcardValue);
+            }
         }
 
         return choice;
     }
 
-    private Map<String, String> getChoices(int hand) {
-        Map<String, String> choices = new HashMap<>();
-        choices.put("h", "hit");
-        choices.put("s", "stand");
+    private Set<Action> getChoices(int hand) {
+        Set<Action> choices = new HashSet<>();
+        choices.add(Action.HIT);
+        choices.add(Action.STAND);
         if (this.canDouble(hand))
-            choices.put("d", "double down");
+            choices.add(Action.DOUBLE_DOWN);
         if (this.canSplit(hand))
-            choices.put("p", "split");
+            choices.add(Action.SPLIT);
         return choices;
     }
 
-    public boolean performPlayerAction(String choice, int hand, Dealer dealer, Deck deck) {
+    public boolean performPlayerAction(Action choice, int hand, Dealer dealer, Deck deck) {
         switch (choice) {
-            case "h" -> dealer.dealCard(this, hand, deck);
-            case "s" -> { return true; }
-            case "d" -> {
-                this.placeBet(hand);
-                int curBet = this.getHand(hand).getBet();
-                this.getHand(hand).setBet(curBet * 2);
-                dealer.dealCard(this, hand, deck);
+            case SURRENDER, HIT -> dealer.dealCard(this, hand, deck);   // TODO add surrender capability
+            case STAND -> { return true; }
+            case DOUBLE_STAND -> {
+                if (this.canDouble(hand)) {
+                    this.placeBet(hand);
+                    int curBet = this.getHand(hand).getBet();
+                    this.getHand(hand).setBet(curBet * 2);
+                    dealer.dealCard(this, hand, deck);
+                }
                 return true;
             }
-            case "p" -> {
+            case DOUBLE_DOWN -> {
+                if (this.canDouble(hand)) {
+                    this.placeBet(hand);
+                    int curBet = this.getHand(hand).getBet();
+                    this.getHand(hand).setBet(curBet * 2);
+                    dealer.dealCard(this, hand, deck);
+                    return true;
+                } else {
+                    dealer.dealCard(this, hand, deck);
+                }
+            }
+            case SPLIT -> {
                 Card temp = this.getHand(hand).removeCard();
                 dealer.dealCard(this, hand, deck);
                 this.addHand(this.getHand(hand).getBet());

@@ -30,6 +30,10 @@ public class Dealer {
         return hand;
     }
 
+    public Card getUpcard() {
+        return hand.getCards().get(0);
+    }
+
     public void play(Deck deck) {
         while (hand.getTotal() < 17) {
             dealCardToDealer(deck);

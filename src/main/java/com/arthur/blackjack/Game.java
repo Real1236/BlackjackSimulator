@@ -3,16 +3,20 @@ package com.arthur.blackjack;
 import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.player.Dealer;
 import com.arthur.blackjack.player.Player;
+import com.arthur.blackjack.simulation.Action;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Map;
+
+import static com.arthur.blackjack.simulation.StrategyTableReader.readStrategyTable;
 
 public class Game {
     private Deck deck;
     private final Dealer dealer;
     private final ArrayList<Player> players;
     private int minimumBet;
+    public static final Map<String, Map<Integer, Map<Integer, Action>>> strategyTable = readStrategyTable();
 
     public Game() {
         dealer = new Dealer();
@@ -20,31 +24,31 @@ public class Game {
     }
 
     public void initializeGame() {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Starting a game of Blackjack!");
+//        Scanner scanner = new Scanner(System.in);
+//
+//        // Have user initialize game
+//        System.out.println("How many decks do you want to play with?");
+//        deck = new Deck(Integer.parseInt(scanner.nextLine()));
+//
+//        System.out.println("What deck penetration do you want to reach before reshuffling? (Answer between 0-100)");
+//        deck.setDepthToReshuffle(Integer.parseInt(scanner.nextLine()));
+//
+//        System.out.println("What is the minimum bet?");
+//        minimumBet = Integer.parseInt(scanner.nextLine());
+//
+//        System.out.println("How many players are playing?");
+//        int numOfPlayers = Integer.parseInt(scanner.nextLine());
+//
+//        System.out.println("What is the starting bankroll?");
+//        int startingBankroll = Integer.parseInt(scanner.nextLine());
 
-        // Have user initialize game
-        System.out.println("How many decks do you want to play with?");
-        deck = new Deck(Integer.parseInt(scanner.nextLine()));
-
-        System.out.println("What deck penetration do you want to reach before reshuffling? (Answer between 0-100)");
-        deck.setDepthToReshuffle(Integer.parseInt(scanner.nextLine()));
-
-        System.out.println("What is the minimum bet?");
-        minimumBet = Integer.parseInt(scanner.nextLine());
-
-        System.out.println("How many players are playing?");
-        int numOfPlayers = Integer.parseInt(scanner.nextLine());
-
-        System.out.println("What is the starting bankroll?");
-        int startingBankroll = Integer.parseInt(scanner.nextLine());
-
-//        // Default settings for testing
-//        deck = new Deck(4);
-//        deck.setDepthToReshuffle(50);
-//        minimumBet = 10;
-//        int numOfPlayers = 1;
-//        int startingBankroll = 1000;
+        // Default settings for testing
+        deck = new Deck(4);
+        deck.setDepthToReshuffle(50);
+        minimumBet = 10;
+        int numOfPlayers = 1;
+        int startingBankroll = 1000;
 
         for (int i = 1; i <= numOfPlayers; i++)
             players.add(new Player(i, startingBankroll));

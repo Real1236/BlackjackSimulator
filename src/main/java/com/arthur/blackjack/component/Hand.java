@@ -6,6 +6,7 @@ import java.util.List;
 public class Hand {
     private final List<Card> cards;
     private int bet;
+    private boolean doubled;
 
     public Hand() {
         cards = new ArrayList<>();
@@ -26,6 +27,15 @@ public class Hand {
 
     public void setBet(int bet) {
         this.bet = bet;
+    }
+
+    public boolean hasDoubled() {
+        return doubled;
+    }
+
+    public void doubleDown() {
+        doubled = true;
+        this.bet *= 2;
     }
 
     public void addCard(Card card) {

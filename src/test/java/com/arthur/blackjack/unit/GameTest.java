@@ -80,4 +80,26 @@ public class GameTest {
         verify(player).getMoney();
         verify(player, never()).clearHand(1);
     }
+
+    @Test
+    public void testPayoutSplit() {
+        List<Player> players = new ArrayList<>();
+        Player player = mock(Player.class);
+        players.add(player);
+
+        when(player.getHand()).thenReturn(mock(Hand.class));
+        when(player.getNumOfHands()).thenReturn(2);
+
+        Game game = new Game();
+        game.setPlayers(players);
+        Dealer dealer = mock(Dealer.class);
+        game.setDealer(dealer);
+        game.payout(player, new ArrayList<>());
+
+        verify(player, times(1)).evaluateHand(1, dealer, true);
+        verify(player, times(1)).evaluateHand(2, dealer, true);
+        verify(player, times(2)).clearHand(0);
+        verify(player).getMoney();
+        verify(player, never()).clearHand(1);
+    }
 }

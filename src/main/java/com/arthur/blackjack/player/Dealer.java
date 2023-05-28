@@ -3,6 +3,7 @@ package com.arthur.blackjack.player;
 import com.arthur.blackjack.component.Card;
 import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.component.Hand;
+import com.arthur.blackjack.component.Rank;
 
 public class Dealer {
     private Hand hand;
@@ -32,6 +33,10 @@ public class Dealer {
 
     public Card getUpcard() {
         return hand.getCards().get(0);
+    }
+
+    public boolean blackjackTenUpcard() {
+        return getUpcard().getValue() == 10 && hand.getCards().get(1).getRank() == Rank.ACE;
     }
 
     public void play(Deck deck) {

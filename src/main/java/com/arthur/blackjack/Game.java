@@ -14,8 +14,8 @@ import static com.arthur.blackjack.simulation.StrategyTableReader.readStrategyTa
 
 public class Game {
     private Deck deck;
-    private final Dealer dealer;
-    private final ArrayList<Player> players;
+    private Dealer dealer;
+    private List<Player> players;
     private int minimumBet;
     public static final Map<String, Map<Integer, Map<Integer, Action>>> strategyTable = readStrategyTable();
 
@@ -50,7 +50,7 @@ public class Game {
 //        int startingBankroll = Integer.parseInt(scanner.nextLine());
 
         // Default settings for testing
-        deck = new Deck(4);
+        deck = new Deck(8);
         deck.setDepthToReshuffle(50);
         minimumBet = 10;
         int numOfPlayers = 1;
@@ -99,7 +99,7 @@ public class Game {
         deck.checkReshuffle();
     }
 
-    private void determineWinners() {
+    public void determineWinners() {
         System.out.println("\nDealer's cards: " + dealer.getHand());
         System.out.println("Dealer's score: " + dealer.getHand().getTotal() + "\n");
 
@@ -112,11 +112,11 @@ public class Game {
         dealer.clearHand();
     }
 
-    private void payout(Player player, List<Player> playersToRemove) {
+    public void payout(Player player, List<Player> playersToRemove) {
         int numOfHands = player.getNumOfHands();
 
         for (int i = 1; i <= numOfHands; i++) {
-            player.evaluateHand(i, dealer);
+            player.evaluateHand(i, dealer, numOfHands > 1);
             System.out.println();
             player.clearHand(0);
         }
@@ -128,4 +128,11 @@ public class Game {
         }
     }
 
+    public void setDealer(Dealer dealer) {
+        this.dealer = dealer;
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
+    }
 }

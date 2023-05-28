@@ -4,6 +4,7 @@ import com.arthur.blackjack.Game;
 import com.arthur.blackjack.component.Card;
 import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.component.Hand;
+import com.arthur.blackjack.component.Rank;
 import com.arthur.blackjack.simulation.Action;
 
 import java.util.*;
@@ -48,6 +49,10 @@ public class Player {
         money += getHand(hand).getBet();
     }
 
+    public void returnDoubledBet(int hand) {
+        money += getHand(hand).getBet() / 2;
+    }
+
     public void addCard(Card card) {
         this.getHand().addCard(card);
     }
@@ -82,6 +87,7 @@ public class Player {
 
     public boolean canSplit(int hand) {
         return getHand(hand).getCards().size() == 2
+                && hands.size() == 1
                 && getHand(hand).getCards().get(0).getRank().getValue() == getHand(hand).getCards().get(1).getRank().getValue()
                 && getHand(hand).getBet() <= money;
     }
@@ -158,20 +164,10 @@ public class Player {
         switch (choice) {
             case SURRENDER, HIT -> dealer.dealCard(this, hand, deck);   // TODO add surrender capability
             case STAND -> { return true; }
-            case DOUBLE_STAND -> {
-                if (this.canDouble(hand)) {
-                    this.placeBet(hand);
-                    int curBet = this.getHand(hand).getBet();
-                    this.getHand(hand).setBet(curBet * 2);
-                    dealer.dealCard(this, hand, deck);
-                }
-                return true;
-            }
             case DOUBLE_DOWN -> {
                 if (this.canDouble(hand)) {
                     this.placeBet(hand);
-                    int curBet = this.getHand(hand).getBet();
-                    this.getHand(hand).setBet(curBet * 2);
+                    this.getHand(hand).doubleDown();
                     dealer.dealCard(this, hand, deck);
                     return true;
                 } else {
@@ -184,18 +180,20 @@ public class Player {
                 this.addHand(this.getHand(hand).getBet());
                 this.getHand().addCard(temp);
                 dealer.dealCard(this, deck);
+                if (temp.getRank() != Rank.ACE)
+                    playHand(this.getNumOfHands() - 1, dealer, deck);
             }
             default -> System.out.println("Invalid choice. Please choose 'h', 's', or 'p'.");
         }
         return false;
     }
 
-    public void evaluateHand(int handIndex, Dealer dealer) {
+    public void evaluateHand(int handIndex, Dealer dealer, boolean split) {
         Hand hand = this.getHand(0);
         System.out.println("Player " + this.getId() + " - Hand " + handIndex + ": " + hand);
         System.out.println("Player " + this.getId() + " - Hand " + handIndex + " score: " + hand.getTotal());
 
-        if (hand.getTotal() == 21 && hand.getCards().size() == 2) {
+        if (hand.getTotal() == 21 && !split && dealer.getHand().getTotal() != 21) {
             System.out.println("Player " + this.getId() + " - Hand " + handIndex + " gets Blackjack!");
             this.winBlackjack(0);
         } else if (hand.getTotal() > 21) {
@@ -206,6 +204,8 @@ public class Player {
         } else if (hand.getTotal() == dealer.getHand().getTotal()) {
             System.out.println("Player " + this.getId() + " - Hand " + handIndex + " pushes.");
             this.pushBet(0);
+        } else if (dealer.blackjackTenUpcard() && hand.hasDoubled()) {
+            this.returnDoubledBet(0);
         } else {
             System.out.println("Player " + this.getId() + " - Hand " + handIndex + " loses.");
         }

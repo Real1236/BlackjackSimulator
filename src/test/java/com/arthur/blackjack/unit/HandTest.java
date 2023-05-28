@@ -82,4 +82,34 @@ public class HandTest {
         hand.setBet(newBet);
         assertEquals("The bet of the hand should be equal to the new bet set using setBet", newBet, hand.getBet());
     }
+
+    @Test
+    public void testIsHard() {
+        LOGGER.info("Testing hard hand");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.TEN));
+        hand.addCard(new Card(Rank.TEN));
+        assertTrue(hand.isHard());
+    }
+
+    @Test
+    public void testIsHardWithAces() {
+        LOGGER.info("Testing hard hand with Aces");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.TWO));
+        hand.addCard(new Card(Rank.KING));
+        hand.addCard(new Card(Rank.ACE));
+        hand.addCard(new Card(Rank.ACE));
+        hand.addCard(new Card(Rank.FOUR));
+        assertTrue(hand.isHard());
+    }
+
+    @Test
+    public void testIsSoft() {
+        LOGGER.info("Testing soft hand");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.TWO));
+        hand.addCard(new Card(Rank.ACE));
+        assertFalse(hand.isHard());
+    }
 }

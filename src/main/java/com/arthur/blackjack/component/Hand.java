@@ -69,7 +69,11 @@ public class Hand {
             if (card.getRank() == Rank.ACE)
                 numAces++;
         }
-        return numAces <= 0 || total <= 21;
+        while (numAces > 0 && total > 21) {
+            total -= 10;
+            numAces--;
+        }
+        return numAces == 0 || total > 21;
     }
 
     public String toString() {

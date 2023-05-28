@@ -435,6 +435,27 @@ public class PlayerTest {
     }
 
     @Test
+    public void testEvaluateHand_NotBlackjack() {
+        LOGGER.info("Testing evaluateHand method with a not blackjack hand.");
+
+        Player player = new Player(1, 100);
+        player.addHand();
+        player.addCard(new Card(Rank.THREE));
+        player.addCard(new Card(Rank.KING));
+        player.addCard(new Card(Rank.THREE));
+        player.addCard(new Card(Rank.FIVE));
+        player.getHand(0).setBet(20);
+
+        Dealer dealer = mock(Dealer.class);
+        Hand dealerHand = mock(Hand.class);
+        when(dealer.getHand()).thenReturn(dealerHand);
+        when(dealerHand.getTotal()).thenReturn(22);
+        player.evaluateHand(0, dealer, false);
+
+        assertEquals(140, player.getMoney());
+    }
+
+    @Test
     public void testEvaluateHand_BlackjackOnSplitHands() {
         LOGGER.info("Testing evaluateHand method with a split blackjack hand.");
 

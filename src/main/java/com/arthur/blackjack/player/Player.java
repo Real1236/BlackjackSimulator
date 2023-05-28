@@ -174,6 +174,14 @@ public class Player {
                     dealer.dealCard(this, hand, deck);
                 }
             }
+            case DOUBLE_STAND -> {
+                if (this.canDouble(hand)) {
+                    this.placeBet(hand);
+                    this.getHand(hand).doubleDown();
+                    dealer.dealCard(this, hand, deck);
+                }
+                return true;
+            }
             case SPLIT -> {
                 Card temp = this.getHand(hand).removeCard();
                 dealer.dealCard(this, hand, deck);
@@ -193,7 +201,7 @@ public class Player {
         System.out.println("Player " + this.getId() + " - Hand " + handIndex + ": " + hand);
         System.out.println("Player " + this.getId() + " - Hand " + handIndex + " score: " + hand.getTotal());
 
-        if (hand.getTotal() == 21 && !split && dealer.getHand().getTotal() != 21) {
+        if (hand.getTotal() == 21 && hand.getCards().size() == 2 && !split && dealer.getHand().getTotal() != 21) {
             System.out.println("Player " + this.getId() + " - Hand " + handIndex + " gets Blackjack!");
             this.winBlackjack(0);
         } else if (hand.getTotal() > 21) {

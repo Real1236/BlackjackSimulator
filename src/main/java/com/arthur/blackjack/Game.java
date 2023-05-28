@@ -17,13 +17,16 @@ public class Game {
     private final Dealer dealer;
     private final ArrayList<Player> players;
     private int minimumBet;
-    private int round;
     public static final Map<String, Map<Integer, Map<Integer, Action>>> strategyTable = readStrategyTable();
+
+    private int round;
+    public static int totalBet;
 
     public Game() {
         dealer = new Dealer();
         players = new ArrayList<>();
         round = 0;
+        totalBet = 0;
     }
 
     public void initializeGame() {
@@ -51,7 +54,7 @@ public class Game {
         deck.setDepthToReshuffle(50);
         minimumBet = 10;
         int numOfPlayers = 1;
-        int startingBankroll = 10000;
+        int startingBankroll = 100000;
 
         for (int i = 1; i <= numOfPlayers; i++)
             players.add(new Player(i, startingBankroll));
@@ -70,7 +73,7 @@ public class Game {
                 resultsTracker.writeResults(round, 0);
         }
 
-        resultsTracker.saveExcel(round);
+        resultsTracker.saveExcel();
         System.out.println("GG");
     }
 

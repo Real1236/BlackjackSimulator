@@ -1,5 +1,6 @@
 package com.arthur.blackjack.simulation;
 
+import com.arthur.blackjack.Game;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -25,15 +26,14 @@ public class ResultsTracker {
         row.createCell(1).setCellValue(money);
     }
 
-    public void saveExcel(Integer round) {
-        Double totalAmountBet = sheet.getRow(round + 1).getCell(0).getNumericCellValue() * 20;  // TODO Bet is hardcoded
-        Double amountLost = sheet.getRow(1).getCell(1).getNumericCellValue();
+    public void saveExcel() {
+        double amountLost = sheet.getRow(1).getCell(1).getNumericCellValue();
 
         sheet.getRow(0).createCell(3).setCellValue("Total Amount Bet");
-        sheet.getRow(0).createCell(4).setCellValue(totalAmountBet.intValue());
+        sheet.getRow(0).createCell(4).setCellValue(Game.totalBet);
 
         sheet.getRow(1).createCell(3).setCellValue("House Edge");
-        sheet.getRow(1).createCell(4).setCellValue(amountLost/totalAmountBet);
+        sheet.getRow(1).createCell(4).setCellValue(amountLost/(double) Game.totalBet);
 
         sheet.autoSizeColumn(3);
         sheet.autoSizeColumn(4);

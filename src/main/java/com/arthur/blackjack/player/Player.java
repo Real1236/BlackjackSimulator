@@ -30,6 +30,7 @@ public class Player {
     public void placeBet(int hand) {
         if (getHand(hand).getBet() <= money) {
             money -= getHand(hand).getBet();
+            Game.totalBet += getHand(hand).getBet();
         } else {
             System.out.println("Error: not enough money to place bet.");
         }
@@ -183,7 +184,6 @@ public class Player {
                 this.addHand(this.getHand(hand).getBet());
                 this.getHand().addCard(temp);
                 dealer.dealCard(this, deck);
-                playHand(this.getNumOfHands() - 1, dealer, deck);
             }
             default -> System.out.println("Invalid choice. Please choose 'h', 's', or 'p'.");
         }

@@ -13,7 +13,7 @@ import java.util.Map;
 import static com.arthur.blackjack.simulation.StrategyTableReader.readStrategyTable;
 
 public class Game {
-    private Deck deck;
+    private final Deck deck;
     private final Dealer dealer;
     private final ArrayList<Player> players;
     public static final Map<String, Map<Integer, Map<Integer, Action>>> strategyTable = readStrategyTable();
@@ -22,6 +22,7 @@ public class Game {
     public static int totalBet;
 
     public Game() {
+        deck = new Deck();
         dealer = new Dealer();
         players = new ArrayList<>();
         round = 0;
@@ -31,7 +32,6 @@ public class Game {
     public void initializeGame() {
         System.out.println("Starting a game of Blackjack!");
 
-        deck = new Deck();
         for (int i = 1; i <= GameSettings.numOfPlayers; i++)
             players.add(new Player(i, GameSettings.startingBankroll));
 

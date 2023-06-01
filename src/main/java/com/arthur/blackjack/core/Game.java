@@ -1,4 +1,4 @@
-package com.arthur.blackjack;
+package com.arthur.blackjack.core;
 
 import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.player.Dealer;

@@ -1,6 +1,6 @@
 package com.arthur.blackjack.simulation;
 
-import com.arthur.blackjack.Game;
+import com.arthur.blackjack.core.Game;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 

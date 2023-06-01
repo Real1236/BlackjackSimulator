@@ -1,6 +1,6 @@
 package com.arthur.blackjack.player;
 
-import com.arthur.blackjack.Game;
+import com.arthur.blackjack.core.Game;
 import com.arthur.blackjack.component.Card;
 import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.component.Hand;

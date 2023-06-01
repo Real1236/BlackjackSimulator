@@ -1,5 +1,8 @@
 package com.arthur.blackjack.component;
 
+import com.arthur.blackjack.core.GameRules;
+import com.arthur.blackjack.core.GameSettings;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -7,11 +10,18 @@ import java.util.List;
 public class Deck {
     private List<Card> cards;
     private final int numOfDecks;
-    private int depthToReshuffle;
+    private final int depthToReshuffle;
+
+    public Deck() {
+        numOfDecks = GameRules.numOfDecks;
+        constructDeck();
+        depthToReshuffle = GameSettings.depthToReshuffle;
+    }
 
     public Deck(int numOfDecks) {
         this.numOfDecks = numOfDecks;
         constructDeck();
+        depthToReshuffle = GameSettings.depthToReshuffle;
     }
 
     private void constructDeck() {
@@ -44,9 +54,5 @@ public class Deck {
 
     public List<Card> getCards() {
         return cards;
-    }
-
-    public void setDepthToReshuffle(int depth) {
-        this.depthToReshuffle = depth;
     }
 }

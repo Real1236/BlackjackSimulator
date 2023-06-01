@@ -153,7 +153,7 @@ public class PlayerTest {
         System.setIn(inputStream);
 
         Mockito.doNothing().when(spyPlayer).playHand(0, dealer, deck);
-        spyPlayer.takeTurn(10, dealer, deck);
+        spyPlayer.takeTurn(dealer, deck);
         assertEquals(Integer.parseInt(input), spyPlayer.getHand().getBet());
     }
 
@@ -175,7 +175,7 @@ public class PlayerTest {
         System.setIn(inputStream);
 
         Mockito.doNothing().when(spyPlayer).playHand(0, dealer, deck);
-        spyPlayer.takeTurn(10, dealer, deck);
+        spyPlayer.takeTurn(dealer, deck);
 
         // Verify that the while loop was triggered
         Mockito.verify(spyPlayer, Mockito.atLeastOnce()).playHand(0, dealer, deck);

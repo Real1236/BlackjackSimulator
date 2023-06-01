@@ -16,7 +16,6 @@ public class Game {
     private Deck deck;
     private final Dealer dealer;
     private final ArrayList<Player> players;
-    private int minimumBet;
     public static final Map<String, Map<Integer, Map<Integer, Action>>> strategyTable = readStrategyTable();
 
     private int round;
@@ -31,33 +30,10 @@ public class Game {
 
     public void initializeGame() {
         System.out.println("Starting a game of Blackjack!");
-//        Scanner scanner = new Scanner(System.in);
-//
-//        // Have user initialize game
-//        System.out.println("How many decks do you want to play with?");
-//        deck = new Deck(Integer.parseInt(scanner.nextLine()));
-//
-//        System.out.println("What deck penetration do you want to reach before reshuffling? (Answer between 0-100)");
-//        deck.setDepthToReshuffle(Integer.parseInt(scanner.nextLine()));
-//
-//        System.out.println("What is the minimum bet?");
-//        minimumBet = Integer.parseInt(scanner.nextLine());
-//
-//        System.out.println("How many players are playing?");
-//        int numOfPlayers = Integer.parseInt(scanner.nextLine());
-//
-//        System.out.println("What is the starting bankroll?");
-//        int startingBankroll = Integer.parseInt(scanner.nextLine());
 
-        // Default settings for testing
-        deck = new Deck(8);
-        deck.setDepthToReshuffle(75);
-        minimumBet = 10;
-        int numOfPlayers = 1;
-        int startingBankroll = 100000;
-
-        for (int i = 1; i <= numOfPlayers; i++)
-            players.add(new Player(i, startingBankroll));
+        deck = new Deck();
+        for (int i = 1; i <= GameSettings.numOfPlayers; i++)
+            players.add(new Player(i, GameSettings.startingBankroll));
 
         // Track results for player 1
         ResultsTracker resultsTracker = new ResultsTracker();
@@ -89,7 +65,7 @@ public class Game {
 
         // Players take their turns
         for (Player player : players)
-            player.takeTurn(minimumBet, dealer, deck);
+            player.takeTurn(dealer, deck);
 
         // Dealer takes its turn
         dealer.play(deck);

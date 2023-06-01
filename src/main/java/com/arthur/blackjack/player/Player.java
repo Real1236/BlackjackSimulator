@@ -4,6 +4,7 @@ import com.arthur.blackjack.core.Game;
 import com.arthur.blackjack.component.Card;
 import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.component.Hand;
+import com.arthur.blackjack.core.GameSettings;
 import com.arthur.blackjack.simulation.Action;
 
 import java.util.*;
@@ -90,18 +91,11 @@ public class Player {
         return getHand(hand).getCards().size() == 2 && getHand(hand).getBet() <= money;
     }
 
-    public void takeTurn(int minimumBet, Dealer dealer, Deck deck) {
+    public void takeTurn(Dealer dealer, Deck deck) {
         System.out.println("\nPlayer " + this.getId() + "'s turn");
         System.out.println("Money: " + this.getMoney());
         System.out.println("\nPlace your bet:");
-//        Scanner scanner = new Scanner(System.in);
-//        int bet = Integer.parseInt(scanner.nextLine());
-//        while (bet < minimumBet) {
-//            System.out.println("Place a bet greater than or equal to the minimum bet:");
-//            bet = Integer.parseInt(scanner.nextLine());
-//        }
-        int bet = 20;   // TODO bet is hardcoded
-        this.getHand().setBet(bet);
+        this.getHand().setBet(GameSettings.bet);
         playHand(0, dealer, deck);
     }
 

@@ -59,7 +59,12 @@ public class Hand {
             if (card.getRank() == Rank.ACE)
                 numAces++;
         }
-        return numAces <= 0 || total <= 21;
+        int numAcesDeducted = 0;
+        while (numAces > 0 && total > 21) {
+            total -= 10;
+            numAcesDeducted--;
+        }
+        return numAces == numAcesDeducted;
     }
 
     public boolean isBlackjack() {

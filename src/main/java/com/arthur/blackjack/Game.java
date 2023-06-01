@@ -50,8 +50,8 @@ public class Game {
 //        int startingBankroll = Integer.parseInt(scanner.nextLine());
 
         // Default settings for testing
-        deck = new Deck(4);
-        deck.setDepthToReshuffle(50);
+        deck = new Deck(8);
+        deck.setDepthToReshuffle(75);
         minimumBet = 10;
         int numOfPlayers = 1;
         int startingBankroll = 100000;

@@ -62,6 +62,10 @@ public class Hand {
         return numAces <= 0 || total <= 21;
     }
 
+    public boolean isBlackjack() {
+        return cards.size() == 2 && getTotal() == 21;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (Card card : cards) {

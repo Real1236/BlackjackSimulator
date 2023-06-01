@@ -184,6 +184,7 @@ public class Player {
                 this.addHand(this.getHand(hand).getBet());
                 this.getHand().addCard(temp);
                 dealer.dealCard(this, deck);
+                playHand(this.getNumOfHands() - 1, dealer, deck);
             }
             default -> System.out.println("Invalid choice. Please choose 'h', 's', or 'p'.");
         }
@@ -195,7 +196,7 @@ public class Player {
         System.out.println("Player " + this.getId() + " - Hand " + handIndex + ": " + hand);
         System.out.println("Player " + this.getId() + " - Hand " + handIndex + " score: " + hand.getTotal());
 
-        if (hand.getTotal() == 21 && hand.getCards().size() == 2) {
+        if (hand.isBlackjack() && !dealer.getHand().isBlackjack()) {
             System.out.println("Player " + this.getId() + " - Hand " + handIndex + " gets Blackjack!");
             this.winBlackjack(0);
         } else if (hand.getTotal() > 21) {

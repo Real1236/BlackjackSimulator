@@ -110,4 +110,32 @@ public class HandTest {
         hand.addCard(new Card(Rank.SIX));
         assertFalse("Hand should be soft", hand.isHard());
     }
+
+    @Test
+    public void testIsBlackjack() {
+        LOGGER.info("Testing if Blackjack hand is Blackjack");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.ACE));
+        hand.addCard(new Card(Rank.TEN));
+        assertTrue("Hand should be Blackjack", hand.isBlackjack());
+    }
+
+    @Test
+    public void testIsNotBlackjack() {
+        LOGGER.info("Testing if non Blackjack hand is Blackjack");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.TWO));
+        hand.addCard(new Card(Rank.TEN));
+        assertFalse("Hand should not be Blackjack", hand.isBlackjack());
+    }
+
+    @Test
+    public void testIsNotBlackjackButTotalIs21() {
+        LOGGER.info("Testing if 21 hand is Blackjack");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.TWO));
+        hand.addCard(new Card(Rank.TEN));
+        hand.addCard(new Card(Rank.NINE));
+        assertFalse("Hand should not be Blackjack", hand.isBlackjack());
+    }
 }

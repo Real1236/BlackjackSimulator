@@ -18,7 +18,7 @@ import static com.arthur.blackjack.simulation.StrategyTableReader.readStrategyTa
 @Component
 public class Game {
     private final ArrayList<Player> players;
-    public static final Map<String, Map<Integer, Map<Integer, Action>>> strategyTable = readStrategyTable();
+    private final Map<String, Map<Integer, Map<Integer, Action>>> strategyTable;
 
     private int round;
     public static int totalBet;
@@ -35,6 +35,7 @@ public class Game {
         this.dealer = dealer;
         this.playerFactory = playerFactory;
         players = new ArrayList<>();
+        strategyTable = readStrategyTable();
         round = 0;
         totalBet = 0;
     }
@@ -118,4 +119,7 @@ public class Game {
         }
     }
 
+    public Map<String, Map<Integer, Map<Integer, Action>>> getStrategyTable() {
+        return strategyTable;
+    }
 }

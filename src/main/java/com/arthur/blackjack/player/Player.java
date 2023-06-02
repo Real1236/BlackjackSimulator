@@ -22,10 +22,12 @@ public class Player {
     private int money;
 
     private final GameSettings gameSettings;
+    private final Game game;
 
     @Autowired
-    public Player(GameSettings gameSettings) {
+    public Player(GameSettings gameSettings, Game game) {
         this.gameSettings = gameSettings;
+        this.game = game;
         hands = new ArrayList<>();
     }
 
@@ -93,10 +95,10 @@ public class Player {
     }
 
     public void takeTurn(Dealer dealer, Deck deck) {
-        System.out.println("\nPlayer " + this.getId() + "'s turn");
-        System.out.println("Money: " + this.getMoney());
+        System.out.println("\nPlayer " + getId() + "'s turn");
+        System.out.println("Money: " + getMoney());
         System.out.println("\nPlace your bet:");
-        this.getHand().setBet(gameSettings.getBet());
+        getHand().setBet(gameSettings.getBet());
         playHand(0, dealer, deck);
     }
 
@@ -121,16 +123,16 @@ public class Player {
         System.out.println("Choose an option: " + choices + "");
         Action choice = null;
         if (choices.contains(Action.SPLIT)) {
-            Map<Integer, Map<Integer, Action>> splitTable = Game.strategyTable.get("Split");
+            Map<Integer, Map<Integer, Action>> splitTable = game.getStrategyTable().get("Split");
             int cardValue = hand.getCards().get(0).getValue();
             choice = splitTable.get(cardValue).get(upcardValue);
         }
         if (choice == null) {
             if (hand.isHard()) {
-                Map<Integer, Map<Integer, Action>> hardTable = Game.strategyTable.get("Hard");
+                Map<Integer, Map<Integer, Action>> hardTable = game.getStrategyTable().get("Hard");
                 choice = hardTable.get(hand.getTotal()).get(upcardValue);
             } else {
-                Map<Integer, Map<Integer, Action>> softTable = Game.strategyTable.get("Soft");
+                Map<Integer, Map<Integer, Action>> softTable = game.getStrategyTable().get("Soft");
                 choice = softTable.get(hand.getTotal()).get(upcardValue);
             }
         }

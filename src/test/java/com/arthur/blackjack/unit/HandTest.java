@@ -93,6 +93,16 @@ public class HandTest {
     }
 
     @Test
+    public void testAceIsHard() {
+        LOGGER.info("Testing if 17 hard hand is hard");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.TEN));
+        hand.addCard(new Card(Rank.SIX));
+        hand.addCard(new Card(Rank.ACE));
+        assertTrue("Hand should be hard", hand.isHard());
+    }
+
+    @Test
     public void testBustedHandIsHard() {
         LOGGER.info("Testing if busted hand is hard");
         Hand hand = new Hand();

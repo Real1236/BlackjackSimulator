@@ -1,17 +1,26 @@
 package com.arthur.blackjack.core;
 
-public class GameRules {
-    public static final int numOfDecks;
-    public static final boolean standsOnSoft17;
-    public static final boolean doubleAfterSplit;
-    public static final int resplitLimit;
-    public static final boolean resplitAces;
-    public static final boolean hitSplitAces;
-    public static final boolean loseOnlyOGBetAgainstDealerBJ;
-    public static final boolean surrender;
-    public static final double blackjackPayout;
+import jakarta.annotation.PostConstruct;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
-    static {
+@Data
+@NoArgsConstructor
+@Component
+public class GameRules {
+    private int numOfDecks;
+    private boolean standsOnSoft17;
+    private boolean doubleAfterSplit;
+    private int resplitLimit;
+    private boolean resplitAces;
+    private boolean hitSplitAces;
+    private boolean loseOnlyOGBetAgainstDealerBJ;
+    private boolean surrender;
+    private double blackjackPayout;
+
+    @PostConstruct
+    public void load() {
         numOfDecks = 8;
         standsOnSoft17 = true;
         doubleAfterSplit = false;

@@ -1,15 +1,25 @@
 package com.arthur.blackjack.core;
 
-public class GameSettings {
-    public static final int depthToReshuffle;
-    public static final int numOfPlayers;
-    public static final int startingBankroll;
-    public static final int bet;
+import jakarta.annotation.PostConstruct;
+import lombok.Data;
+import org.springframework.stereotype.Component;
 
-    static {
+@Data
+@Component
+public class GameSettings {
+    private int depthToReshuffle;
+    private int numOfPlayers;
+    private int startingBankroll;
+    private int bet;
+
+    public GameSettings() {
+    }
+
+    @PostConstruct
+    public void load() {
         depthToReshuffle = 75;
         numOfPlayers = 1;
-        startingBankroll = 100000;
+        startingBankroll = 50000;
         bet = 20;
     }
 }

@@ -6,26 +6,27 @@ import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.component.Hand;
 import com.arthur.blackjack.core.GameSettings;
 import com.arthur.blackjack.simulation.Action;
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+@Data
+@Component
+@Scope("prototype")
 public class Player {
-    private final int id;
+    private int id;
     private final List<Hand> hands;
     private int money;
 
-    public Player(int id, int startingMoney) {
-        this.id = id;
+    private final GameSettings gameSettings;
+
+    @Autowired
+    public Player(GameSettings gameSettings) {
+        this.gameSettings = gameSettings;
         hands = new ArrayList<>();
-        money = startingMoney;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public int getMoney() {
-        return money;
     }
 
     public void placeBet(int hand) {
@@ -95,7 +96,7 @@ public class Player {
         System.out.println("\nPlayer " + this.getId() + "'s turn");
         System.out.println("Money: " + this.getMoney());
         System.out.println("\nPlace your bet:");
-        this.getHand().setBet(GameSettings.bet);
+        this.getHand().setBet(gameSettings.getBet());
         playHand(0, dealer, deck);
     }
 

@@ -3,8 +3,11 @@ package com.arthur.blackjack.core;
 import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.player.Dealer;
 import com.arthur.blackjack.player.Player;
+import com.arthur.blackjack.player.PlayerFactory;
 import com.arthur.blackjack.simulation.Action;
 import com.arthur.blackjack.simulation.ResultsTracker;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,18 +15,25 @@ import java.util.Map;
 
 import static com.arthur.blackjack.simulation.StrategyTableReader.readStrategyTable;
 
+@Component
 public class Game {
-    private final Deck deck;
-    private final Dealer dealer;
     private final ArrayList<Player> players;
     public static final Map<String, Map<Integer, Map<Integer, Action>>> strategyTable = readStrategyTable();
 
     private int round;
     public static int totalBet;
 
-    public Game() {
-        deck = new Deck();
-        dealer = new Dealer();
+    private final GameSettings gameSettings;
+    private final Deck deck;
+    private final Dealer dealer;
+    private final PlayerFactory playerFactory;
+
+    @Autowired
+    public Game(GameSettings gameSettings, Deck deck, Dealer dealer, PlayerFactory playerFactory) {
+        this.gameSettings = gameSettings;
+        this.deck = deck;
+        this.dealer = dealer;
+        this.playerFactory = playerFactory;
         players = new ArrayList<>();
         round = 0;
         totalBet = 0;
@@ -32,8 +42,12 @@ public class Game {
     public void initializeGame() {
         System.out.println("Starting a game of Blackjack!");
 
-        for (int i = 1; i <= GameSettings.numOfPlayers; i++)
-            players.add(new Player(i, GameSettings.startingBankroll));
+        for (int i = 1; i <= gameSettings.getNumOfPlayers(); i++) {
+            Player player = playerFactory.createPlayer();
+            player.setId(i);
+            player.setMoney(gameSettings.getStartingBankroll());
+            players.add(player);
+        }
 
         // Track results for player 1
         ResultsTracker resultsTracker = new ResultsTracker();

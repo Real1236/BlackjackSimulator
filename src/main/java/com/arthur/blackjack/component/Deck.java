@@ -2,26 +2,37 @@ package com.arthur.blackjack.component;
 
 import com.arthur.blackjack.core.GameRules;
 import com.arthur.blackjack.core.GameSettings;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Component
 public class Deck {
     private List<Card> cards;
-    private final int numOfDecks;
-    private final int depthToReshuffle;
+    private int numOfDecks;
+    private int depthToReshuffle;
 
-    public Deck() {
-        numOfDecks = GameRules.numOfDecks;
-        constructDeck();
-        depthToReshuffle = GameSettings.depthToReshuffle;
+    GameSettings gameSettings;
+    GameRules gameRules;
+
+    @Autowired
+    public Deck(GameSettings gameSettings, GameRules gameRules) {
+        this.gameSettings = gameSettings;
+        this.gameRules = gameRules;
+        load(gameRules.getNumOfDecks());
     }
 
     public Deck(int numOfDecks) {
+        load(numOfDecks);
+    }
+
+    private void load(int numOfDecks) {
         this.numOfDecks = numOfDecks;
         constructDeck();
-        depthToReshuffle = GameSettings.depthToReshuffle;
+        depthToReshuffle = gameSettings.getDepthToReshuffle();
     }
 
     private void constructDeck() {
@@ -54,5 +65,9 @@ public class Deck {
 
     public List<Card> getCards() {
         return cards;
+    }
+
+    public void setDepthToReshuffle(int depthToReshuffle) {
+        this.depthToReshuffle = depthToReshuffle;
     }
 }

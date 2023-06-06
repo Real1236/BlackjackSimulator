@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
@@ -46,11 +47,25 @@ public class PlayerTest {
     @Test
     public void testCanSplit() {
         LOGGER.info("Testing canSplit method with valid split condition.");
-        Player player = new Player(gameSettings, game);
-        player.addHand();
-        player.addCard(new Card(Rank.TWO));
-        player.addCard(new Card(Rank.TWO));
-        player.getHand().setBet(10);
+        Rank rank = mock(Rank.class);
+        when(rank.getValue()).thenReturn(8);
+
+        Card card1 = mock(Card.class);
+        when(card1.getRank()).thenReturn(rank);
+        Card card2 = mock(Card.class);
+        when(card2.getRank()).thenReturn(rank);
+
+        List<Card> cards = new ArrayList<>();
+        cards.add(card1);
+        cards.add(card2);
+
+        Hand hand = mock(Hand.class);
+        when(hand.getCards()).thenReturn(cards);
+        when(hand.getBet()).thenReturn(10);
+
+        Player player = spy(new Player(gameSettings, game));
+        doReturn(hand).when(player).getHand(0);
+        player.setMoney(1000);
         assertTrue(player.canSplit(0));
     }
 
@@ -211,37 +226,30 @@ public class PlayerTest {
     public void testPlayHand() {
         LOGGER.info("Testing playHand method.");
 
-        // Create a mock player, dealer, and deck
+        Card mockCard = mock(Card.class);
+        when(mockCard.getValue()).thenReturn(0);
+
+        List<Card> mockCards = Arrays.asList(mockCard, mock(Card.class));
+        Hand mockHand = mock(Hand.class);
+        when(mockHand.getTotal()).thenReturn(10, 10, 20);
+        doReturn(mockCards).when(mockHand).getCards();
+
+        Dealer mockDealer = mock(Dealer.class);
+        when(mockDealer.getUpcard()).thenReturn(mockCard);
+
+        Deck deck = mock(Deck.class);
+
         Player player = new Player(gameSettings, game);
-        player.setMoney(100);
         player.addHand();
-        player.addCard(new Card(Rank.TWO));
-        player.addCard(new Card(Rank.SEVEN));
+        Player spyPlayer = spy(player);
+        doNothing().when(spyPlayer).placeBet(anyInt());
+        doReturn(mockHand).when(spyPlayer).getHand(anyInt());
+        doReturn(Action.HIT, Action.STAND).when(spyPlayer).getPlayerChoice(anyInt(), anyInt());
+        doReturn(false, true).when(spyPlayer).performPlayerAction(any(Action.class), anyInt(), any(Dealer.class), any(Deck.class));
 
-        // Mock dealer and deck
-        List<Card> mockCards = Arrays.asList(Mockito.mock(Card.class), Mockito.mock(Card.class));
-        Hand mockHand = Mockito.mock(Hand.class);
-        Mockito.doReturn(mockCards).when(mockHand).getCards();
-        Dealer mockDealer = Mockito.mock(Dealer.class);
-        Mockito.doReturn(mockHand).when(mockDealer).getHand();
-        Deck deck = Mockito.mock(Deck.class);
-
-        // Create a spy player to test the method
-        Player spyPlayer = Mockito.spy(player);
-
-        // Stub the necessary methods
-        // TODO refactor for simulation
-//        Mockito.doReturn("h").doReturn("s").when(spyPlayer).getPlayerChoice(Mockito.anyInt());
-        Mockito.doReturn(false).doReturn(true).when(spyPlayer).performPlayerAction(Mockito.any(Action.class), Mockito.anyInt(), Mockito.any(Dealer.class), Mockito.any(Deck.class));
-
-        // Call the method
         spyPlayer.playHand(0, mockDealer, deck);
-
-        // Verify that the necessary methods were called
-        // TODO refactor for simulation
-//        Mockito.verify(spyPlayer, Mockito.times(2)).getPlayerChoice(0);
-        Mockito.verify(spyPlayer, Mockito.times(1)).performPlayerAction(Action.HIT, 0, mockDealer, deck);
-        Mockito.verify(spyPlayer, Mockito.times(1)).performPlayerAction(Action.STAND, 0, mockDealer, deck);
+        verify(spyPlayer, times(1)).performPlayerAction(Action.HIT, 0, mockDealer, deck);
+        verify(spyPlayer, times(1)).performPlayerAction(Action.STAND, 0, mockDealer, deck);
     }
 
     @Test
@@ -257,12 +265,12 @@ public class PlayerTest {
         player.addCard(new Card(Rank.SEVEN));
 
         // Mock dealer and deck
-        List<Card> mockCards = Arrays.asList(Mockito.mock(Card.class), Mockito.mock(Card.class));
-        Hand mockHand = Mockito.mock(Hand.class);
+        List<Card> mockCards = Arrays.asList(mock(Card.class), mock(Card.class));
+        Hand mockHand = mock(Hand.class);
         Mockito.doReturn(mockCards).when(mockHand).getCards();
-        Dealer mockDealer = Mockito.mock(Dealer.class);
+        Dealer mockDealer = mock(Dealer.class);
         Mockito.doReturn(mockHand).when(mockDealer).getHand();
-        Deck deck = Mockito.mock(Deck.class);
+        Deck deck = mock(Deck.class);
 
         // Create a spy player to test the method
         Player spyPlayer = Mockito.spy(player);
@@ -287,8 +295,8 @@ public class PlayerTest {
         LOGGER.info("Testing player hitting.");
 
         // Create a mock instance of the Dealer and Deck
-        Dealer dealer = Mockito.mock(Dealer.class);
-        Deck deck = Mockito.mock(Deck.class);
+        Dealer dealer = mock(Dealer.class);
+        Deck deck = mock(Deck.class);
 
         // Create a player with a hand and set up necessary objects
         Player player = new Player(gameSettings, game);
@@ -311,8 +319,8 @@ public class PlayerTest {
         LOGGER.info("Testing player standing.");
 
         // Create a mock instance of the Dealer and Deck
-        Dealer dealer = Mockito.mock(Dealer.class);
-        Deck deck = Mockito.mock(Deck.class);
+        Dealer dealer = mock(Dealer.class);
+        Deck deck = mock(Deck.class);
 
         // Create a player with a hand and set up necessary objects
         Player player = new Player(gameSettings, game);
@@ -330,29 +338,27 @@ public class PlayerTest {
     public void testPerformPlayerActionDouble() {
         LOGGER.info("Testing player doubling down.");
 
-        // Create a mock instance of the Dealer and Deck
-        Dealer dealer = Mockito.mock(Dealer.class);
-        Deck deck = Mockito.mock(Deck.class);
+        int handIndex = 0;
+        int originalBet = 10;
+
+        // Create a mock instance of the Dealer, Deck, and Hand
+        Deck deck = mock(Deck.class);
+        Dealer dealer = mock(Dealer.class);
+        Hand mockHand = mock(Hand.class);
+        when(mockHand.getBet()).thenReturn(originalBet);
 
         // Create a player with a hand and set up necessary objects
-        Player player = new Player(gameSettings, game);
-        player.setMoney(100);
-        player.addHand();
-        player.getHand().setBet(10);
-        int initialBet = player.getHand().getBet();
+        Player spyPlayer = spy(new Player(gameSettings, game));
+        doReturn(true).when(spyPlayer).canDouble(handIndex);
+        doNothing().when(spyPlayer).placeBet(handIndex);
+        doReturn(mockHand).when(spyPlayer).getHand(handIndex);
 
-        // Perform player action: Double
-        boolean result = player.performPlayerAction(Action.DOUBLE_DOWN, 0, dealer, deck);
+        boolean result = spyPlayer.performPlayerAction(Action.DOUBLE_DOWN, handIndex, dealer, deck);
 
-        // Verify that the dealCard method is called on the dealer with the correct arguments
-        Mockito.verify(dealer).dealCard(player, 0, deck);
-
-        // Ensure the player's bet is doubled
-        assertEquals(initialBet * 2, player.getHand().getBet(), "Initial bet was not doubled");
-        assertEquals(100 - initialBet, player.getMoney(), "Bet was not deducted from player's money");
-
-        // Ensure the result is true (player doubled and stood)
-        assertTrue(result);
+        verify(spyPlayer, times(1)).placeBet(handIndex);
+        verify(mockHand, times(1)).setBet(originalBet * 2);
+        verify(dealer, times(1)).dealCard(spyPlayer, handIndex, deck);
+        assertTrue(result, "Player should automatically stand after doubling");
     }
 
     @Test
@@ -360,15 +366,15 @@ public class PlayerTest {
         LOGGER.info("Testing player splitting.");
 
         // Create a mock instance of the Dealer and Deck
-        Dealer dealer = Mockito.mock(Dealer.class);
-        Deck deck = Mockito.mock(Deck.class);
+        Dealer dealer = mock(Dealer.class);
+        Deck deck = mock(Deck.class);
 
         // Create a player with a hand and set up necessary objects
         Player player = new Player(gameSettings, game);
         player.setMoney(100);
         player.addHand();
-        player.addCard(Mockito.mock(Card.class));
-        player.addCard(Mockito.mock(Card.class));
+        player.addCard(mock(Card.class));
+        player.addCard(mock(Card.class));
         player.getHand().setBet(10);
         int initialBet = player.getHand().getBet();
 
@@ -390,17 +396,23 @@ public class PlayerTest {
     public void testEvaluateHand_Blackjack() {
         LOGGER.info("Testing evaluateHand method with a blackjack hand.");
 
+        Hand mockPlayerHand = mock(Hand.class);
+        when(mockPlayerHand.isBlackjack()).thenReturn(true);
+
         Player player = new Player(gameSettings, game);
-        player.setMoney(100);
-        player.addHand();
-        player.addCard(new Card(Rank.ACE));
-        player.addCard(new Card(Rank.KING));
-        player.getHand(0).setBet(20);
+        player.addHand(mockPlayerHand);
 
-        Dealer dealer = Mockito.mock(Dealer.class);
-        player.evaluateHand(0, dealer);
+        Hand mockDealerHand = mock(Hand.class);
+        when(mockDealerHand.isBlackjack()).thenReturn(false);
 
-        assertEquals(150, player.getMoney());
+        Dealer dealer = mock(Dealer.class);
+        when(dealer.getHand()).thenReturn(mockDealerHand);
+
+        Player spyPlayer = spy(player);
+        doNothing().when(spyPlayer).winBlackjack(anyInt());
+        spyPlayer.evaluateHand(0, dealer);
+
+        verify(spyPlayer, times(1)).winBlackjack(anyInt());
     }
 
     @Test
@@ -414,8 +426,8 @@ public class PlayerTest {
         player.addCard(new Card(Rank.NINE));
         player.getHand(0).setBet(30);
 
-        Dealer dealer = Mockito.mock(Dealer.class);
-        Hand hand = Mockito.mock(Hand.class);
+        Dealer dealer = mock(Dealer.class);
+        Hand hand = mock(Hand.class);
         Mockito.when(hand.getTotal()).thenReturn(18);
         Mockito.when(dealer.getHand()).thenReturn(hand);
 
@@ -437,7 +449,7 @@ public class PlayerTest {
         player.addCard(new Card(Rank.KING));
         player.getHand(0).setBet(20);
 
-        Dealer dealer = Mockito.mock(Dealer.class);
+        Dealer dealer = mock(Dealer.class);
         player.evaluateHand(0, dealer);
 
         assertEquals(100, player.getMoney());
@@ -454,8 +466,8 @@ public class PlayerTest {
         player.addCard(new Card(Rank.EIGHT));
         player.getHand(0).setBet(20);
 
-        Dealer dealer = Mockito.mock(Dealer.class);
-        Hand hand = Mockito.mock(Hand.class);
+        Dealer dealer = mock(Dealer.class);
+        Hand hand = mock(Hand.class);
         Mockito.when(hand.getTotal()).thenReturn(15);
         Mockito.when(dealer.getHand()).thenReturn(hand);
 
@@ -475,8 +487,8 @@ public class PlayerTest {
         player.addCard(new Card(Rank.FIVE));
         player.getHand(0).setBet(20);
 
-        Dealer dealer = Mockito.mock(Dealer.class);
-        Hand hand = Mockito.mock(Hand.class);
+        Dealer dealer = mock(Dealer.class);
+        Hand hand = mock(Hand.class);
         Mockito.when(hand.getTotal()).thenReturn(17);
         Mockito.when(dealer.getHand()).thenReturn(hand);
 

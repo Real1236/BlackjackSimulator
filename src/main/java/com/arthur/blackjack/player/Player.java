@@ -68,6 +68,10 @@ public class Player {
         hands.add(new Hand(bet));
     }
 
+    public void addHand(Hand hand) {
+        hands.add(hand);
+    }
+
     public Hand getHand() {
         return hands.get(hands.size() - 1);
     }
@@ -103,12 +107,12 @@ public class Player {
     }
 
     public void playHand(int hand, Dealer dealer, Deck deck) {
-        this.placeBet(hand);
+        placeBet(hand);
         boolean hasStood = false;
 
-        while (this.getHand(hand).getTotal() < 21 && !hasStood) {
-            System.out.println("\nYour cards: " + this.getHand(hand));
-            System.out.println("Your score: " + this.getHand(hand).getTotal());
+        while (getHand(hand).getTotal() < 21 && !hasStood) {
+            System.out.println("\nYour cards: " + getHand(hand));
+            System.out.println("Your score: " + getHand(hand).getTotal());
             System.out.println("Dealer's upcard: " + dealer.getUpcard());
 
             Action choice = getPlayerChoice(hand, dealer.getUpcard().getValue());
@@ -120,7 +124,7 @@ public class Player {
         Set<Action> choices = getChoices(handIndex);
         Hand hand = this.getHand(handIndex);
 
-        System.out.println("Choose an option: " + choices + "");
+        System.out.println("Choose an option: " + choices);
         Action choice = null;
         if (choices.contains(Action.SPLIT)) {
             Map<Integer, Map<Integer, Action>> splitTable = game.getStrategyTable().get("Split");
@@ -165,10 +169,10 @@ public class Player {
                 return true;
             }
             case DOUBLE_DOWN -> {
-                if (this.canDouble(hand)) {
-                    this.placeBet(hand);
-                    int curBet = this.getHand(hand).getBet();
-                    this.getHand(hand).setBet(curBet * 2);
+                if (canDouble(hand)) {
+                    placeBet(hand);
+                    int newBet = getHand(hand).getBet() * 2;
+                    getHand(hand).setBet(newBet);
                     dealer.dealCard(this, hand, deck);
                     return true;
                 } else {
@@ -195,15 +199,15 @@ public class Player {
 
         if (hand.isBlackjack() && !dealer.getHand().isBlackjack()) {
             System.out.println("Player " + this.getId() + " - Hand " + handIndex + " gets Blackjack!");
-            this.winBlackjack(0);
+            winBlackjack(0);
         } else if (hand.getTotal() > 21) {
             System.out.println("Player " + this.getId() + " - Hand " + handIndex + " busts!");
         } else if (dealer.getHand().getTotal() > 21 || hand.getTotal() > dealer.getHand().getTotal()) {
             System.out.println("Player " + this.getId() + " - Hand " + handIndex + " wins!");
-            this.winBet(0);
+            winBet(0);
         } else if (hand.getTotal() == dealer.getHand().getTotal()) {
             System.out.println("Player " + this.getId() + " - Hand " + handIndex + " pushes.");
-            this.pushBet(0);
+            pushBet(0);
         } else {
             System.out.println("Player " + this.getId() + " - Hand " + handIndex + " loses.");
         }

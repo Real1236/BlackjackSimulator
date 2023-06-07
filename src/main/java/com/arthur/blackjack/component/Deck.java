@@ -12,7 +12,7 @@ import java.util.List;
 @Component
 public class Deck {
     private List<Card> cards;
-    private int numOfDecks;
+    private final int numOfDecks;
     private int depthToReshuffle;
 
     GameSettings gameSettings;
@@ -22,17 +22,9 @@ public class Deck {
     public Deck(GameSettings gameSettings, GameRules gameRules) {
         this.gameSettings = gameSettings;
         this.gameRules = gameRules;
-        load(gameRules.getNumOfDecks());
-    }
-
-    public Deck(int numOfDecks) {
-        load(numOfDecks);
-    }
-
-    private void load(int numOfDecks) {
-        this.numOfDecks = numOfDecks;
-        constructDeck();
+        numOfDecks = gameRules.getNumOfDecks();
         depthToReshuffle = gameSettings.getDepthToReshuffle();
+        constructDeck();
     }
 
     private void constructDeck() {

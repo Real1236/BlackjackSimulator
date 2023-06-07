@@ -1,12 +1,14 @@
 package com.arthur.blackjack.core;
 
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Component
 public class GameRules {
     private int numOfDecks;
@@ -29,6 +31,6 @@ public class GameRules {
         hitSplitAces = false;
         loseOnlyOGBetAgainstDealerBJ = false;
         surrender = false;
-        blackjackPayout = 3.0/2.0;
+        blackjackPayout = 3.0/2.0;  // TODO
     }
 }

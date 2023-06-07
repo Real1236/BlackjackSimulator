@@ -196,32 +196,6 @@ public class PlayerTest {
         verify(spyPlayer, times(1)).playHand(0, dealer, deck);
     }
 
-//    @Test
-//    public void testTakeTurnWithInvalidAndValidBet() {
-//        LOGGER.info("Testing takeTurn method with invalid and valid input.");
-//
-//        Player player = new Player(gameSettings, strategyTableReader);
-//        player.setMoney(100);
-//        player.addHand();
-//        Player spyPlayer = Mockito.spy(player);
-//        Dealer dealer = new Dealer();
-//        Deck deck = new Deck(4);
-//
-//        // Set the input stream to provide an invalid bet value followed by a valid bet value
-//        String invalidInput = "5\n";
-//        String validInput = "20";
-//        String input = invalidInput + validInput;
-//        ByteArrayInputStream inputStream = new ByteArrayInputStream(input.getBytes());
-//        System.setIn(inputStream);
-//
-//        doNothing().when(spyPlayer).playHand(0, dealer, deck);
-//        spyPlayer.takeTurn(dealer, deck);
-//
-//        // Verify that the while loop was triggered
-//        Mockito.verify(spyPlayer, Mockito.atLeastOnce()).playHand(0, dealer, deck);
-//        assertEquals(Integer.parseInt(validInput), spyPlayer.getHand().getBet());
-//    }
-
     @Test
     public void testPlayHand() {
         LOGGER.info("Testing playHand method.");

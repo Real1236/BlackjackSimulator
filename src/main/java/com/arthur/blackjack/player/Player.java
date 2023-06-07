@@ -6,6 +6,7 @@ import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.component.Hand;
 import com.arthur.blackjack.core.GameSettings;
 import com.arthur.blackjack.simulation.Action;
+import com.arthur.blackjack.simulation.StrategyTableReader;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -22,12 +23,12 @@ public class Player {
     private int money;
 
     private final GameSettings gameSettings;
-    private final Game game;
+    private final StrategyTableReader strategyTableReader;
 
     @Autowired
-    public Player(GameSettings gameSettings, Game game) {
+    public Player(GameSettings gameSettings, StrategyTableReader strategyTableReader) {
         this.gameSettings = gameSettings;
-        this.game = game;
+        this.strategyTableReader = strategyTableReader;
         hands = new ArrayList<>();
     }
 
@@ -127,16 +128,16 @@ public class Player {
         System.out.println("Choose an option: " + choices);
         Action choice = null;
         if (choices.contains(Action.SPLIT)) {
-            Map<Integer, Map<Integer, Action>> splitTable = game.getStrategyTable().get("Split");
+            Map<Integer, Map<Integer, Action>> splitTable = strategyTableReader.getStrategyTable().get("Split");
             int cardValue = hand.getCards().get(0).getValue();
             choice = splitTable.get(cardValue).get(upcardValue);
         }
         if (choice == null) {
             if (hand.isHard()) {
-                Map<Integer, Map<Integer, Action>> hardTable = game.getStrategyTable().get("Hard");
+                Map<Integer, Map<Integer, Action>> hardTable = strategyTableReader.getStrategyTable().get("Hard");
                 choice = hardTable.get(hand.getTotal()).get(upcardValue);
             } else {
-                Map<Integer, Map<Integer, Action>> softTable = game.getStrategyTable().get("Soft");
+                Map<Integer, Map<Integer, Action>> softTable = strategyTableReader.getStrategyTable().get("Soft");
                 choice = softTable.get(hand.getTotal()).get(upcardValue);
             }
         }

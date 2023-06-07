@@ -4,6 +4,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,8 +12,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+@Component
 public class StrategyTableReader {
     private static final String FILE_PATH = "src/main/resources/basic-strategy.xlsx"; // Specify the file path of your strategy Excel file
+
+    private final Map<String, Map<Integer, Map<Integer, Action>>> strategyTable;
+
+    public StrategyTableReader() {
+        strategyTable = readStrategyTable();
+    }
+
+    public Map<String, Map<Integer, Map<Integer, Action>>> getStrategyTable() {
+        return strategyTable;
+    }
 
     public static Map<String, Map<Integer, Map<Integer, Action>>> readStrategyTable() {
         /* {

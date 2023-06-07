@@ -4,21 +4,16 @@ import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.player.Dealer;
 import com.arthur.blackjack.player.Player;
 import com.arthur.blackjack.player.PlayerFactory;
-import com.arthur.blackjack.simulation.Action;
 import com.arthur.blackjack.simulation.ResultsTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import static com.arthur.blackjack.simulation.StrategyTableReader.readStrategyTable;
 
 @Component
 public class Game {
     private final ArrayList<Player> players;
-    private final Map<String, Map<Integer, Map<Integer, Action>>> strategyTable;
 
     private int round;
     public static int totalBet;
@@ -35,7 +30,6 @@ public class Game {
         this.dealer = dealer;
         this.playerFactory = playerFactory;
         players = new ArrayList<>();
-        strategyTable = readStrategyTable();
         round = 0;
         totalBet = 0;
     }
@@ -117,9 +111,5 @@ public class Game {
             System.out.println("Player " + player.getId() + " is eliminated from the game!\n");
             playersToRemove.add(player);
         }
-    }
-
-    public Map<String, Map<Integer, Map<Integer, Action>>> getStrategyTable() {
-        return strategyTable;
     }
 }

@@ -11,6 +11,7 @@ I was inspired to create this when I discovered card-counting. I was fascinated 
 - Currently loading basic strategy from 'src/main/resources/basic-strategy.xlsx' Excel file
 - Track and analyze game statistics, including win/loss ratio, profit/loss, and more
 - Export simulation results to Excel for further analysis, stored in 'src/main/resources/results.xlsx'
+- I am still currently working out bugs to ensure basic strategy hits the theoretical EV. Next steps, I will implement card counting
 
 ![image](https://github.com/Real1236/BlackjackSimulator/assets/58100386/7f0c5a85-6953-4d90-8b2e-ef340cf2f55d) 
 ![image](https://github.com/Real1236/BlackjackSimulator/assets/58100386/36a3779a-06d3-450c-9c4b-2aa05a5ef96f)

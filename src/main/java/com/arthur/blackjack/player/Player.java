@@ -6,6 +6,7 @@ import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.component.Hand;
 import com.arthur.blackjack.core.GameSettings;
 import com.arthur.blackjack.simulation.Action;
+import com.arthur.blackjack.simulation.RoundResult;
 import com.arthur.blackjack.simulation.StrategyTableReader;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +92,7 @@ public class Player {
 
     public boolean canSplit(int hand) {
         return getHand(hand).getCards().size() == 2
-                && getHand(hand).getCards().get(0).getRank().getValue() == getHand(hand).getCards().get(1).getRank().getValue()
+                && getHand(hand).getCards().get(0).getRank() == getHand(hand).getCards().get(1).getRank()
                 && getHand(hand).getBet() <= money;
     }
 
@@ -193,7 +194,7 @@ public class Player {
         return false;
     }
 
-    public void evaluateHand(int handIndex, Dealer dealer) {
+    public RoundResult evaluateHand(int handIndex, Dealer dealer) {
         Hand hand = this.getHand(0);
         System.out.println("Player " + this.getId() + " - Hand " + handIndex + ": " + hand);
         System.out.println("Player " + this.getId() + " - Hand " + handIndex + " score: " + hand.getTotal());
@@ -201,16 +202,21 @@ public class Player {
         if (hand.isBlackjack() && !dealer.getHand().isBlackjack()) {
             System.out.println("Player " + this.getId() + " - Hand " + handIndex + " gets Blackjack!");
             winBlackjack(0);
+            return RoundResult.BLACKJACK;
         } else if (hand.getTotal() > 21) {
             System.out.println("Player " + this.getId() + " - Hand " + handIndex + " busts!");
+            return hand.getBet() == gameSettings.getBet() ? RoundResult.BUST : RoundResult.DOUBLE_BUST;
         } else if (dealer.getHand().getTotal() > 21 || hand.getTotal() > dealer.getHand().getTotal()) {
             System.out.println("Player " + this.getId() + " - Hand " + handIndex + " wins!");
             winBet(0);
+            return hand.getBet() == gameSettings.getBet() ? RoundResult.WIN : RoundResult.DOUBLE_WIN;
         } else if (hand.getTotal() == dealer.getHand().getTotal()) {
             System.out.println("Player " + this.getId() + " - Hand " + handIndex + " pushes.");
             pushBet(0);
+            return RoundResult.PUSH;
         } else {
             System.out.println("Player " + this.getId() + " - Hand " + handIndex + " loses.");
+            return hand.getBet() == gameSettings.getBet() ? RoundResult.LOSE : RoundResult.DOUBLE_LOSE;
         }
     }
 }

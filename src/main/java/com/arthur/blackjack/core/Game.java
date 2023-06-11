@@ -5,6 +5,8 @@ import com.arthur.blackjack.player.Dealer;
 import com.arthur.blackjack.player.Player;
 import com.arthur.blackjack.player.PlayerFactory;
 import com.arthur.blackjack.simulation.ResultsTracker;
+import com.arthur.blackjack.simulation.RoundResult;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +15,11 @@ import java.util.List;
 
 @Component
 public class Game {
+    @Getter
     private final ArrayList<Player> players;
 
     private int round;
+    private final ResultsTracker resultsTracker;
     public static int totalBet;
 
     private final GameSettings gameSettings;
@@ -31,6 +35,7 @@ public class Game {
         this.playerFactory = playerFactory;
         players = new ArrayList<>();
         round = 0;
+        resultsTracker = new ResultsTracker();
         totalBet = 0;
     }
 
@@ -45,12 +50,12 @@ public class Game {
         }
 
         // Track results for player 1
-        ResultsTracker resultsTracker = new ResultsTracker();
         resultsTracker.writeResults(0, players.get(0).getMoney());
 
         // Loop game until all players are bankrupt (they'll be deleted)
-        while (players.size() > 0) {
+        while (players.size() > 0 && round < 100000) {
             round++;
+            System.out.println("Round " + round + "\n---------------------------------");
             startRound();
             if (!players.isEmpty())
                 resultsTracker.writeResults(round, players.get(0).getMoney());
@@ -101,7 +106,9 @@ public class Game {
         int numOfHands = player.getNumOfHands();
 
         for (int i = 1; i <= numOfHands; i++) {
-            player.evaluateHand(i, dealer);
+            RoundResult result = player.evaluateHand(i, dealer);
+            System.out.println(result);
+            resultsTracker.recordRoundResult(round, result);
             System.out.println();
             player.clearHand(0);
         }

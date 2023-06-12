@@ -53,7 +53,7 @@ public class Game {
         resultsTracker.writeResults(0, players.get(0).getMoney());
 
         // Loop game until all players are bankrupt (they'll be deleted)
-        while (players.size() > 0 && round < 100000) {
+        while (players.size() > 0 && round < 1048574) {
             round++;
             System.out.println("Round " + round + "\n---------------------------------");
             startRound();
@@ -106,7 +106,7 @@ public class Game {
         int numOfHands = player.getNumOfHands();
 
         for (int i = 1; i <= numOfHands; i++) {
-            RoundResult result = player.evaluateHand(i, dealer);
+            RoundResult result = player.evaluateHand(i, dealer, numOfHands);
             System.out.println(result);
             resultsTracker.recordRoundResult(round, result);
             System.out.println();

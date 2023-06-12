@@ -5,6 +5,7 @@ import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.component.Hand;
 import com.arthur.blackjack.component.Rank;
 import com.arthur.blackjack.config.LoggerConfig;
+import com.arthur.blackjack.core.GameRules;
 import com.arthur.blackjack.core.GameSettings;
 import com.arthur.blackjack.player.Dealer;
 import com.arthur.blackjack.player.Player;
@@ -36,11 +37,14 @@ public class PlayerTest {
     private GameSettings gameSettings;
     @MockBean
     private StrategyTableReader strategyTableReader;
+    @MockBean
+    private GameRules gameRules;
 
     @BeforeEach()
     public void setUp() {
         strategyTableReader = mock(StrategyTableReader.class);
         gameSettings = mock(GameSettings.class);
+        gameRules = mock(GameRules.class);
         when(gameSettings.getDepthToReshuffle()).thenReturn(85);
     }
 
@@ -63,7 +67,7 @@ public class PlayerTest {
         when(hand.getCards()).thenReturn(cards);
         when(hand.getBet()).thenReturn(10);
 
-        Player player = spy(new Player(gameSettings, strategyTableReader));
+        Player player = spy(new Player(gameSettings, gameRules, strategyTableReader));
         doReturn(hand).when(player).getHand(0);
         player.setMoney(1000);
         assertTrue(player.canSplit(0));
@@ -72,7 +76,7 @@ public class PlayerTest {
     @Test
     public void testCannotSplit() {
         LOGGER.info("Testing canSplit method with not matching cards.");
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(100);
         player.addHand();
         player.addCard(new Card(Rank.TWO));
@@ -84,7 +88,7 @@ public class PlayerTest {
     @Test
     public void testCannotSplitNoMoney() {
         LOGGER.info("Testing canSplit method with not matching cards.");
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(50);
         player.addHand();
         player.addCard(new Card(Rank.TWO));
@@ -96,7 +100,7 @@ public class PlayerTest {
     @Test
     public void testCanDouble() {
         LOGGER.info("Testing canDouble method with valid double condition.");
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(100);
         player.setMoney(100);
         player.addHand();
@@ -109,7 +113,7 @@ public class PlayerTest {
     @Test
     public void testCannotDouble() {
         LOGGER.info("Testing canDouble method with invalid double condition.");
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(50);
         player.addHand();
         player.addCard(new Card(Rank.TWO));
@@ -122,7 +126,7 @@ public class PlayerTest {
     @Test
     public void testCannotDoubleNoMoney() {
         LOGGER.info("Testing canDouble method because not enough money.");
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(5);
         player.addHand();
         player.addCard(new Card(Rank.TWO));
@@ -132,9 +136,55 @@ public class PlayerTest {
     }
 
     @Test
+    public void testCanDoubleAfterSplitting() {
+        LOGGER.info("Testing player can double after splitting.");
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
+
+        // Hand 1
+        player.addHand();
+        player.addCard(new Card(Rank.TWO));
+        player.addCard(new Card(Rank.THREE));
+        player.getHand().setBet(10);
+
+        // Hand 2
+        player.addHand();
+        player.addCard(new Card(Rank.TWO));
+        player.addCard(new Card(Rank.THREE));
+        player.getHand().setBet(10);
+
+        when(gameRules.isDoubleAfterSplit()).thenReturn(true);
+        assertTrue(player.canDouble(0));
+        assertTrue(player.canDouble(1));
+    }
+
+    @Test
+    public void testCannotDoubleAfterSplitting() {
+        LOGGER.info("Testing player can't double after splitting.");
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
+
+        // Hand 1
+        player.addHand();
+        player.addCard(new Card(Rank.TWO));
+        player.addCard(new Card(Rank.THREE));
+        player.getHand().setBet(10);
+
+        // Hand 2
+        player.addHand();
+        player.addCard(new Card(Rank.TWO));
+        player.addCard(new Card(Rank.THREE));
+        player.getHand().setBet(10);
+
+        when(gameRules.isDoubleAfterSplit()).thenReturn(false);
+        assertFalse(player.canDouble(0));
+        assertFalse(player.canDouble(1));
+    }
+
+    @Test
     public void testPlaceBet() {
         LOGGER.info("Starting testPlaceBet");
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(100);
         player.addHand(10);
 
@@ -146,7 +196,7 @@ public class PlayerTest {
     @Test
     public void testWinBet() {
         LOGGER.info("Starting testWinBet");
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(100);
         player.addHand(10);
 
@@ -158,7 +208,7 @@ public class PlayerTest {
     @Test
     public void testWinBlackjack() {
         LOGGER.info("Starting testWinBlackjack");
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(100);
         player.addHand(10);
 
@@ -170,7 +220,7 @@ public class PlayerTest {
     @Test
     public void testPushBet() {
         LOGGER.info("Starting testPushBet");
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(100);
         player.addHand(10);
 
@@ -183,7 +233,7 @@ public class PlayerTest {
     public void testTakeTurn() {
         LOGGER.info("Testing takeTurn method with valid input.");
         when(gameSettings.getBet()).thenReturn(50);
-        Player spyPlayer = Mockito.spy(new Player(gameSettings, strategyTableReader));
+        Player spyPlayer = Mockito.spy(new Player(gameSettings, gameRules, strategyTableReader));
         Dealer dealer = mock(Dealer.class);
         Deck deck = mock(Deck.class);
         Hand hand = mock(Hand.class);
@@ -213,7 +263,7 @@ public class PlayerTest {
 
         Deck deck = mock(Deck.class);
 
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.addHand();
         Player spyPlayer = spy(player);
         doNothing().when(spyPlayer).placeBet(anyInt());
@@ -231,7 +281,7 @@ public class PlayerTest {
         LOGGER.info("Testing playHand method.");
 
         // Create a mock player, dealer, and deck
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(100);
         player.addHand();
         player.addCard(new Card(Rank.TEN));
@@ -273,7 +323,7 @@ public class PlayerTest {
         Deck deck = mock(Deck.class);
 
         // Create a player with a hand and set up necessary objects
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(100);
         player.addHand();
         player.getHand().setBet(10);
@@ -297,7 +347,7 @@ public class PlayerTest {
         Deck deck = mock(Deck.class);
 
         // Create a player with a hand and set up necessary objects
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(100);
         player.addHand();
 
@@ -322,7 +372,7 @@ public class PlayerTest {
         when(mockHand.getBet()).thenReturn(originalBet);
 
         // Create a player with a hand and set up necessary objects
-        Player spyPlayer = spy(new Player(gameSettings, strategyTableReader));
+        Player spyPlayer = spy(new Player(gameSettings, gameRules, strategyTableReader));
         doReturn(true).when(spyPlayer).canDouble(handIndex);
         doNothing().when(spyPlayer).placeBet(handIndex);
         doReturn(mockHand).when(spyPlayer).getHand(handIndex);
@@ -344,7 +394,7 @@ public class PlayerTest {
         Deck deck = mock(Deck.class);
 
         // Create a player with a hand and set up necessary objects
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(100);
         player.addHand();
         player.addCard(mock(Card.class));
@@ -373,7 +423,7 @@ public class PlayerTest {
         Hand mockPlayerHand = mock(Hand.class);
         when(mockPlayerHand.isBlackjack()).thenReturn(true);
 
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.addHand(mockPlayerHand);
 
         Hand mockDealerHand = mock(Hand.class);
@@ -384,7 +434,7 @@ public class PlayerTest {
 
         Player spyPlayer = spy(player);
         doNothing().when(spyPlayer).winBlackjack(anyInt());
-        spyPlayer.evaluateHand(0, dealer);
+        spyPlayer.evaluateHand(0, dealer, 1);
 
         verify(spyPlayer, times(1)).winBlackjack(anyInt());
     }
@@ -393,7 +443,7 @@ public class PlayerTest {
     public void testEvaluateHand_Win() {
         LOGGER.info("Testing evaluateHand method with a winning hand.");
 
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(100);
         player.addHand();
         player.addCard(new Card(Rank.QUEEN));
@@ -405,7 +455,7 @@ public class PlayerTest {
         Mockito.when(hand.getTotal()).thenReturn(18);
         Mockito.when(dealer.getHand()).thenReturn(hand);
 
-        player.evaluateHand(0, dealer);
+        player.evaluateHand(0, dealer, 1);
 
         assertEquals(160, player.getMoney());
     }
@@ -415,7 +465,7 @@ public class PlayerTest {
     public void testEvaluateHand_Bust() {
         LOGGER.info("Testing evaluateHand method with a bust hand.");
 
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(100);
         player.addHand();
         player.addCard(new Card(Rank.KING));
@@ -424,7 +474,7 @@ public class PlayerTest {
         player.getHand(0).setBet(20);
 
         Dealer dealer = mock(Dealer.class);
-        player.evaluateHand(0, dealer);
+        player.evaluateHand(0, dealer, 1);
 
         assertEquals(100, player.getMoney());
     }
@@ -433,7 +483,7 @@ public class PlayerTest {
     public void testEvaluateHand_Push() {
         LOGGER.info("Testing evaluateHand method with a push hand.");
 
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(100);
         player.addHand();
         player.addCard(new Card(Rank.SEVEN));
@@ -445,7 +495,7 @@ public class PlayerTest {
         Mockito.when(hand.getTotal()).thenReturn(15);
         Mockito.when(dealer.getHand()).thenReturn(hand);
 
-        player.evaluateHand(0, dealer);
+        player.evaluateHand(0, dealer, 1);
 
         assertEquals(120, player.getMoney());
     }
@@ -454,7 +504,7 @@ public class PlayerTest {
     public void testEvaluateHand_Loss() {
         LOGGER.info("Testing evaluateHand method with a losing hand.");
 
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(100);
         player.addHand();
         player.addCard(new Card(Rank.JACK));
@@ -466,7 +516,7 @@ public class PlayerTest {
         Mockito.when(hand.getTotal()).thenReturn(17);
         Mockito.when(dealer.getHand()).thenReturn(hand);
 
-        player.evaluateHand(0, dealer);
+        player.evaluateHand(0, dealer, 1);
 
         assertEquals(100, player.getMoney());
     }

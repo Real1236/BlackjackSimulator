@@ -56,10 +56,10 @@ public class GameIntegrationTest {
         deck.getCards().add(new Card(Rank.ACE));
         deck.getCards().add(new Card(Rank.TEN));
 
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(bankroll);
 
-        Game game = new Game(gameSettings, deck, new Dealer(gameRules), new PlayerFactory(gameSettings, strategyTableReader));
+        Game game = new Game(gameSettings, deck, new Dealer(gameRules), new PlayerFactory(gameSettings, gameRules, strategyTableReader));
         game.getPlayers().add(player);
         game.startRound();
 

@@ -50,7 +50,7 @@ public class PlayerIntegrationTest {
         int bankroll = gameSettings.getStartingBankroll();
         int bet = gameSettings.getBet();
 
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(bankroll);
 
         player.addHand();
@@ -62,7 +62,7 @@ public class PlayerIntegrationTest {
         dealer.getHand().addCard(new Card(Rank.QUEEN));
         dealer.getHand().addCard(new Card(Rank.SIX));
 
-        player.evaluateHand(0, dealer);
+        player.evaluateHand(0, dealer, 1);
 
         assertEquals(bankroll + bet * 2.5, player.getMoney(), "Incorrect payout for player");
     }
@@ -74,7 +74,7 @@ public class PlayerIntegrationTest {
         int bankroll = gameSettings.getStartingBankroll();
         int bet = gameSettings.getBet();
 
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(bankroll);
 
         player.addHand();
@@ -86,7 +86,7 @@ public class PlayerIntegrationTest {
         dealer.getHand().addCard(new Card(Rank.ACE));
         dealer.getHand().addCard(new Card(Rank.TEN));
 
-        player.evaluateHand(0, dealer);
+        player.evaluateHand(0, dealer, 1);
 
         assertEquals(bankroll + bet, player.getMoney(), "Incorrect payout for player");
     }
@@ -98,7 +98,7 @@ public class PlayerIntegrationTest {
         int bankroll = gameSettings.getStartingBankroll();
         int bet = gameSettings.getBet();
 
-        Player player = new Player(gameSettings, strategyTableReader);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(bankroll);
 
         player.addHand();
@@ -110,7 +110,7 @@ public class PlayerIntegrationTest {
         dealer.getHand().addCard(new Card(Rank.SEVEN));
         dealer.getHand().addCard(new Card(Rank.TEN));
 
-        player.evaluateHand(0, dealer);
+        player.evaluateHand(0, dealer, 1);
 
         assertEquals(bankroll + bet * 2, player.getMoney(), "Incorrect payout for player");
     }

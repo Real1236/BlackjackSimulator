@@ -4,6 +4,7 @@ import com.arthur.blackjack.core.Game;
 import com.arthur.blackjack.component.Card;
 import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.component.Hand;
+import com.arthur.blackjack.core.GameRules;
 import com.arthur.blackjack.core.GameSettings;
 import com.arthur.blackjack.simulation.Action;
 import com.arthur.blackjack.simulation.RoundResult;
@@ -24,11 +25,13 @@ public class Player {
     private int money;
 
     private final GameSettings gameSettings;
+    private final GameRules gameRules;
     private final StrategyTableReader strategyTableReader;
 
     @Autowired
-    public Player(GameSettings gameSettings, StrategyTableReader strategyTableReader) {
+    public Player(GameSettings gameSettings, GameRules gameRules, StrategyTableReader strategyTableReader) {
         this.gameSettings = gameSettings;
+        this.gameRules = gameRules;
         this.strategyTableReader = strategyTableReader;
         hands = new ArrayList<>();
     }
@@ -90,14 +93,22 @@ public class Player {
         hands.remove(index);
     }
 
-    public boolean canSplit(int hand) {
-        return getHand(hand).getCards().size() == 2
-                && getHand(hand).getCards().get(0).getRank() == getHand(hand).getCards().get(1).getRank()
-                && getHand(hand).getBet() <= money;
+    public boolean canSplit(int handIndex) {
+        Hand hand = getHand(handIndex);
+        List<Card> cards = hand.getCards();
+        return cards.size() == 2
+                && cards.get(0).getRank() == cards.get(1).getRank()
+                && hand.getBet() <= money;
     }
 
-    public boolean canDouble(int hand) {
-        return getHand(hand).getCards().size() == 2 && getHand(hand).getBet() <= money;
+    public boolean canDouble(int handIndex) {
+        boolean rules = true;
+        if (hands.size() > 1)
+            rules = gameRules.isDoubleAfterSplit();
+
+        Hand hand = getHand(handIndex);
+        List<Card> cards = hand.getCards();
+        return rules && cards.size() == 2 && hand.getBet() <= money;
     }
 
     public void takeTurn(Dealer dealer, Deck deck) {
@@ -194,12 +205,12 @@ public class Player {
         return false;
     }
 
-    public RoundResult evaluateHand(int handIndex, Dealer dealer) {
+    public RoundResult evaluateHand(int handIndex, Dealer dealer, int numOfHands) {
         Hand hand = this.getHand(0);
         System.out.println("Player " + this.getId() + " - Hand " + handIndex + ": " + hand);
         System.out.println("Player " + this.getId() + " - Hand " + handIndex + " score: " + hand.getTotal());
 
-        if (hand.isBlackjack() && !dealer.getHand().isBlackjack()) {
+        if (numOfHands == 1 && hand.isBlackjack() && !dealer.getHand().isBlackjack()) {
             System.out.println("Player " + this.getId() + " - Hand " + handIndex + " gets Blackjack!");
             winBlackjack(0);
             return RoundResult.BLACKJACK;

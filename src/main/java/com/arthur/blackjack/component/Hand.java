@@ -6,6 +6,7 @@ import java.util.List;
 public class Hand {
     private final List<Card> cards;
     private int bet;
+    private boolean doubled;
 
     public Hand() {
         cards = new ArrayList<>();
@@ -28,6 +29,15 @@ public class Hand {
         this.bet = bet;
     }
 
+    public boolean hasDoubled() {
+        return doubled;
+    }
+
+    public void doubleDown() {
+        doubled = true;
+        this.bet *= 2;
+    }
+
     public void addCard(Card card) {
         cards.add(card);
     }
@@ -37,9 +47,8 @@ public class Hand {
         int numAces = 0;
         for (Card card : cards) {
             total += card.getValue();
-            if (card.getRank() == Rank.ACE) {
+            if (card.getRank() == Rank.ACE)
                 numAces++;
-            }
         }
         while (numAces > 0 && total > 21) {
             total -= 10;
@@ -50,6 +59,21 @@ public class Hand {
 
     public Card removeCard() {
         return cards.remove(cards.size() - 1);
+    }
+
+    public boolean isHard() {
+        int total = 0;
+        int numAces = 0;
+        for (Card card : cards) {
+            total += card.getValue();
+            if (card.getRank() == Rank.ACE)
+                numAces++;
+        }
+        while (numAces > 0 && total > 21) {
+            total -= 10;
+            numAces--;
+        }
+        return numAces == 0 || total > 21;
     }
 
     public String toString() {

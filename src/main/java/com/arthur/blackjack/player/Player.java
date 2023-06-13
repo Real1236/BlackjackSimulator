@@ -1,8 +1,11 @@
 package com.arthur.blackjack.player;
 
+import com.arthur.blackjack.Game;
 import com.arthur.blackjack.component.Card;
 import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.component.Hand;
+import com.arthur.blackjack.component.Rank;
+import com.arthur.blackjack.simulation.Action;
 
 import java.util.*;
 
@@ -28,6 +31,7 @@ public class Player {
     public void placeBet(int hand) {
         if (getHand(hand).getBet() <= money) {
             money -= getHand(hand).getBet();
+            Game.totalBet += getHand(hand).getBet();
         } else {
             System.out.println("Error: not enough money to place bet.");
         }
@@ -43,6 +47,10 @@ public class Player {
 
     public void pushBet(int hand) {
         money += getHand(hand).getBet();
+    }
+
+    public void returnDoubledBet(int hand) {
+        money += getHand(hand).getBet() / 2;
     }
 
     public void addCard(Card card) {
@@ -79,6 +87,7 @@ public class Player {
 
     public boolean canSplit(int hand) {
         return getHand(hand).getCards().size() == 2
+                && hands.size() == 1
                 && getHand(hand).getCards().get(0).getRank().getValue() == getHand(hand).getCards().get(1).getRank().getValue()
                 && getHand(hand).getBet() <= money;
     }
@@ -88,15 +97,16 @@ public class Player {
     }
 
     public void takeTurn(int minimumBet, Dealer dealer, Deck deck) {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("\nPlayer " + this.getId() + "'s turn");
         System.out.println("Money: " + this.getMoney());
         System.out.println("\nPlace your bet:");
-        int bet = Integer.parseInt(scanner.nextLine());
-        while (bet < minimumBet) {
-            System.out.println("Place a bet greater than or equal to the minimum bet:");
-            bet = Integer.parseInt(scanner.nextLine());
-        }
+//        Scanner scanner = new Scanner(System.in);
+//        int bet = Integer.parseInt(scanner.nextLine());
+//        while (bet < minimumBet) {
+//            System.out.println("Place a bet greater than or equal to the minimum bet:");
+//            bet = Integer.parseInt(scanner.nextLine());
+//        }
+        int bet = 20;   // TODO bet is hardcoded
         this.getHand().setBet(bet);
         playHand(0, dealer, deck);
     }
@@ -108,69 +118,90 @@ public class Player {
         while (this.getHand(hand).getTotal() < 21 && !hasStood) {
             System.out.println("\nYour cards: " + this.getHand(hand));
             System.out.println("Your score: " + this.getHand(hand).getTotal());
-            System.out.println("Dealer's upcard: " + dealer.getHand().getCards().get(0));
+            System.out.println("Dealer's upcard: " + dealer.getUpcard());
 
-            String choice = getPlayerChoice(hand);
+            Action choice = getPlayerChoice(hand, dealer.getUpcard().getValue());
             hasStood = performPlayerAction(choice, hand, dealer, deck);
         }
     }
 
-    public String getPlayerChoice(int hand) {
-        Scanner scanner = new Scanner(System.in);
-        Map<String, String> choices = getChoices(hand);
+    public Action getPlayerChoice(int handIndex, int upcardValue) {
+        Set<Action> choices = getChoices(handIndex);
+        Hand hand = this.getHand(handIndex);
 
         System.out.println("Choose an option: " + choices + "");
-        String choice = scanner.nextLine();
-
-        while (!choices.containsKey(choice)) {
-            System.out.println("Invalid choice, pick again:");
-            choice = scanner.nextLine();
+        Action choice = null;
+        if (choices.contains(Action.SPLIT)) {
+            Map<Integer, Map<Integer, Action>> splitTable = Game.strategyTable.get("Split");
+            int cardValue = hand.getCards().get(0).getValue();
+            choice = splitTable.get(cardValue).get(upcardValue);
+        }
+        if (choice == null) {
+            if (hand.isHard()) {
+                Map<Integer, Map<Integer, Action>> hardTable = Game.strategyTable.get("Hard");
+                choice = hardTable.get(hand.getTotal()).get(upcardValue);
+            } else {
+                Map<Integer, Map<Integer, Action>> softTable = Game.strategyTable.get("Soft");
+                choice = softTable.get(hand.getTotal()).get(upcardValue);
+            }
         }
 
         return choice;
     }
 
-    private Map<String, String> getChoices(int hand) {
-        Map<String, String> choices = new HashMap<>();
-        choices.put("h", "hit");
-        choices.put("s", "stand");
+    private Set<Action> getChoices(int hand) {
+        Set<Action> choices = new HashSet<>();
+        choices.add(Action.HIT);
+        choices.add(Action.STAND);
         if (this.canDouble(hand))
-            choices.put("d", "double down");
+            choices.add(Action.DOUBLE_DOWN);
         if (this.canSplit(hand))
-            choices.put("p", "split");
+            choices.add(Action.SPLIT);
         return choices;
     }
 
-    public boolean performPlayerAction(String choice, int hand, Dealer dealer, Deck deck) {
+    public boolean performPlayerAction(Action choice, int hand, Dealer dealer, Deck deck) {
         switch (choice) {
-            case "h" -> dealer.dealCard(this, hand, deck);
-            case "s" -> { return true; }
-            case "d" -> {
-                this.placeBet(hand);
-                int curBet = this.getHand(hand).getBet();
-                this.getHand(hand).setBet(curBet * 2);
-                dealer.dealCard(this, hand, deck);
+            case SURRENDER, HIT -> dealer.dealCard(this, hand, deck);   // TODO add surrender capability
+            case STAND -> { return true; }
+            case DOUBLE_DOWN -> {
+                if (this.canDouble(hand)) {
+                    this.placeBet(hand);
+                    this.getHand(hand).doubleDown();
+                    dealer.dealCard(this, hand, deck);
+                    return true;
+                } else {
+                    dealer.dealCard(this, hand, deck);
+                }
+            }
+            case DOUBLE_STAND -> {
+                if (this.canDouble(hand)) {
+                    this.placeBet(hand);
+                    this.getHand(hand).doubleDown();
+                    dealer.dealCard(this, hand, deck);
+                }
                 return true;
             }
-            case "p" -> {
+            case SPLIT -> {
                 Card temp = this.getHand(hand).removeCard();
                 dealer.dealCard(this, hand, deck);
                 this.addHand(this.getHand(hand).getBet());
                 this.getHand().addCard(temp);
                 dealer.dealCard(this, deck);
-                playHand(this.getNumOfHands() - 1, dealer, deck);
+                if (temp.getRank() != Rank.ACE)
+                    playHand(this.getNumOfHands() - 1, dealer, deck);
             }
             default -> System.out.println("Invalid choice. Please choose 'h', 's', or 'p'.");
         }
         return false;
     }
 
-    public void evaluateHand(int handIndex, Dealer dealer) {
+    public void evaluateHand(int handIndex, Dealer dealer, boolean split) {
         Hand hand = this.getHand(0);
         System.out.println("Player " + this.getId() + " - Hand " + handIndex + ": " + hand);
         System.out.println("Player " + this.getId() + " - Hand " + handIndex + " score: " + hand.getTotal());
 
-        if (hand.getTotal() == 21 && hand.getCards().size() == 2) {
+        if (hand.getTotal() == 21 && hand.getCards().size() == 2 && !split && dealer.getHand().getTotal() != 21) {
             System.out.println("Player " + this.getId() + " - Hand " + handIndex + " gets Blackjack!");
             this.winBlackjack(0);
         } else if (hand.getTotal() > 21) {
@@ -181,6 +212,8 @@ public class Player {
         } else if (hand.getTotal() == dealer.getHand().getTotal()) {
             System.out.println("Player " + this.getId() + " - Hand " + handIndex + " pushes.");
             this.pushBet(0);
+        } else if (dealer.blackjackTenUpcard() && hand.hasDoubled()) {
+            this.returnDoubledBet(0);
         } else {
             System.out.println("Player " + this.getId() + " - Hand " + handIndex + " loses.");
         }

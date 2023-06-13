@@ -2,6 +2,7 @@
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+BlackjackSimulator.iml
 
 # User-specific stuff
 .idea/**/workspace.xml

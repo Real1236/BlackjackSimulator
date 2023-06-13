@@ -70,6 +70,8 @@ public class PlayerTest {
         Player player = spy(new Player(gameSettings, gameRules, strategyTableReader));
         doReturn(hand).when(player).getHand(0);
         player.setMoney(1000);
+
+        when(gameRules.getResplitLimit()).thenReturn(2);
         assertTrue(player.canSplit(0));
     }
 
@@ -82,6 +84,8 @@ public class PlayerTest {
         player.addCard(new Card(Rank.TWO));
         player.addCard(new Card(Rank.THREE));
         player.getHand().setBet(10);
+
+        when(gameRules.getResplitLimit()).thenReturn(2);
         assertFalse(player.canSplit(0));
     }
 
@@ -94,7 +98,47 @@ public class PlayerTest {
         player.addCard(new Card(Rank.TWO));
         player.addCard(new Card(Rank.TWO));
         player.getHand().setBet(51);
+
+        when(gameRules.getResplitLimit()).thenReturn(2);
         assertFalse(player.canSplit(0));
+    }
+
+    @Test
+    public void testCannotSplitLimit() {
+        LOGGER.info("Testing canSplit method with too many hands.");
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
+        player.addHand();
+        player.addCard(new Card(Rank.TWO));
+        player.addCard(new Card(Rank.TWO));
+        player.getHand().setBet(10);
+        player.addHand();
+        player.addCard(new Card(Rank.TWO));
+        player.addCard(new Card(Rank.TWO));
+        player.getHand().setBet(10);
+
+        when(gameRules.getResplitLimit()).thenReturn(2);
+        assertFalse(player.canSplit(0));
+        assertFalse(player.canSplit(1));
+    }
+
+    @Test
+    public void testCanSplitBelowLimit() {
+        LOGGER.info("Testing canSplit method with valid amount of hands.");
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
+        player.addHand();
+        player.addCard(new Card(Rank.TWO));
+        player.addCard(new Card(Rank.TWO));
+        player.getHand().setBet(10);
+        player.addHand();
+        player.addCard(new Card(Rank.TWO));
+        player.addCard(new Card(Rank.TWO));
+        player.getHand().setBet(10);
+
+        when(gameRules.getResplitLimit()).thenReturn(3);
+        assertTrue(player.canSplit(0));
+        assertTrue(player.canSplit(1));
     }
 
     @Test

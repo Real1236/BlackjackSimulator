@@ -142,6 +142,46 @@ public class PlayerTest {
     }
 
     @Test
+    public void testCanResplitAces() {
+        LOGGER.info("Testing canSplit method with two sets of aces.");
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
+        player.addHand();
+        player.addCard(new Card(Rank.ACE));
+        player.addCard(new Card(Rank.ACE));
+        player.getHand().setBet(10);
+        player.addHand();
+        player.addCard(new Card(Rank.ACE));
+        player.addCard(new Card(Rank.ACE));
+        player.getHand().setBet(10);
+
+        when(gameRules.getResplitLimit()).thenReturn(3);
+        when(gameRules.isResplitAces()).thenReturn(true);
+        assertTrue(player.canSplit(0));
+        assertTrue(player.canSplit(1));
+    }
+
+    @Test
+    public void testCannotResplitAces() {
+        LOGGER.info("Testing canSplit method with two sets of aces, but resplitting aces is not allowed");
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
+        player.addHand();
+        player.addCard(new Card(Rank.ACE));
+        player.addCard(new Card(Rank.ACE));
+        player.getHand().setBet(10);
+        player.addHand();
+        player.addCard(new Card(Rank.ACE));
+        player.addCard(new Card(Rank.ACE));
+        player.getHand().setBet(10);
+
+        when(gameRules.getResplitLimit()).thenReturn(3);
+        when(gameRules.isResplitAces()).thenReturn(false);
+        assertFalse(player.canSplit(0));
+        assertFalse(player.canSplit(1));
+    }
+
+    @Test
     public void testCanDouble() {
         LOGGER.info("Testing canDouble method with valid double condition.");
         Player player = new Player(gameSettings, gameRules, strategyTableReader);

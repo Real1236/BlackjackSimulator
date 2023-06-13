@@ -1,5 +1,6 @@
 package com.arthur.blackjack.player;
 
+import com.arthur.blackjack.component.Rank;
 import com.arthur.blackjack.core.Game;
 import com.arthur.blackjack.component.Card;
 import com.arthur.blackjack.component.Deck;
@@ -96,6 +97,10 @@ public class Player {
     public boolean canSplit(int handIndex) {
         Hand hand = getHand(handIndex);
         List<Card> cards = hand.getCards();
+
+        if (cards.get(0).getRank() == Rank.ACE && !gameRules.isResplitAces())
+            return false;
+
         return hands.size() < gameRules.getResplitLimit()
                 && cards.size() == 2
                 && cards.get(0).getRank() == cards.get(1).getRank()

@@ -201,10 +201,13 @@ public class Player {
             case SPLIT -> {
                 Card temp = getHand(hand).removeCard();
                 dealer.dealCard(this, hand, deck);
+
                 addHand(getHand(hand).getBet());
                 getHand().addCard(temp);
                 dealer.dealCard(this, deck);
-                playHand(getNumOfHands() - 1, dealer, deck);
+
+                if (temp.getRank() != Rank.ACE || gameRules.isHitSplitAces())
+                    playHand(getNumOfHands() - 1, dealer, deck);
             }
             default -> System.out.println("Invalid choice. Please choose 'h', 's', or 'p'.");
         }

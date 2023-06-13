@@ -393,9 +393,9 @@ public class PlayerTest {
 
         // Verify that the necessary methods were called
         // TODO refactor for simulation
-//        Mockito.verify(spyPlayer, Mockito.times(0)).getPlayerChoice(0);
-        Mockito.verify(spyPlayer, Mockito.times(0)).performPlayerAction(Action.HIT, 0, mockDealer, deck);
-        Mockito.verify(spyPlayer, Mockito.times(0)).performPlayerAction(Action.STAND, 0, mockDealer, deck);
+//        verify(spyPlayer, times(0)).getPlayerChoice(0);
+        verify(spyPlayer, times(0)).performPlayerAction(Action.HIT, 0, mockDealer, deck);
+        verify(spyPlayer, times(0)).performPlayerAction(Action.STAND, 0, mockDealer, deck);
     }
 
     @Test
@@ -416,7 +416,7 @@ public class PlayerTest {
         boolean result = player.performPlayerAction(Action.HIT, 0, dealer, deck);
 
         // Verify that the dealCard method is called on the dealer with the correct arguments
-        Mockito.verify(dealer).dealCard(player, 0, deck);
+        verify(dealer).dealCard(player, 0, deck);
 
         // Ensure the result is false (player didn't stand)
         assertFalse(result);
@@ -476,13 +476,15 @@ public class PlayerTest {
         // Create a mock instance of the Dealer and Deck
         Dealer dealer = mock(Dealer.class);
         Deck deck = mock(Deck.class);
+        Card card = mock(Card.class);
+        when(card.getRank()).thenReturn(Rank.TEN);
 
         // Create a player with a hand and set up necessary objects
         Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(100);
         player.addHand();
-        player.addCard(mock(Card.class));
-        player.addCard(mock(Card.class));
+        player.addCard(card);
+        player.addCard(card);
         player.getHand().setBet(10);
         int initialBet = player.getHand().getBet();
 
@@ -492,8 +494,83 @@ public class PlayerTest {
         spyPlayer.performPlayerAction(Action.SPLIT, 0, dealer, deck);
 
         // Verify that the dealCard method is called on the dealer twice (for each new hand)
-        Mockito.verify(dealer, Mockito.times(1)).dealCard(spyPlayer, 0, deck);
-        Mockito.verify(dealer, Mockito.times(1)).dealCard(spyPlayer, deck);
+        verify(dealer, times(1)).dealCard(spyPlayer, 0, deck);
+        verify(dealer, times(1)).dealCard(spyPlayer, deck);
+
+        // Verify that new hand is played
+        verify(spyPlayer, times(1)).playHand(1, dealer, deck);
+
+        // Verify that the player's bet is added to the new hand, number of hands is 2, both hands have 2 cards
+        assertEquals(initialBet, player.getHand(player.getNumOfHands() - 1).getBet());
+        assertEquals(spyPlayer.getNumOfHands(), 2);
+    }
+
+    @Test
+    public void testPerformPlayerActionSplitAces() {
+        LOGGER.info("Testing player can hit after splitting aces.");
+
+        Dealer dealer = mock(Dealer.class);
+        Deck deck = mock(Deck.class);
+        Card ace = mock(Card.class);
+        when(ace.getRank()).thenReturn(Rank.ACE);
+
+        // Create a player with a hand and set up necessary objects
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
+        player.addHand();
+        player.addCard(ace);
+        player.addCard(ace);
+        player.getHand().setBet(10);
+        int initialBet = player.getHand().getBet();
+
+        // Perform player action: Split
+        Player spyPlayer = Mockito.spy(player);
+        doNothing().when(spyPlayer).playHand(1, dealer, deck);
+        when(gameRules.isHitSplitAces()).thenReturn(true);
+        spyPlayer.performPlayerAction(Action.SPLIT, 0, dealer, deck);
+
+        // Verify that the dealCard method is called on the dealer twice (for each new hand)
+        verify(dealer, times(1)).dealCard(spyPlayer, 0, deck);
+        verify(dealer, times(1)).dealCard(spyPlayer, deck);
+
+        // Verify that new hand is not played
+        verify(spyPlayer, times(1)).playHand(1, dealer, deck);
+
+        // Verify that the player's bet is added to the new hand, number of hands is 2, both hands have 2 cards
+        assertEquals(initialBet, player.getHand(player.getNumOfHands() - 1).getBet());
+        assertEquals(spyPlayer.getNumOfHands(), 2);
+    }
+
+    @Test
+    public void testPerformPlayerActionSplitAcesCantHit() {
+        LOGGER.info("Testing player can't hit after splitting aces.");
+
+        Dealer dealer = mock(Dealer.class);
+        Deck deck = mock(Deck.class);
+        Card ace = mock(Card.class);
+        when(ace.getRank()).thenReturn(Rank.ACE);
+
+        // Create a player with a hand and set up necessary objects
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
+        player.addHand();
+        player.addCard(ace);
+        player.addCard(ace);
+        player.getHand().setBet(10);
+        int initialBet = player.getHand().getBet();
+
+        // Perform player action: Split
+        Player spyPlayer = Mockito.spy(player);
+        doNothing().when(spyPlayer).playHand(1, dealer, deck);
+        when(gameRules.isHitSplitAces()).thenReturn(false);
+        spyPlayer.performPlayerAction(Action.SPLIT, 0, dealer, deck);
+
+        // Verify that the dealCard method is called on the dealer twice (for each new hand)
+        verify(dealer, times(1)).dealCard(spyPlayer, 0, deck);
+        verify(dealer, times(1)).dealCard(spyPlayer, deck);
+
+        // Verify that new hand is not played
+        verify(spyPlayer, times(0)).playHand(1, dealer, deck);
 
         // Verify that the player's bet is added to the new hand, number of hands is 2, both hands have 2 cards
         assertEquals(initialBet, player.getHand(player.getNumOfHands() - 1).getBet());

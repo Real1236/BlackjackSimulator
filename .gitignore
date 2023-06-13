@@ -10,7 +10,7 @@ BlackjackSimulator.iml
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
-.idea/
+.idea
 
 ### Eclipse ###
 .apt_generated

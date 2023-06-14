@@ -27,9 +27,9 @@ public class GameRules {
         standsOnSoft17 = true;
         doubleAfterSplit = false;
         resplitLimit = 2;
-        resplitAces = false;
+        resplitAces = true;
         hitSplitAces = false;
-        loseOnlyOGBetAgainstDealerBJ = false;
+        loseOnlyOGBetAgainstDealerBJ = true;
         surrender = false;
         blackjackPayout = 3.0/2.0;  // TODO
     }

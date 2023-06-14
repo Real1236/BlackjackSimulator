@@ -71,6 +71,10 @@ public class Hand {
         return cards.size() == 2 && getTotal() == 21;
     }
 
+    public boolean isUpcard10Blackjack() {
+        return cards.get(0).getRank().getValue() == 10 && isBlackjack();
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (Card card : cards) {

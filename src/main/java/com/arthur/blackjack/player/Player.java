@@ -50,6 +50,10 @@ public class Player {
         money += 2 * getHand(hand).getBet();
     }
 
+    public void getOgBet(int hand) {
+        money += getHand(hand).getBet() / 2;
+    }
+
     public void winBlackjack(int hand) {
         money += 2.5 * getHand(hand).getBet();
     }
@@ -122,11 +126,11 @@ public class Player {
         System.out.println("Money: " + getMoney());
         System.out.println("\nPlace your bet:");
         getHand().setBet(gameSettings.getBet());
+        placeBet(0);
         playHand(0, dealer, deck);
     }
 
     public void playHand(int hand, Dealer dealer, Deck deck) {
-        placeBet(hand);
         boolean hasStood = false;
 
         while (getHand(hand).getTotal() < 21 && !hasStood) {
@@ -203,6 +207,7 @@ public class Player {
                 dealer.dealCard(this, hand, deck);
 
                 addHand(getHand(hand).getBet());
+                placeBet(getNumOfHands() - 1);
                 getHand().addCard(temp);
                 dealer.dealCard(this, deck);
 
@@ -225,7 +230,11 @@ public class Player {
             return RoundResult.BLACKJACK;
         } else if (hand.getTotal() > 21) {
             System.out.println("Player " + getId() + " - Hand " + handIndex + " busts!");
-            return hand.getBet() == gameSettings.getBet() ? RoundResult.BUST : RoundResult.DOUBLE_BUST;
+            if (hand.getBet() == gameSettings.getBet())
+                return RoundResult.BUST;
+            if (dealer.getHand().isUpcard10Blackjack())
+                getOgBet(0);
+            return RoundResult.DOUBLE_BUST;
         } else if (dealer.getHand().getTotal() > 21 || hand.getTotal() > dealer.getHand().getTotal()) {
             System.out.println("Player " + getId() + " - Hand " + handIndex + " wins!");
             winBet(0);
@@ -236,7 +245,13 @@ public class Player {
             return RoundResult.PUSH;
         } else {
             System.out.println("Player " + getId() + " - Hand " + handIndex + " loses.");
-            return hand.getBet() == gameSettings.getBet() ? RoundResult.LOSE : RoundResult.DOUBLE_LOSE;
+            if (hand.getBet() == gameSettings.getBet())
+                return RoundResult.LOSE;
+            if (gameRules.isLoseOnlyOGBetAgainstDealerBJ() && dealer.getHand().isUpcard10Blackjack()) {
+                getOgBet(0);
+                return RoundResult.LOSE;
+            }
+            return RoundResult.DOUBLE_LOSE;
         }
     }
 }

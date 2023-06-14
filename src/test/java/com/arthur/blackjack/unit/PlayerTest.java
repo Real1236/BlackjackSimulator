@@ -10,6 +10,7 @@ import com.arthur.blackjack.core.GameSettings;
 import com.arthur.blackjack.player.Dealer;
 import com.arthur.blackjack.player.Player;
 import com.arthur.blackjack.simulation.Action;
+import com.arthur.blackjack.simulation.RoundResult;
 import com.arthur.blackjack.simulation.StrategyTableReader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -326,8 +327,11 @@ public class PlayerTest {
         when(spyPlayer.getMoney()).thenReturn(1);
         doReturn(hand).when(spyPlayer).getHand();
         doNothing().when(spyPlayer).playHand(0, dealer, deck);
+        doNothing().when(spyPlayer).placeBet(0);
+
         spyPlayer.takeTurn(dealer, deck);
         verify(spyPlayer, times(1)).playHand(0, dealer, deck);
+        verify(spyPlayer, times(1)).placeBet(0);
     }
 
     @Test
@@ -635,8 +639,9 @@ public class PlayerTest {
         player.getHand(0).setBet(20);
 
         Dealer dealer = mock(Dealer.class);
-        player.evaluateHand(0, dealer, 1);
+        when(gameSettings.getBet()).thenReturn(20);
 
+        assertEquals(RoundResult.BUST, player.evaluateHand(0, dealer, 1));
         assertEquals(100, player.getMoney());
     }
 

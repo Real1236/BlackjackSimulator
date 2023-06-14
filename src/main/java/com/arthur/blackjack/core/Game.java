@@ -113,7 +113,7 @@ public class Game {
             player.clearHand(0);
         }
 
-        if (player.getMoney() <= 0) {
+        if (player.getMoney() < gameSettings.getBet()) {
             System.out.println("Player " + player.getId() + " is out of money!");
             System.out.println("Player " + player.getId() + " is eliminated from the game!\n");
             playersToRemove.add(player);

@@ -18,7 +18,7 @@ public class GameSettings {
 
     @PostConstruct
     public void load() {
-        depthToReshuffle = 75;
+        depthToReshuffle = 50;
         numOfPlayers = 1;
         startingBankroll = 10000;
         bet = 20;

@@ -5,64 +5,189 @@ import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.component.Hand;
 import com.arthur.blackjack.component.Rank;
 import com.arthur.blackjack.config.LoggerConfig;
+import com.arthur.blackjack.core.GameRules;
+import com.arthur.blackjack.core.GameSettings;
 import com.arthur.blackjack.player.Dealer;
 import com.arthur.blackjack.player.Player;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import com.arthur.blackjack.simulation.Action;
+import com.arthur.blackjack.simulation.RoundResult;
+import com.arthur.blackjack.simulation.StrategyTableReader;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class PlayerTest {
     private static final Logger LOGGER = Logger.getLogger(PlayerTest.class.getName());
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpLogger() {
         LoggerConfig.configure(LOGGER);
+    }
+    
+    @MockBean
+    private GameSettings gameSettings;
+    @MockBean
+    private StrategyTableReader strategyTableReader;
+    @MockBean
+    private GameRules gameRules;
+
+    @BeforeEach()
+    public void setUp() {
+        strategyTableReader = mock(StrategyTableReader.class);
+        gameSettings = mock(GameSettings.class);
+        gameRules = mock(GameRules.class);
+        when(gameSettings.getDepthToReshuffle()).thenReturn(85);
     }
 
     @Test
     public void testCanSplit() {
         LOGGER.info("Testing canSplit method with valid split condition.");
-        Player player = new Player(1, 100);
-        player.addHand();
-        player.addCard(new Card(Rank.TWO));
-        player.addCard(new Card(Rank.TWO));
-        player.getHand().setBet(10);
+        Rank rank = mock(Rank.class);
+        when(rank.getValue()).thenReturn(8);
+
+        Card card1 = mock(Card.class);
+        when(card1.getRank()).thenReturn(rank);
+        Card card2 = mock(Card.class);
+        when(card2.getRank()).thenReturn(rank);
+
+        List<Card> cards = new ArrayList<>();
+        cards.add(card1);
+        cards.add(card2);
+
+        Hand hand = mock(Hand.class);
+        when(hand.getCards()).thenReturn(cards);
+        when(hand.getBet()).thenReturn(10);
+
+        Player player = spy(new Player(gameSettings, gameRules, strategyTableReader));
+        doReturn(hand).when(player).getHand(0);
+        player.setMoney(1000);
+
+        when(gameRules.getResplitLimit()).thenReturn(2);
         assertTrue(player.canSplit(0));
     }
 
     @Test
     public void testCannotSplit() {
         LOGGER.info("Testing canSplit method with not matching cards.");
-        Player player = new Player(1, 100);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
         player.addHand();
         player.addCard(new Card(Rank.TWO));
         player.addCard(new Card(Rank.THREE));
         player.getHand().setBet(10);
+
+        when(gameRules.getResplitLimit()).thenReturn(2);
         assertFalse(player.canSplit(0));
     }
 
     @Test
     public void testCannotSplitNoMoney() {
         LOGGER.info("Testing canSplit method with not matching cards.");
-        Player player = new Player(1, 50);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(50);
         player.addHand();
         player.addCard(new Card(Rank.TWO));
         player.addCard(new Card(Rank.TWO));
         player.getHand().setBet(51);
+
+        when(gameRules.getResplitLimit()).thenReturn(2);
         assertFalse(player.canSplit(0));
+    }
+
+    @Test
+    public void testCannotSplitLimit() {
+        LOGGER.info("Testing canSplit method with too many hands.");
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
+        player.addHand();
+        player.addCard(new Card(Rank.TWO));
+        player.addCard(new Card(Rank.TWO));
+        player.getHand().setBet(10);
+        player.addHand();
+        player.addCard(new Card(Rank.TWO));
+        player.addCard(new Card(Rank.TWO));
+        player.getHand().setBet(10);
+
+        when(gameRules.getResplitLimit()).thenReturn(2);
+        assertFalse(player.canSplit(0));
+        assertFalse(player.canSplit(1));
+    }
+
+    @Test
+    public void testCanSplitBelowLimit() {
+        LOGGER.info("Testing canSplit method with valid amount of hands.");
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
+        player.addHand();
+        player.addCard(new Card(Rank.TWO));
+        player.addCard(new Card(Rank.TWO));
+        player.getHand().setBet(10);
+        player.addHand();
+        player.addCard(new Card(Rank.TWO));
+        player.addCard(new Card(Rank.TWO));
+        player.getHand().setBet(10);
+
+        when(gameRules.getResplitLimit()).thenReturn(3);
+        assertTrue(player.canSplit(0));
+        assertTrue(player.canSplit(1));
+    }
+
+    @Test
+    public void testCanResplitAces() {
+        LOGGER.info("Testing canSplit method with two sets of aces.");
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
+        player.addHand();
+        player.addCard(new Card(Rank.ACE));
+        player.addCard(new Card(Rank.ACE));
+        player.getHand().setBet(10);
+        player.addHand();
+        player.addCard(new Card(Rank.ACE));
+        player.addCard(new Card(Rank.ACE));
+        player.getHand().setBet(10);
+
+        when(gameRules.getResplitLimit()).thenReturn(3);
+        when(gameRules.isResplitAces()).thenReturn(true);
+        assertTrue(player.canSplit(0));
+        assertTrue(player.canSplit(1));
+    }
+
+    @Test
+    public void testCannotResplitAces() {
+        LOGGER.info("Testing canSplit method with two sets of aces, but resplitting aces is not allowed");
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
+        player.addHand();
+        player.addCard(new Card(Rank.ACE));
+        player.addCard(new Card(Rank.ACE));
+        player.getHand().setBet(10);
+        player.addHand();
+        player.addCard(new Card(Rank.ACE));
+        player.addCard(new Card(Rank.ACE));
+        player.getHand().setBet(10);
+
+        when(gameRules.getResplitLimit()).thenReturn(3);
+        when(gameRules.isResplitAces()).thenReturn(false);
+        assertFalse(player.canSplit(0));
+        assertFalse(player.canSplit(1));
     }
 
     @Test
     public void testCanDouble() {
         LOGGER.info("Testing canDouble method with valid double condition.");
-        Player player = new Player(1, 100);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
+        player.setMoney(100);
         player.addHand();
         player.addCard(new Card(Rank.TWO));
         player.addCard(new Card(Rank.THREE));
@@ -73,7 +198,8 @@ public class PlayerTest {
     @Test
     public void testCannotDouble() {
         LOGGER.info("Testing canDouble method with invalid double condition.");
-        Player player = new Player(1, 50);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(50);
         player.addHand();
         player.addCard(new Card(Rank.TWO));
         player.addCard(new Card(Rank.THREE));
@@ -85,7 +211,8 @@ public class PlayerTest {
     @Test
     public void testCannotDoubleNoMoney() {
         LOGGER.info("Testing canDouble method because not enough money.");
-        Player player = new Player(1, 5);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(5);
         player.addHand();
         player.addCard(new Card(Rank.TWO));
         player.addCard(new Card(Rank.THREE));
@@ -94,125 +221,148 @@ public class PlayerTest {
     }
 
     @Test
+    public void testCanDoubleAfterSplitting() {
+        LOGGER.info("Testing player can double after splitting.");
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
+
+        // Hand 1
+        player.addHand();
+        player.addCard(new Card(Rank.TWO));
+        player.addCard(new Card(Rank.THREE));
+        player.getHand().setBet(10);
+
+        // Hand 2
+        player.addHand();
+        player.addCard(new Card(Rank.TWO));
+        player.addCard(new Card(Rank.THREE));
+        player.getHand().setBet(10);
+
+        when(gameRules.isDoubleAfterSplit()).thenReturn(true);
+        assertTrue(player.canDouble(0));
+        assertTrue(player.canDouble(1));
+    }
+
+    @Test
+    public void testCannotDoubleAfterSplitting() {
+        LOGGER.info("Testing player can't double after splitting.");
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
+
+        // Hand 1
+        player.addHand();
+        player.addCard(new Card(Rank.TWO));
+        player.addCard(new Card(Rank.THREE));
+        player.getHand().setBet(10);
+
+        // Hand 2
+        player.addHand();
+        player.addCard(new Card(Rank.TWO));
+        player.addCard(new Card(Rank.THREE));
+        player.getHand().setBet(10);
+
+        when(gameRules.isDoubleAfterSplit()).thenReturn(false);
+        assertFalse(player.canDouble(0));
+        assertFalse(player.canDouble(1));
+    }
+
+    @Test
     public void testPlaceBet() {
         LOGGER.info("Starting testPlaceBet");
-        Player player = new Player(1, 100);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
         player.addHand(10);
 
         player.placeBet(0);
-        assertEquals("Player's money should decrease by bet amount", 90, player.getMoney());
+        assertEquals(90, player.getMoney(), "Player's money should decrease by bet amount");
         LOGGER.info("Player's money: " + player.getMoney());
     }
 
     @Test
     public void testWinBet() {
         LOGGER.info("Starting testWinBet");
-        Player player = new Player(1, 100);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
         player.addHand(10);
 
         player.winBet(0);
-        assertEquals("Player's money should increase by 2 times bet amount", 120, player.getMoney());
+        assertEquals(120, player.getMoney(), "Player's money should increase by 2 times bet amount");
         LOGGER.info("Player's money: " + player.getMoney());
     }
 
     @Test
     public void testWinBlackjack() {
         LOGGER.info("Starting testWinBlackjack");
-        Player player = new Player(1, 100);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
         player.addHand(10);
 
+        when(gameRules.getBlackjackPayout()).thenReturn(3.0/2.0);
         player.winBlackjack(0);
-        assertEquals("Player's money should increase by 2.5 times bet amount", 125, player.getMoney());
+        assertEquals(125, player.getMoney(), "Player's money should increase by 2.5 times bet amount");
         LOGGER.info("Player's money: " + player.getMoney());
     }
 
     @Test
     public void testPushBet() {
         LOGGER.info("Starting testPushBet");
-        Player player = new Player(1, 100);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
         player.addHand(10);
 
         player.pushBet(0);
-        assertEquals("Player's money should increase by bet amount", 110, player.getMoney());
+        assertEquals(110, player.getMoney(), "Player's money should increase by bet amount");
         LOGGER.info("Player's money: " + player.getMoney());
     }
 
     @Test
     public void testTakeTurn() {
         LOGGER.info("Testing takeTurn method with valid input.");
+        when(gameSettings.getBet()).thenReturn(50);
+        Player spyPlayer = Mockito.spy(new Player(gameSettings, gameRules, strategyTableReader));
+        Dealer dealer = mock(Dealer.class);
+        Deck deck = mock(Deck.class);
+        Hand hand = mock(Hand.class);
 
-        Player player = new Player(1, 100);
-        player.addHand();
-        Player spyPlayer = Mockito.spy(player);
-        Dealer dealer = new Dealer();
-        Deck deck = new Deck(4);
+        when(spyPlayer.getId()).thenReturn(1);
+        when(spyPlayer.getMoney()).thenReturn(1);
+        doReturn(hand).when(spyPlayer).getHand();
+        doNothing().when(spyPlayer).playHand(0, dealer, deck);
+        doNothing().when(spyPlayer).placeBet(0);
 
-        String input = "100";
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(input.getBytes());
-        System.setIn(inputStream);
-
-        Mockito.doNothing().when(spyPlayer).playHand(0, dealer, deck);
-        spyPlayer.takeTurn(10, dealer, deck);
-        assertEquals(Integer.parseInt(input), spyPlayer.getHand().getBet());
-    }
-
-    @Test
-    public void testTakeTurnWithInvalidAndValidBet() {
-        LOGGER.info("Testing takeTurn method with invalid and valid input.");
-
-        Player player = new Player(1, 100);
-        player.addHand();
-        Player spyPlayer = Mockito.spy(player);
-        Dealer dealer = new Dealer();
-        Deck deck = new Deck(4);
-
-        // Set the input stream to provide an invalid bet value followed by a valid bet value
-        String invalidInput = "5\n";
-        String validInput = "20";
-        String input = invalidInput + validInput;
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(input.getBytes());
-        System.setIn(inputStream);
-
-        Mockito.doNothing().when(spyPlayer).playHand(0, dealer, deck);
-        spyPlayer.takeTurn(10, dealer, deck);
-
-        // Verify that the while loop was triggered
-        Mockito.verify(spyPlayer, Mockito.atLeastOnce()).playHand(0, dealer, deck);
-        assertEquals(Integer.parseInt(validInput), spyPlayer.getHand().getBet());
+        spyPlayer.takeTurn(dealer, deck);
+        verify(spyPlayer, times(1)).playHand(0, dealer, deck);
+        verify(spyPlayer, times(1)).placeBet(0);
     }
 
     @Test
     public void testPlayHand() {
         LOGGER.info("Testing playHand method.");
 
-        // Create a mock player, dealer, and deck
-        Player player = new Player(1, 100);
+        Card mockCard = mock(Card.class);
+        when(mockCard.getValue()).thenReturn(0);
+
+        List<Card> mockCards = Arrays.asList(mockCard, mock(Card.class));
+        Hand mockHand = mock(Hand.class);
+        when(mockHand.getTotal()).thenReturn(10, 10, 20);
+        doReturn(mockCards).when(mockHand).getCards();
+
+        Dealer mockDealer = mock(Dealer.class);
+        when(mockDealer.getUpcard()).thenReturn(mockCard);
+
+        Deck deck = mock(Deck.class);
+
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.addHand();
-        player.addCard(new Card(Rank.TWO));
-        player.addCard(new Card(Rank.SEVEN));
+        Player spyPlayer = spy(player);
+        doNothing().when(spyPlayer).placeBet(anyInt());
+        doReturn(mockHand).when(spyPlayer).getHand(anyInt());
+        doReturn(Action.HIT, Action.STAND).when(spyPlayer).getPlayerChoice(anyInt(), anyInt());
+        doReturn(false, true).when(spyPlayer).performPlayerAction(any(Action.class), anyInt(), any(Dealer.class), any(Deck.class));
 
-        // Mock dealer and deck
-        List<Card> mockCards = Arrays.asList(Mockito.mock(Card.class), Mockito.mock(Card.class));
-        Hand mockHand = Mockito.mock(Hand.class);
-        Mockito.doReturn(mockCards).when(mockHand).getCards();
-        Dealer mockDealer = Mockito.mock(Dealer.class);
-        Mockito.doReturn(mockHand).when(mockDealer).getHand();
-        Deck deck = Mockito.mock(Deck.class);
-
-        // Create a spy player to test the method
-        Player spyPlayer = Mockito.spy(player);
-
-        // Stub the necessary methods
-        Mockito.doReturn("h").doReturn("s").when(spyPlayer).getPlayerChoice(Mockito.anyInt());
-        Mockito.doReturn(false).doReturn(true).when(spyPlayer).performPlayerAction(Mockito.anyString(), Mockito.anyInt(), Mockito.any(Dealer.class), Mockito.any(Deck.class));
-
-        // Call the method
         spyPlayer.playHand(0, mockDealer, deck);
-
-        // Verify that the necessary methods were called
-        Mockito.verify(spyPlayer, Mockito.times(2)).getPlayerChoice(0);
-        Mockito.verify(spyPlayer, Mockito.times(1)).performPlayerAction("h", 0, mockDealer, deck);
-        Mockito.verify(spyPlayer, Mockito.times(1)).performPlayerAction("s", 0, mockDealer, deck);
+        verify(spyPlayer, times(1)).performPlayerAction(Action.HIT, 0, mockDealer, deck);
+        verify(spyPlayer, times(1)).performPlayerAction(Action.STAND, 0, mockDealer, deck);
     }
 
     @Test
@@ -220,34 +370,37 @@ public class PlayerTest {
         LOGGER.info("Testing playHand method.");
 
         // Create a mock player, dealer, and deck
-        Player player = new Player(1, 100);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
         player.addHand();
         player.addCard(new Card(Rank.TEN));
         player.addCard(new Card(Rank.SEVEN));
         player.addCard(new Card(Rank.SEVEN));
 
         // Mock dealer and deck
-        List<Card> mockCards = Arrays.asList(Mockito.mock(Card.class), Mockito.mock(Card.class));
-        Hand mockHand = Mockito.mock(Hand.class);
+        List<Card> mockCards = Arrays.asList(mock(Card.class), mock(Card.class));
+        Hand mockHand = mock(Hand.class);
         Mockito.doReturn(mockCards).when(mockHand).getCards();
-        Dealer mockDealer = Mockito.mock(Dealer.class);
+        Dealer mockDealer = mock(Dealer.class);
         Mockito.doReturn(mockHand).when(mockDealer).getHand();
-        Deck deck = Mockito.mock(Deck.class);
+        Deck deck = mock(Deck.class);
 
         // Create a spy player to test the method
         Player spyPlayer = Mockito.spy(player);
 
         // Stub the necessary methods
-        Mockito.doReturn("h").doReturn("s").when(spyPlayer).getPlayerChoice(Mockito.anyInt());
-        Mockito.doReturn(false).doReturn(true).when(spyPlayer).performPlayerAction(Mockito.anyString(), Mockito.anyInt(), Mockito.any(Dealer.class), Mockito.any(Deck.class));
+        // TODO refactor for simulation
+//        Mockito.doReturn("h").doReturn("s").when(spyPlayer).getPlayerChoice(Mockito.anyInt());
+        Mockito.doReturn(false).doReturn(true).when(spyPlayer).performPlayerAction(Mockito.any(Action.class), Mockito.anyInt(), Mockito.any(Dealer.class), Mockito.any(Deck.class));
 
         // Call the method
         spyPlayer.playHand(0, mockDealer, deck);
 
         // Verify that the necessary methods were called
-        Mockito.verify(spyPlayer, Mockito.times(0)).getPlayerChoice(0);
-        Mockito.verify(spyPlayer, Mockito.times(0)).performPlayerAction("h", 0, mockDealer, deck);
-        Mockito.verify(spyPlayer, Mockito.times(0)).performPlayerAction("s", 0, mockDealer, deck);
+        // TODO refactor for simulation
+//        verify(spyPlayer, times(0)).getPlayerChoice(0);
+        verify(spyPlayer, times(0)).performPlayerAction(Action.HIT, 0, mockDealer, deck);
+        verify(spyPlayer, times(0)).performPlayerAction(Action.STAND, 0, mockDealer, deck);
     }
 
     @Test
@@ -255,19 +408,20 @@ public class PlayerTest {
         LOGGER.info("Testing player hitting.");
 
         // Create a mock instance of the Dealer and Deck
-        Dealer dealer = Mockito.mock(Dealer.class);
-        Deck deck = Mockito.mock(Deck.class);
+        Dealer dealer = mock(Dealer.class);
+        Deck deck = mock(Deck.class);
 
         // Create a player with a hand and set up necessary objects
-        Player player = new Player(1, 100);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
         player.addHand();
         player.getHand().setBet(10);
 
         // Perform player action: Hit
-        boolean result = player.performPlayerAction("h", 0, dealer, deck);
+        boolean result = player.performPlayerAction(Action.HIT, 0, dealer, deck);
 
         // Verify that the dealCard method is called on the dealer with the correct arguments
-        Mockito.verify(dealer).dealCard(player, 0, deck);
+        verify(dealer).dealCard(player, 0, deck);
 
         // Ensure the result is false (player didn't stand)
         assertFalse(result);
@@ -278,15 +432,16 @@ public class PlayerTest {
         LOGGER.info("Testing player standing.");
 
         // Create a mock instance of the Dealer and Deck
-        Dealer dealer = Mockito.mock(Dealer.class);
-        Deck deck = Mockito.mock(Deck.class);
+        Dealer dealer = mock(Dealer.class);
+        Deck deck = mock(Deck.class);
 
         // Create a player with a hand and set up necessary objects
-        Player player = new Player(1, 100);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
         player.addHand();
 
         // Perform player action: Stand
-        boolean result = player.performPlayerAction("s", 0, dealer, deck);
+        boolean result = player.performPlayerAction(Action.STAND, 0, dealer, deck);
 
         // Ensure the result is true (player stood)
         assertTrue(result);
@@ -296,28 +451,27 @@ public class PlayerTest {
     public void testPerformPlayerActionDouble() {
         LOGGER.info("Testing player doubling down.");
 
-        // Create a mock instance of the Dealer and Deck
-        Dealer dealer = Mockito.mock(Dealer.class);
-        Deck deck = Mockito.mock(Deck.class);
+        int handIndex = 0;
+        int originalBet = 10;
+
+        // Create a mock instance of the Dealer, Deck, and Hand
+        Deck deck = mock(Deck.class);
+        Dealer dealer = mock(Dealer.class);
+        Hand mockHand = mock(Hand.class);
+        when(mockHand.getBet()).thenReturn(originalBet);
 
         // Create a player with a hand and set up necessary objects
-        Player player = new Player(1, 100);
-        player.addHand();
-        player.getHand().setBet(10);
-        int initialBet = player.getHand().getBet();
+        Player spyPlayer = spy(new Player(gameSettings, gameRules, strategyTableReader));
+        doReturn(true).when(spyPlayer).canDouble(handIndex);
+        doNothing().when(spyPlayer).placeBet(handIndex);
+        doReturn(mockHand).when(spyPlayer).getHand(handIndex);
 
-        // Perform player action: Double
-        boolean result = player.performPlayerAction("d", 0, dealer, deck);
+        boolean result = spyPlayer.performPlayerAction(Action.DOUBLE_DOWN, handIndex, dealer, deck);
 
-        // Verify that the dealCard method is called on the dealer with the correct arguments
-        Mockito.verify(dealer).dealCard(player, 0, deck);
-
-        // Ensure the player's bet is doubled
-        assertEquals("Initial bet was not doubled", initialBet * 2, player.getHand().getBet());
-        assertEquals("Bet was not deducted from player's money", 100 - initialBet, player.getMoney());
-
-        // Ensure the result is true (player doubled and stood)
-        assertTrue(result);
+        verify(spyPlayer, times(1)).placeBet(handIndex);
+        verify(mockHand, times(1)).setBet(originalBet * 2);
+        verify(dealer, times(1)).dealCard(spyPlayer, handIndex, deck);
+        assertTrue(result, "Player should automatically stand after doubling");
     }
 
     @Test
@@ -325,25 +479,103 @@ public class PlayerTest {
         LOGGER.info("Testing player splitting.");
 
         // Create a mock instance of the Dealer and Deck
-        Dealer dealer = Mockito.mock(Dealer.class);
-        Deck deck = Mockito.mock(Deck.class);
+        Dealer dealer = mock(Dealer.class);
+        Deck deck = mock(Deck.class);
+        Card card = mock(Card.class);
+        when(card.getRank()).thenReturn(Rank.TEN);
 
         // Create a player with a hand and set up necessary objects
-        Player player = new Player(1, 100);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
         player.addHand();
-        player.addCard(Mockito.mock(Card.class));
-        player.addCard(Mockito.mock(Card.class));
+        player.addCard(card);
+        player.addCard(card);
         player.getHand().setBet(10);
         int initialBet = player.getHand().getBet();
 
         // Perform player action: Split
         Player spyPlayer = Mockito.spy(player);
-        Mockito.doNothing().when(spyPlayer).playHand(1, dealer, deck);
-        spyPlayer.performPlayerAction("p", 0, dealer, deck);
+        doNothing().when(spyPlayer).playHand(1, dealer, deck);
+        spyPlayer.performPlayerAction(Action.SPLIT, 0, dealer, deck);
 
         // Verify that the dealCard method is called on the dealer twice (for each new hand)
-        Mockito.verify(dealer, Mockito.times(1)).dealCard(spyPlayer, 0, deck);
-        Mockito.verify(dealer, Mockito.times(1)).dealCard(spyPlayer, deck);
+        verify(dealer, times(1)).dealCard(spyPlayer, 0, deck);
+        verify(dealer, times(1)).dealCard(spyPlayer, deck);
+
+        // Verify that new hand is played
+        verify(spyPlayer, times(1)).playHand(1, dealer, deck);
+
+        // Verify that the player's bet is added to the new hand, number of hands is 2, both hands have 2 cards
+        assertEquals(initialBet, player.getHand(player.getNumOfHands() - 1).getBet());
+        assertEquals(spyPlayer.getNumOfHands(), 2);
+    }
+
+    @Test
+    public void testPerformPlayerActionSplitAces() {
+        LOGGER.info("Testing player can hit after splitting aces.");
+
+        Dealer dealer = mock(Dealer.class);
+        Deck deck = mock(Deck.class);
+        Card ace = mock(Card.class);
+        when(ace.getRank()).thenReturn(Rank.ACE);
+
+        // Create a player with a hand and set up necessary objects
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
+        player.addHand();
+        player.addCard(ace);
+        player.addCard(ace);
+        player.getHand().setBet(10);
+        int initialBet = player.getHand().getBet();
+
+        // Perform player action: Split
+        Player spyPlayer = Mockito.spy(player);
+        doNothing().when(spyPlayer).playHand(1, dealer, deck);
+        when(gameRules.isHitSplitAces()).thenReturn(true);
+        spyPlayer.performPlayerAction(Action.SPLIT, 0, dealer, deck);
+
+        // Verify that the dealCard method is called on the dealer twice (for each new hand)
+        verify(dealer, times(1)).dealCard(spyPlayer, 0, deck);
+        verify(dealer, times(1)).dealCard(spyPlayer, deck);
+
+        // Verify that new hand is not played
+        verify(spyPlayer, times(1)).playHand(1, dealer, deck);
+
+        // Verify that the player's bet is added to the new hand, number of hands is 2, both hands have 2 cards
+        assertEquals(initialBet, player.getHand(player.getNumOfHands() - 1).getBet());
+        assertEquals(spyPlayer.getNumOfHands(), 2);
+    }
+
+    @Test
+    public void testPerformPlayerActionSplitAcesCantHit() {
+        LOGGER.info("Testing player can't hit after splitting aces.");
+
+        Dealer dealer = mock(Dealer.class);
+        Deck deck = mock(Deck.class);
+        Card ace = mock(Card.class);
+        when(ace.getRank()).thenReturn(Rank.ACE);
+
+        // Create a player with a hand and set up necessary objects
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
+        player.addHand();
+        player.addCard(ace);
+        player.addCard(ace);
+        player.getHand().setBet(10);
+        int initialBet = player.getHand().getBet();
+
+        // Perform player action: Split
+        Player spyPlayer = Mockito.spy(player);
+        doNothing().when(spyPlayer).playHand(1, dealer, deck);
+        when(gameRules.isHitSplitAces()).thenReturn(false);
+        spyPlayer.performPlayerAction(Action.SPLIT, 0, dealer, deck);
+
+        // Verify that the dealCard method is called on the dealer twice (for each new hand)
+        verify(dealer, times(1)).dealCard(spyPlayer, 0, deck);
+        verify(dealer, times(1)).dealCard(spyPlayer, deck);
+
+        // Verify that new hand is not played
+        verify(spyPlayer, times(0)).playHand(1, dealer, deck);
 
         // Verify that the player's bet is added to the new hand, number of hands is 2, both hands have 2 cards
         assertEquals(initialBet, player.getHand(player.getNumOfHands() - 1).getBet());
@@ -354,34 +586,42 @@ public class PlayerTest {
     public void testEvaluateHand_Blackjack() {
         LOGGER.info("Testing evaluateHand method with a blackjack hand.");
 
-        Player player = new Player(1, 100);
-        player.addHand();
-        player.addCard(new Card(Rank.ACE));
-        player.addCard(new Card(Rank.KING));
-        player.getHand(0).setBet(20);
+        Hand mockPlayerHand = mock(Hand.class);
+        when(mockPlayerHand.isBlackjack()).thenReturn(true);
 
-        Dealer dealer = Mockito.mock(Dealer.class);
-        player.evaluateHand(0, dealer);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.addHand(mockPlayerHand);
 
-        assertEquals(150, player.getMoney());
+        Hand mockDealerHand = mock(Hand.class);
+        when(mockDealerHand.isBlackjack()).thenReturn(false);
+
+        Dealer dealer = mock(Dealer.class);
+        when(dealer.getHand()).thenReturn(mockDealerHand);
+
+        Player spyPlayer = spy(player);
+        doNothing().when(spyPlayer).winBlackjack(anyInt());
+        spyPlayer.evaluateHand(0, dealer, 1);
+
+        verify(spyPlayer, times(1)).winBlackjack(anyInt());
     }
 
     @Test
     public void testEvaluateHand_Win() {
         LOGGER.info("Testing evaluateHand method with a winning hand.");
 
-        Player player = new Player(1, 100);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
         player.addHand();
         player.addCard(new Card(Rank.QUEEN));
         player.addCard(new Card(Rank.NINE));
         player.getHand(0).setBet(30);
 
-        Dealer dealer = Mockito.mock(Dealer.class);
-        Hand hand = Mockito.mock(Hand.class);
+        Dealer dealer = mock(Dealer.class);
+        Hand hand = mock(Hand.class);
         Mockito.when(hand.getTotal()).thenReturn(18);
         Mockito.when(dealer.getHand()).thenReturn(hand);
 
-        player.evaluateHand(0, dealer);
+        player.evaluateHand(0, dealer, 1);
 
         assertEquals(160, player.getMoney());
     }
@@ -391,16 +631,18 @@ public class PlayerTest {
     public void testEvaluateHand_Bust() {
         LOGGER.info("Testing evaluateHand method with a bust hand.");
 
-        Player player = new Player(1, 100);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
         player.addHand();
         player.addCard(new Card(Rank.KING));
         player.addCard(new Card(Rank.KING));
         player.addCard(new Card(Rank.KING));
         player.getHand(0).setBet(20);
 
-        Dealer dealer = Mockito.mock(Dealer.class);
-        player.evaluateHand(0, dealer);
+        Dealer dealer = mock(Dealer.class);
+        when(gameSettings.getBet()).thenReturn(20);
 
+        assertEquals(RoundResult.BUST, player.evaluateHand(0, dealer, 1));
         assertEquals(100, player.getMoney());
     }
 
@@ -408,18 +650,19 @@ public class PlayerTest {
     public void testEvaluateHand_Push() {
         LOGGER.info("Testing evaluateHand method with a push hand.");
 
-        Player player = new Player(1, 100);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
         player.addHand();
         player.addCard(new Card(Rank.SEVEN));
         player.addCard(new Card(Rank.EIGHT));
         player.getHand(0).setBet(20);
 
-        Dealer dealer = Mockito.mock(Dealer.class);
-        Hand hand = Mockito.mock(Hand.class);
+        Dealer dealer = mock(Dealer.class);
+        Hand hand = mock(Hand.class);
         Mockito.when(hand.getTotal()).thenReturn(15);
         Mockito.when(dealer.getHand()).thenReturn(hand);
 
-        player.evaluateHand(0, dealer);
+        player.evaluateHand(0, dealer, 1);
 
         assertEquals(120, player.getMoney());
     }
@@ -428,18 +671,19 @@ public class PlayerTest {
     public void testEvaluateHand_Loss() {
         LOGGER.info("Testing evaluateHand method with a losing hand.");
 
-        Player player = new Player(1, 100);
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(100);
         player.addHand();
         player.addCard(new Card(Rank.JACK));
         player.addCard(new Card(Rank.FIVE));
         player.getHand(0).setBet(20);
 
-        Dealer dealer = Mockito.mock(Dealer.class);
-        Hand hand = Mockito.mock(Hand.class);
+        Dealer dealer = mock(Dealer.class);
+        Hand hand = mock(Hand.class);
         Mockito.when(hand.getTotal()).thenReturn(17);
         Mockito.when(dealer.getHand()).thenReturn(hand);
 
-        player.evaluateHand(0, dealer);
+        player.evaluateHand(0, dealer, 1);
 
         assertEquals(100, player.getMoney());
     }

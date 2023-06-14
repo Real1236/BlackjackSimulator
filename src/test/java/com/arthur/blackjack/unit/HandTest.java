@@ -82,4 +82,70 @@ public class HandTest {
         hand.setBet(newBet);
         assertEquals("The bet of the hand should be equal to the new bet set using setBet", newBet, hand.getBet());
     }
+
+    @Test
+    public void testIsHard() {
+        LOGGER.info("Testing if hard hand is hard");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.TEN));
+        hand.addCard(new Card(Rank.SIX));
+        assertTrue("Hand should be hard", hand.isHard());
+    }
+
+    @Test
+    public void testAceIsHard() {
+        LOGGER.info("Testing if 17 hard hand is hard");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.TEN));
+        hand.addCard(new Card(Rank.SIX));
+        hand.addCard(new Card(Rank.ACE));
+        assertTrue("Hand should be hard", hand.isHard());
+    }
+
+    @Test
+    public void testBustedHandIsHard() {
+        LOGGER.info("Testing if busted hand is hard");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.TEN));
+        hand.addCard(new Card(Rank.SEVEN));
+        hand.addCard(new Card(Rank.SIX));
+        assertTrue("Hand should be hard", hand.isHard());
+    }
+
+    @Test
+    public void testIsSoft() {
+        LOGGER.info("Testing if soft hand is hard");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.ACE));
+        hand.addCard(new Card(Rank.SIX));
+        assertFalse("Hand should be soft", hand.isHard());
+    }
+
+    @Test
+    public void testIsBlackjack() {
+        LOGGER.info("Testing if Blackjack hand is Blackjack");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.ACE));
+        hand.addCard(new Card(Rank.TEN));
+        assertTrue("Hand should be Blackjack", hand.isBlackjack());
+    }
+
+    @Test
+    public void testIsNotBlackjack() {
+        LOGGER.info("Testing if non Blackjack hand is Blackjack");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.TWO));
+        hand.addCard(new Card(Rank.TEN));
+        assertFalse("Hand should not be Blackjack", hand.isBlackjack());
+    }
+
+    @Test
+    public void testIsNotBlackjackButTotalIs21() {
+        LOGGER.info("Testing if 21 hand is Blackjack");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.TWO));
+        hand.addCard(new Card(Rank.TEN));
+        hand.addCard(new Card(Rank.NINE));
+        assertFalse("Hand should not be Blackjack", hand.isBlackjack());
+    }
 }

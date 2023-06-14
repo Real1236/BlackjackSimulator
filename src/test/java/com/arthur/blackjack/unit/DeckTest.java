@@ -3,69 +3,79 @@ package com.arthur.blackjack.unit;
 import com.arthur.blackjack.component.Card;
 import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.config.LoggerConfig;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import com.arthur.blackjack.core.GameRules;
+import com.arthur.blackjack.core.GameSettings;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class DeckTest {
-    private static final Logger logger = Logger.getLogger(DeckTest.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DeckTest.class.getName());
 
-    @BeforeClass
+    @MockBean
+    private GameRules gameRules;
+    @MockBean
+    private GameSettings gameSettings;
+
+    @BeforeAll
     public static void setUpLogger() {
-        LoggerConfig.configure(logger);
+        LoggerConfig.configure(LOGGER);
+    }
+
+    @BeforeEach()
+    public void setUp() {
+        gameRules = mock(GameRules.class);
+        gameSettings = mock(GameSettings.class);
+        when(gameRules.getNumOfDecks()).thenReturn(8);
     }
 
     @Test
     public void testDeckSize() {
-        Deck deck = new Deck(4);
-        logger.log(Level.INFO, "Deck created with 1 deck.");
-        int expectedSize = 208;
-        assertEquals("Deck size is not correct.", expectedSize, deck.getCards().size());
-        logger.log(Level.INFO, "testDeckSize passed.");
+        LOGGER.info("Testing deck size");
+        Deck deck = new Deck(gameSettings, gameRules);
+        assertEquals(52 * gameRules.getNumOfDecks(), deck.getCards().size(), "Deck size is not correct.");
     }
 
     @Test
     public void testDealCard() {
-        Deck deck = new Deck(1);
-        logger.log(Level.INFO, "Deck created with 1 deck.");
-        int expectedSize = 51;
-        assertNotNull("No card was dealt.", deck.dealCard());
-        assertEquals("Deck size is not correct after dealing a card.", expectedSize, deck.getCards().size());
-        logger.log(Level.INFO, "testDealCard passed.");
+        Deck deck = new Deck(gameSettings, gameRules);
+        int expectedSize = gameRules.getNumOfDecks() * 52 - 1;
+        assertNotNull(deck.dealCard(), "No card was dealt.");
+        assertEquals(expectedSize, deck.getCards().size(), "Deck size is not correct after dealing a card.");
     }
 
     @Test
     public void testCheckReshuffle() {
-        logger.info("Testing reshuffling at certain depth");
-        int numOfDecks = 4;
+        LOGGER.info("Testing reshuffling at certain depth");
         int depthToReshuffle = 37;
-        Deck deck = new Deck(numOfDecks);
-        deck.setDepthToReshuffle(depthToReshuffle);
+        when(gameSettings.getDepthToReshuffle()).thenReturn(depthToReshuffle);
+        Deck deck = new Deck(gameSettings, gameRules);
 
-        int cardsNeededToAchieveDepth = (int) Math.ceil(52 * numOfDecks * ((double) depthToReshuffle/100));
+        int cardsNeededToAchieveDepth = (int) Math.ceil(52 * gameRules.getNumOfDecks() * ((double) depthToReshuffle/100));
         for (int i = 0; i < cardsNeededToAchieveDepth; i++)
             deck.dealCard();
-        assertEquals("Error with dealing cards", 52 * numOfDecks - cardsNeededToAchieveDepth, deck.getCards().size());
+        assertEquals(52 * gameRules.getNumOfDecks() - cardsNeededToAchieveDepth, deck.getCards().size(), "Error with dealing cards");
         deck.checkReshuffle();
-        assertEquals("Depth was achieved but deck was not reshuffled", 52 * numOfDecks, deck.getCards().size());
+        assertEquals(52 * gameRules.getNumOfDecks(), deck.getCards().size(), "Depth was achieved but deck was not reshuffled");
     }
 
     @Test
     public void testShuffle() {
-        Deck deck = new Deck(1);
-        logger.log(Level.INFO, "Deck created with 1 deck.");
+        Deck deck = new Deck(gameSettings, gameRules);
         Card firstCard = deck.getCards().get(0);
         for (int i = 0; i < 5; i++) {
-            deck = new Deck(1);
+            deck = new Deck(gameSettings, gameRules);
             if (!deck.getCards().get(0).equals(firstCard))
                 break;
         }
-        assertNotEquals("Deck has not been shuffled.", deck.getCards().get(0), firstCard);
-        logger.info("testShuffle passed.");
+        assertNotEquals(deck.getCards().get(0), firstCard, "Deck has not been shuffled.");
     }
 
 }

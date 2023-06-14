@@ -37,9 +37,8 @@ public class Hand {
         int numAces = 0;
         for (Card card : cards) {
             total += card.getValue();
-            if (card.getRank() == Rank.ACE) {
+            if (card.getRank() == Rank.ACE)
                 numAces++;
-            }
         }
         while (numAces > 0 && total > 21) {
             total -= 10;
@@ -50,6 +49,30 @@ public class Hand {
 
     public Card removeCard() {
         return cards.remove(cards.size() - 1);
+    }
+
+    public boolean isHard() {
+        int total = 0;
+        int numAces = 0;
+        for (Card card : cards) {
+            total += card.getValue();
+            if (card.getRank() == Rank.ACE)
+                numAces++;
+        }
+        int numAcesDeducted = 0;
+        while (numAces > 0 && total > 21) {
+            total -= 10;
+            numAcesDeducted++;
+        }
+        return numAces == numAcesDeducted;
+    }
+
+    public boolean isBlackjack() {
+        return cards.size() == 2 && getTotal() == 21;
+    }
+
+    public boolean isUpcard10Blackjack() {
+        return cards.get(0).getRank().getValue() == 10 && isBlackjack();
     }
 
     public String toString() {

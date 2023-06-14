@@ -3,11 +3,18 @@ package com.arthur.blackjack.player;
 import com.arthur.blackjack.component.Card;
 import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.component.Hand;
+import com.arthur.blackjack.core.GameRules;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Dealer {
     private Hand hand;
+    GameRules gameRules;
 
-    public Dealer() {
+    @Autowired
+    public Dealer(GameRules gameRules) {
+        this.gameRules = gameRules;
         hand = new Hand();
     }
 
@@ -30,9 +37,20 @@ public class Dealer {
         return hand;
     }
 
+    public Card getUpcard() {
+        return hand.getCards().get(0);
+    }
+
     public void play(Deck deck) {
-        while (hand.getTotal() < 17) {
-            dealCardToDealer(deck);
+        if (gameRules.isStandsOnSoft17()) {
+            while (hand.getTotal() < 17)
+                dealCardToDealer(deck);
+        } else {
+            int handTotal = hand.getTotal();
+            while (handTotal < 17 || (!hand.isHard() && handTotal == 17)) {
+                dealCardToDealer(deck);
+                handTotal = hand.getTotal();
+            }
         }
     }
 

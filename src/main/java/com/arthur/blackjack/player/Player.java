@@ -55,7 +55,7 @@ public class Player {
     }
 
     public void winBlackjack(int hand) {
-        money += 2.5 * getHand(hand).getBet();
+        money += (gameRules.getBlackjackPayout() + 1) * getHand(hand).getBet();
     }
 
     public void pushBet(int hand) {

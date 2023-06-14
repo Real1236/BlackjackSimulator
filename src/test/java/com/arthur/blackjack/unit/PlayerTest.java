@@ -297,6 +297,7 @@ public class PlayerTest {
         player.setMoney(100);
         player.addHand(10);
 
+        when(gameRules.getBlackjackPayout()).thenReturn(3.0/2.0);
         player.winBlackjack(0);
         assertEquals(125, player.getMoney(), "Player's money should increase by 2.5 times bet amount");
         LOGGER.info("Player's money: " + player.getMoney());

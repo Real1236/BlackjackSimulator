@@ -62,6 +62,7 @@ public class PlayerIntegrationTest {
         dealer.getHand().addCard(new Card(Rank.QUEEN));
         dealer.getHand().addCard(new Card(Rank.SIX));
 
+        when(gameRules.getBlackjackPayout()).thenReturn(3.0/2.0);
         player.evaluateHand(0, dealer, 1);
 
         assertEquals(bankroll + bet * 2.5, player.getMoney(), "Incorrect payout for player");

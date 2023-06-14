@@ -20,7 +20,7 @@ public class GameSettings {
     public void load() {
         depthToReshuffle = 50;
         numOfPlayers = 1;
-        startingBankroll = 10000;
+        startingBankroll = 25000;
         bet = 20;
     }
 }

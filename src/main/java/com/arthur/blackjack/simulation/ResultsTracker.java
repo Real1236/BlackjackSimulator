@@ -38,7 +38,6 @@ public class ResultsTracker {
         }
         sheet = workbook.getSheet("Results");
         sheet.getRow(0).createCell(12).setCellValue(bet);
-//        clearExcel();
     }
 
     public void writeResults(Integer round, Integer money) {
@@ -65,7 +64,6 @@ public class ResultsTracker {
     }
 
     public void saveExcel() {
-//        generateFormulas();
         FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
         for (int row = 1; row < 6; row++) {
             Cell c = sheet.getRow(row).getCell(12);
@@ -83,52 +81,4 @@ public class ResultsTracker {
         }
     }
 
-    private void generateFormulas() {
-        int lastRow = sheet.getLastRowNum();
-        for (int rowNumber = 2; rowNumber < lastRow; rowNumber++) {
-            Row row = sheet.getRow(rowNumber);
-            if (row == null || row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() == CellType.BLANK)
-                break;
-
-            // Amount Bet
-            Cell amountBetCell = row.createCell(11);
-            amountBetCell.setCellFormula(String.format("$U$4*(SUM(C%d:J%d)+SUM(E%d,G%d,I%d))", rowNumber + 1, rowNumber + 1, rowNumber + 1, rowNumber + 1, rowNumber + 1));
-
-            // Amount Won
-            Cell amountWonCell = row.createCell(12);
-            amountWonCell.setCellFormula(String.format("$U$4*(D%d+2*E%d+1.5*C%d)", rowNumber + 1, rowNumber + 1, rowNumber + 1));
-
-            // Amount Lost
-            Cell amountLostCell = row.createCell(13);
-            amountLostCell.setCellFormula(String.format("$U$4*(SUM(J%d,H%d)+2*SUM(I%d,G%d))", rowNumber + 1, rowNumber + 1, rowNumber + 1, rowNumber + 1));
-
-            // Amount Change
-            Cell amountChangeCell = row.createCell(15);
-            amountChangeCell.setCellFormula(String.format("B%d-B%d", rowNumber + 1, rowNumber));
-
-            // Expected Change
-            Cell expectedChangeCell = row.createCell(16);
-            expectedChangeCell.setCellFormula(String.format("SUM(C%d*$U$4*1.5,D%d*$U$4,E%d*$U$4*2)-SUM(H%d*$U$4,J%d*$U$4,G%d*$U$4*2,I%d*$U$4*2)",
-                    rowNumber + 1, rowNumber + 1, rowNumber + 1, rowNumber + 1, rowNumber + 1, rowNumber + 1, rowNumber + 1));
-
-            // Failed
-            Cell failedCell = row.createCell(17);
-            failedCell.setCellFormula(String.format("IF(Q%d<>P%d,\"X\",\"\")", rowNumber + 1, rowNumber + 1));
-        }
-    }
-
-    private void clearExcel() {
-        int row = 1;
-        while (true) {
-            Row excelRow = sheet.getRow(row);
-            if (excelRow == null || excelRow.getCell(0) == null)
-                break;
-
-            for (int col = 0; col <= 9; col++) {
-                Cell cell = excelRow.getCell(col, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                cell.setBlank();
-            }
-            row++;
-        }
-    }
 }

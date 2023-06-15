@@ -35,7 +35,7 @@ public class Game {
         this.playerFactory = playerFactory;
         players = new ArrayList<>();
         round = 0;
-        resultsTracker = new ResultsTracker();
+        resultsTracker = new ResultsTracker(gameSettings.getBet());
         totalBet = 0;
     }
 

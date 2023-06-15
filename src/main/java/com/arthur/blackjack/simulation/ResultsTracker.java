@@ -2,7 +2,10 @@ package com.arthur.blackjack.simulation;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
@@ -16,10 +19,10 @@ public class ResultsTracker {
     private static final Logger LOGGER = Logger.getLogger(ResultsTracker.class.getName());
     private static final String FILE_PATH = "src/main/resources/result-tracker.xlsx"; // Specify the file path of the Excel file
     private static final String OUTPUT_FILE_PATH = "src/main/resources/results.xlsx";
-    private final Workbook workbook;
-    private final Sheet sheet;
+    private final XSSFWorkbook workbook;
+    private Sheet sheet;
 
-    public ResultsTracker(int bet) {
+    public ResultsTracker() {
         // Creating a copy of the spreadsheet for file exporting purposes
         File originalSpreadsheet = new File(FILE_PATH);
         File copySpreadsheet = new File(UUID.randomUUID() + ".xlsx");
@@ -36,7 +39,10 @@ public class ResultsTracker {
         } catch (IOException | InvalidFormatException e) {
             throw new RuntimeException(e);
         }
-        sheet = workbook.getSheet("Results");
+    }
+
+    public void createNewResultsSheet(int gameNum, int bet) {
+        sheet = workbook.cloneSheet(0, "Results" + gameNum);
         sheet.getRow(0).createCell(12).setCellValue(bet);
     }
 
@@ -63,7 +69,7 @@ public class ResultsTracker {
         }
     }
 
-    public void saveExcel() {
+    public void evaluateFormulas() {
         FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
         for (int row = 1; row < 6; row++) {
             Cell c = sheet.getRow(row).getCell(12);
@@ -73,7 +79,10 @@ public class ResultsTracker {
                 LOGGER.warning("Error while recalculating sheet");
             }
         }
+    }
 
+    public void saveExcel() {
+        workbook.removeSheetAt(0);
         try (FileOutputStream outputStream = new FileOutputStream(OUTPUT_FILE_PATH)) {
             workbook.write(outputStream);
         } catch (IOException e) {

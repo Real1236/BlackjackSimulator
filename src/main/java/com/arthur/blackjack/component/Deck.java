@@ -13,7 +13,7 @@ import java.util.List;
 public class Deck {
     private List<Card> cards;
     private final int numOfDecks;
-    private int depthToReshuffle;
+    private final int depthToReshuffle;
 
     GameSettings gameSettings;
     GameRules gameRules;
@@ -27,7 +27,7 @@ public class Deck {
         constructDeck();
     }
 
-    private void constructDeck() {
+    public void constructDeck() {
         cards = new ArrayList<>();
         for (Rank rank : Rank.values())
             for (int i = 0; i < 4; i++)
@@ -59,7 +59,4 @@ public class Deck {
         return cards;
     }
 
-    public void setDepthToReshuffle(int depthToReshuffle) {
-        this.depthToReshuffle = depthToReshuffle;
-    }
 }

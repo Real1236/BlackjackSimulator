@@ -20,7 +20,6 @@ public class Game {
 
     private int round;
     private final ResultsTracker resultsTracker;
-    public static int totalBet;
 
     private final GameSettings gameSettings;
     private final Deck deck;
@@ -35,36 +34,43 @@ public class Game {
         this.playerFactory = playerFactory;
         players = new ArrayList<>();
         round = 0;
-        resultsTracker = new ResultsTracker(gameSettings.getBet());
-        totalBet = 0;
+        resultsTracker = new ResultsTracker();
     }
 
     public void initializeGame() {
-        System.out.println("Starting a game of Blackjack!");
+        for (int game = 1; game <= gameSettings.getNumOfGames(); game++) {
+            System.out.println("Starting a game of Blackjack!");
 
-        for (int i = 1; i <= gameSettings.getNumOfPlayers(); i++) {
-            Player player = playerFactory.createPlayer();
-            player.setId(i);
-            player.setMoney(gameSettings.getStartingBankroll());
-            players.add(player);
+            for (int i = 1; i <= gameSettings.getNumOfPlayers(); i++) {
+                Player player = playerFactory.createPlayer();
+                player.setId(i);
+                player.setMoney(gameSettings.getStartingBankroll());
+                players.add(player);
+            }
+
+            // Track results for player 1
+            resultsTracker.createNewResultsSheet(game, gameSettings.getBet());
+            resultsTracker.writeResults(0, players.get(0).getMoney());
+
+            // Loop game until all players are bankrupt (they'll be deleted)
+            while (players.size() > 0 && round < 1048574) {
+                round++;
+                System.out.println("Game " + game + " - Round " + round + "\n---------------------------------");
+                startRound();
+                if (!players.isEmpty())
+                    resultsTracker.writeResults(round, players.get(0).getMoney());
+                else
+                    resultsTracker.writeResults(round, 0);
+            }
+            System.out.println("GG");
+
+            // Resetting game
+            resultsTracker.evaluateFormulas();
+            players.clear();
+            deck.constructDeck();
+            round = 0;
         }
-
-        // Track results for player 1
-        resultsTracker.writeResults(0, players.get(0).getMoney());
-
-        // Loop game until all players are bankrupt (they'll be deleted)
-        while (players.size() > 0 && round < 1048574) {
-            round++;
-            System.out.println("Round " + round + "\n---------------------------------");
-            startRound();
-            if (!players.isEmpty())
-                resultsTracker.writeResults(round, players.get(0).getMoney());
-            else
-                resultsTracker.writeResults(round, 0);
-        }
-
         resultsTracker.saveExcel();
-        System.out.println("GG");
     }
 
     public void startRound() {

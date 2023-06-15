@@ -1,10 +1,9 @@
 package com.arthur.blackjack.player;
 
-import com.arthur.blackjack.component.Rank;
-import com.arthur.blackjack.core.Game;
 import com.arthur.blackjack.component.Card;
 import com.arthur.blackjack.component.Deck;
 import com.arthur.blackjack.component.Hand;
+import com.arthur.blackjack.component.Rank;
 import com.arthur.blackjack.core.GameRules;
 import com.arthur.blackjack.core.GameSettings;
 import com.arthur.blackjack.simulation.Action;
@@ -40,7 +39,6 @@ public class Player {
     public void placeBet(int hand) {
         if (getHand(hand).getBet() <= money) {
             money -= getHand(hand).getBet();
-            Game.totalBet += getHand(hand).getBet();
         } else {
             System.out.println("Error: not enough money to place bet.");
         }

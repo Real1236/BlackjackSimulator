@@ -15,6 +15,7 @@ public class GameSettings {
     private int numOfPlayers;
     private int startingBankroll;
     private int bet;
+    private int numOfGames;
 
     @PostConstruct
     public void load() {
@@ -22,5 +23,6 @@ public class GameSettings {
         numOfPlayers = 1;
         startingBankroll = 25000;
         bet = 20;
+        numOfGames = 5;
     }
 }

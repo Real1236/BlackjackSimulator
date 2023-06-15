@@ -31,6 +31,6 @@ public class GameRules {
         hitSplitAces = false;
         loseOnlyOGBetAgainstDealerBJ = true;
         surrender = false;
-        blackjackPayout = 3.0/2.0;  // TODO
+        blackjackPayout = 3.0/2.0;
     }
 }

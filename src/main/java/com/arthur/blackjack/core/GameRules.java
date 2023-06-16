@@ -25,9 +25,9 @@ public class GameRules {
     public void load() {
         numOfDecks = 8;
         standsOnSoft17 = true;
-        doubleAfterSplit = false;
+        doubleAfterSplit = true;
         resplitLimit = 2;
-        resplitAces = true;
+        resplitAces = false;
         hitSplitAces = false;
         loseOnlyOGBetAgainstDealerBJ = true;
         surrender = false;

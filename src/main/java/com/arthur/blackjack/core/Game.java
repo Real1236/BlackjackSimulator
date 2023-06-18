@@ -27,14 +27,14 @@ public class Game {
     private final PlayerFactory playerFactory;
 
     @Autowired
-    public Game(GameSettings gameSettings, Deck deck, Dealer dealer, PlayerFactory playerFactory) {
+    public Game(GameSettings gameSettings, Deck deck, Dealer dealer, PlayerFactory playerFactory, ResultsTracker resultsTracker) {
         this.gameSettings = gameSettings;
         this.deck = deck;
         this.dealer = dealer;
         this.playerFactory = playerFactory;
         players = new ArrayList<>();
         round = 0;
-        resultsTracker = new ResultsTracker();
+        this.resultsTracker = resultsTracker;
     }
 
     public void initializeGame() {

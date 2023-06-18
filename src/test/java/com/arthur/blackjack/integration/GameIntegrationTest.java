@@ -10,6 +10,9 @@ import com.arthur.blackjack.core.GameSettings;
 import com.arthur.blackjack.player.Dealer;
 import com.arthur.blackjack.player.Player;
 import com.arthur.blackjack.player.PlayerFactory;
+import com.arthur.blackjack.simulation.Action;
+import com.arthur.blackjack.simulation.ResultsTracker;
+import com.arthur.blackjack.simulation.RoundResult;
 import com.arthur.blackjack.simulation.StrategyTableReader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +34,7 @@ public class GameIntegrationTest {
     private GameRules gameRules;
     private GameSettings gameSettings;
     private StrategyTableReader strategyTableReader;
+    private ResultsTracker resultsTracker;
 
     @BeforeEach
     public void setUp() {
@@ -40,11 +44,12 @@ public class GameIntegrationTest {
                 2,
                 true,
                 false,
-                false,
+                true,
                 false,
                 3.0/2.0);
-        gameSettings = new GameSettings(50, 1, 1000, 20);
+        gameSettings = new GameSettings(50, 1, 1000, 20, 1);
         strategyTableReader = new StrategyTableReader();
+        resultsTracker = mock(ResultsTracker.class);
     }
 
     @Test
@@ -67,7 +72,7 @@ public class GameIntegrationTest {
         Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(bankroll);
 
-        Game game = new Game(gameSettings, deck, new Dealer(gameRules), new PlayerFactory(gameSettings, gameRules, strategyTableReader));
+        Game game = new Game(gameSettings, deck, new Dealer(gameRules), new PlayerFactory(gameSettings, gameRules, strategyTableReader), resultsTracker);
         game.getPlayers().add(player);
         game.startRound();
 
@@ -104,7 +109,7 @@ public class GameIntegrationTest {
         Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(bankroll);
 
-        Game game = new Game(gameSettings, deck, new Dealer(gameRules), new PlayerFactory(gameSettings, gameRules, strategyTableReader));
+        Game game = new Game(gameSettings, deck, new Dealer(gameRules), new PlayerFactory(gameSettings, gameRules, strategyTableReader), resultsTracker);
         game.getPlayers().add(player);
         game.startRound();
 
@@ -137,7 +142,7 @@ public class GameIntegrationTest {
         Player player = new Player(gameSettings, spyGameRules, strategyTableReader);
         player.setMoney(bankroll);
 
-        Game game = new Game(gameSettings, deck, new Dealer(spyGameRules), new PlayerFactory(gameSettings, spyGameRules, strategyTableReader));
+        Game game = new Game(gameSettings, deck, new Dealer(spyGameRules), new PlayerFactory(gameSettings, spyGameRules, strategyTableReader), resultsTracker);
         game.getPlayers().add(player);
         game.startRound();
 
@@ -166,10 +171,44 @@ public class GameIntegrationTest {
         Player player = new Player(spyGameSettings, gameRules, strategyTableReader);
         player.setMoney(bankroll);
 
-        Game game = new Game(spyGameSettings, deck, new Dealer(gameRules), new PlayerFactory(spyGameSettings, gameRules, strategyTableReader));
+        Game game = new Game(spyGameSettings, deck, new Dealer(gameRules), new PlayerFactory(spyGameSettings, gameRules, strategyTableReader), resultsTracker);
         game.getPlayers().add(player);
         game.startRound();
 
         assertEquals(0, game.getPlayers().size(), "Player was not deleted");
+    }
+
+    @Test
+    public void testDoubleAgainstDealerAceBJ() {
+        LOGGER.info("Test that player loses both double and og bet against dealer's bj with Ace upcard");
+
+        int bankroll = gameSettings.getStartingBankroll();
+        int bet = gameSettings.getBet();
+        ResultsTracker spyResultsTracker = spy(resultsTracker);
+        doNothing().when(spyResultsTracker).recordRoundResult(anyInt(), any(RoundResult.class));
+
+        Deck deck = new Deck(gameSettings, gameRules);
+
+        // Player's last card
+        deck.getCards().add(new Card(Rank.TWO));
+
+        // Dealer Cards
+        deck.getCards().add(new Card(Rank.TEN));
+        deck.getCards().add(new Card(Rank.ACE));
+
+        // Player cards
+        deck.getCards().add(new Card(Rank.TEN));
+        deck.getCards().add(new Card(Rank.TWO));
+
+        Player player = new Player(gameSettings, gameRules, strategyTableReader);
+        player.setMoney(bankroll);
+        Player spyPlayer = spy(player);
+        doReturn(Action.DOUBLE_DOWN).when(spyPlayer).getPlayerChoice(anyInt(), anyInt());
+
+        Game game = new Game(gameSettings, deck, new Dealer(gameRules), new PlayerFactory(gameSettings, gameRules, strategyTableReader), resultsTracker);
+        game.getPlayers().add(spyPlayer);
+        game.startRound();
+
+        assertEquals(bankroll - 2 * bet, spyPlayer.getMoney(), "Payout was incorrect");
     }
 }

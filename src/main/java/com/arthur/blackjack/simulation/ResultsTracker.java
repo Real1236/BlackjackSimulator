@@ -7,6 +7,7 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,6 +16,7 @@ import java.io.UncheckedIOException;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+@Component
 public class ResultsTracker {
     private static final Logger LOGGER = Logger.getLogger(ResultsTracker.class.getName());
     private static final String FILE_PATH = "src/main/resources/result-tracker.xlsx"; // Specify the file path of the Excel file

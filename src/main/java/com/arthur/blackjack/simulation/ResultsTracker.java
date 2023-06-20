@@ -2,10 +2,7 @@ package com.arthur.blackjack.simulation;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
@@ -73,8 +70,24 @@ public class ResultsTracker {
 
     public void evaluateFormulas() {
         FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
-        for (int row = 1; row < 6; row++) {
+        for (int row = 1; row < 13; row++) {
             Cell c = sheet.getRow(row).getCell(12);
+            if (c == null || c.getCellType() != CellType.FORMULA)
+                continue;
+
+            try {
+                evaluator.evaluateFormulaCell(c);
+            } catch (Throwable var4) {
+                LOGGER.warning("Error while recalculating sheet");
+            }
+        }
+
+        Row resultDistribution = sheet.getRow(8);
+        for (int col = 11; col < 19; col++) {
+            Cell c = resultDistribution.getCell(col);
+            if (c.getCellType() != CellType.FORMULA)
+                continue;
+
             try {
                 evaluator.evaluateFormulaCell(c);
             } catch (Throwable var4) {

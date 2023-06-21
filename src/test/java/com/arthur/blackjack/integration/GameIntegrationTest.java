@@ -38,15 +38,7 @@ public class GameIntegrationTest {
 
     @BeforeEach
     public void setUp() {
-        gameRules = new GameRules(8,
-                true,
-                false,
-                2,
-                true,
-                false,
-                true,
-                false,
-                3.0/2.0);
+        gameRules = mock(GameRules.class);
         gameSettings = new GameSettings(50, 1, 1000, 20, 1);
         strategyTableReader = new StrategyTableReader();
         resultsTracker = mock(ResultsTracker.class);
@@ -72,7 +64,7 @@ public class GameIntegrationTest {
         Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(bankroll);
 
-        Game game = new Game(gameSettings, deck, new Dealer(gameRules), new PlayerFactory(gameSettings, gameRules, strategyTableReader), resultsTracker);
+        Game game = new Game(gameRules, gameSettings, deck, new Dealer(gameRules), new PlayerFactory(gameSettings, gameRules, strategyTableReader), resultsTracker);
         game.getPlayers().add(player);
         game.startRound();
 
@@ -109,7 +101,10 @@ public class GameIntegrationTest {
         Player player = new Player(gameSettings, gameRules, strategyTableReader);
         player.setMoney(bankroll);
 
-        Game game = new Game(gameSettings, deck, new Dealer(gameRules), new PlayerFactory(gameSettings, gameRules, strategyTableReader), resultsTracker);
+        when(gameRules.isHitSplitAces()).thenReturn(false);
+        when(gameRules.isResplitAces()).thenReturn(false);
+        when(gameRules.getResplitLimit()).thenReturn(2);
+        Game game = new Game(gameRules, gameSettings, deck, new Dealer(gameRules), new PlayerFactory(gameSettings, gameRules, strategyTableReader), resultsTracker);
         game.getPlayers().add(player);
         game.startRound();
 
@@ -142,7 +137,7 @@ public class GameIntegrationTest {
         Player player = new Player(gameSettings, spyGameRules, strategyTableReader);
         player.setMoney(bankroll);
 
-        Game game = new Game(gameSettings, deck, new Dealer(spyGameRules), new PlayerFactory(gameSettings, spyGameRules, strategyTableReader), resultsTracker);
+        Game game = new Game(gameRules, gameSettings, deck, new Dealer(spyGameRules), new PlayerFactory(gameSettings, spyGameRules, strategyTableReader), resultsTracker);
         game.getPlayers().add(player);
         game.startRound();
 
@@ -171,7 +166,7 @@ public class GameIntegrationTest {
         Player player = new Player(spyGameSettings, gameRules, strategyTableReader);
         player.setMoney(bankroll);
 
-        Game game = new Game(spyGameSettings, deck, new Dealer(gameRules), new PlayerFactory(spyGameSettings, gameRules, strategyTableReader), resultsTracker);
+        Game game = new Game(gameRules, spyGameSettings, deck, new Dealer(gameRules), new PlayerFactory(spyGameSettings, gameRules, strategyTableReader), resultsTracker);
         game.getPlayers().add(player);
         game.startRound();
 
@@ -205,7 +200,7 @@ public class GameIntegrationTest {
         Player spyPlayer = spy(player);
         doReturn(Action.DOUBLE_DOWN).when(spyPlayer).getPlayerChoice(anyInt(), anyInt());
 
-        Game game = new Game(gameSettings, deck, new Dealer(gameRules), new PlayerFactory(gameSettings, gameRules, strategyTableReader), resultsTracker);
+        Game game = new Game(gameRules, gameSettings, deck, new Dealer(gameRules), new PlayerFactory(gameSettings, gameRules, strategyTableReader), resultsTracker);
         game.getPlayers().add(spyPlayer);
         game.startRound();
 

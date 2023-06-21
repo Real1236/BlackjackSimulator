@@ -23,6 +23,6 @@ public class GameSettings {
         numOfPlayers = 1;
         startingBankroll = 200000;
         bet = 20;
-        numOfGames = 5;
+        numOfGames = 1;
     }
 }

@@ -21,13 +21,15 @@ public class Game {
     private int round;
     private final ResultsTracker resultsTracker;
 
+    private final GameRules gameRules;
     private final GameSettings gameSettings;
     private final Deck deck;
     private final Dealer dealer;
     private final PlayerFactory playerFactory;
 
     @Autowired
-    public Game(GameSettings gameSettings, Deck deck, Dealer dealer, PlayerFactory playerFactory, ResultsTracker resultsTracker) {
+    public Game(GameRules gameRules, GameSettings gameSettings, Deck deck, Dealer dealer, PlayerFactory playerFactory, ResultsTracker resultsTracker) {
+        this.gameRules = gameRules;
         this.gameSettings = gameSettings;
         this.deck = deck;
         this.dealer = dealer;
@@ -83,12 +85,15 @@ public class Game {
         dealer.dealCardToDealer(deck);
         dealer.dealCardToDealer(deck);
 
-        // Players take their turns
-        for (Player player : players)
-            player.takeTurn(dealer, deck);
+        // If dealer doesn't peek for Blackjack, then Player's play
+        if (!gameRules.isDealerPeeks() || !dealer.getHand().isUpcard10Blackjack()) {
+            // Players take their turns
+            for (Player player : players)
+                player.takeTurn(dealer, deck);
 
-        // Dealer takes its turn
-        dealer.play(deck);
+            // Dealer takes its turn
+            dealer.play(deck);
+        }
 
         // Determine the winners and pay out
         determineWinners();

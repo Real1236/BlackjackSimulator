@@ -20,6 +20,7 @@ public class GameRules {
     private boolean loseOnlyOGBetAgainstDealerBJ;
     private boolean surrender;
     private double blackjackPayout;
+    private boolean dealerPeeks;
 
     @PostConstruct
     public void load() {
@@ -32,5 +33,6 @@ public class GameRules {
         loseOnlyOGBetAgainstDealerBJ = true;
         surrender = false;
         blackjackPayout = 3.0/2.0;
+        dealerPeeks = true;
     }
 }

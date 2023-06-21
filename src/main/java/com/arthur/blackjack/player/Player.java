@@ -100,7 +100,7 @@ public class Player {
         Hand hand = getHand(handIndex);
         List<Card> cards = hand.getCards();
 
-        if (handIndex > 0 && !gameRules.isResplitAces() && cards.get(0).getRank() == Rank.ACE)
+        if (hands.size() > 1 && !gameRules.isResplitAces() && cards.get(0).getRank() == Rank.ACE)
             return false;
 
         return hands.size() < gameRules.getResplitLimit()

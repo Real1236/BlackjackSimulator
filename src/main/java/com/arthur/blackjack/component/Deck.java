@@ -41,8 +41,6 @@ public class Deck {
     }
 
     public Card dealCard() {
-        if (cards.size() == 0)
-            return null;
         return cards.remove(cards.size() - 1);
     }
 

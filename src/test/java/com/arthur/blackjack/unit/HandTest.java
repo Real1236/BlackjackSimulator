@@ -103,12 +103,51 @@ public class HandTest {
     }
 
     @Test
+    public void testIsHardMulipleAces() {
+        LOGGER.info("Running testGetHardTotal");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.ACE));
+        hand.addCard(new Card(Rank.ACE));
+        assertFalse("Hand should be soft", hand.isHard());
+    }
+
+    @Test
     public void testBustedHandIsHard() {
         LOGGER.info("Testing if busted hand is hard");
         Hand hand = new Hand();
         hand.addCard(new Card(Rank.TEN));
         hand.addCard(new Card(Rank.SEVEN));
         hand.addCard(new Card(Rank.SIX));
+        assertTrue("Hand should be hard", hand.isHard());
+    }
+
+    @Test
+    public void testIsHardNoAce21() {
+        LOGGER.info("Testing if hand with no aces");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.TEN));
+        hand.addCard(new Card(Rank.SEVEN));
+        assertTrue("Hand should be hard", hand.isHard());
+    }
+
+    @Test
+    public void testIsHardAce21() {
+        LOGGER.info("Testing if hand with one ace and is 21");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.ACE));
+        hand.addCard(new Card(Rank.SEVEN));
+        hand.addCard(new Card(Rank.THREE));
+        assertFalse("Hand should be soft", hand.isHard());
+    }
+
+    @Test
+    public void testIsHardAceGreatherThan21() {
+        LOGGER.info("Testing if hand with one ace and is greater than 21");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.ACE));
+        hand.addCard(new Card(Rank.TEN));
+        hand.addCard(new Card(Rank.SEVEN));
+        hand.addCard(new Card(Rank.FOUR));
         assertTrue("Hand should be hard", hand.isHard());
     }
 
@@ -147,5 +186,31 @@ public class HandTest {
         hand.addCard(new Card(Rank.TEN));
         hand.addCard(new Card(Rank.NINE));
         assertFalse("Hand should not be Blackjack", hand.isBlackjack());
+    }
+
+    @Test
+    public void testIsUpcard10Blackjack() {
+        LOGGER.info("Testing if upcard 10 and Ace hand is Blackjack");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.TEN));
+        hand.addCard(new Card(Rank.ACE));
+        assertTrue("Hand should not be Blackjack", hand.isUpcard10Blackjack());
+    }
+
+    @Test
+    public void testIsNotUpcard10Blackjack() {
+        LOGGER.info("Testing if upcard Ace and 10 hand is Blackjack");
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.ACE));
+        hand.addCard(new Card(Rank.TEN));
+        assertFalse("Hand should be Blackjack", hand.isUpcard10Blackjack());
+    }
+
+    @Test
+    public void testToString() {
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.ACE));
+        hand.addCard(new Card(Rank.KING));
+        assertEquals("ACE, KING", hand.toString());
     }
 }

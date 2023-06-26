@@ -60,7 +60,7 @@ public class Hand {
                 numAces++;
         }
         int numAcesDeducted = 0;
-        while (numAces > 0 && total > 21) {
+        while (numAcesDeducted < numAces && total > 21) {
             total -= 10;
             numAcesDeducted++;
         }

@@ -85,15 +85,16 @@ public class DealerTest {
 
         when(gameRules.isStandsOnSoft17()).thenReturn(false);
         Deck deck = mock(Deck.class);
-        when(deck.dealCard()).thenReturn(new Card(Rank.TEN));
+        when(deck.dealCard()).thenReturn(new Card(Rank.TWO), new Card(Rank.TEN));
 
-        Dealer dealer = new Dealer(gameRules);
+        Dealer dealer = spy(new Dealer(gameRules));
         dealer.getHand().addCard(new Card(Rank.ACE));
-        dealer.getHand().addCard(new Card(Rank.SIX));
+        dealer.getHand().addCard(new Card(Rank.FOUR));
         dealer.play(deck);
 
         LOGGER.info("Dealer's hand: " + dealer.getHand().toString());
         assertTrue(dealer.getHand().isHard(), "Dealer's hand should be hard now");
+        verify(dealer, times(2)).dealCardToDealer(deck);
     }
 
     @Test
@@ -102,16 +103,34 @@ public class DealerTest {
 
         when(gameRules.isStandsOnSoft17()).thenReturn(true);
         Deck deck = mock(Deck.class);
-        when(deck.dealCard()).thenReturn(new Card(Rank.TEN));
+        when(deck.dealCard()).thenReturn(new Card(Rank.TWO));
 
-        Dealer dealer = new Dealer(gameRules);
+        Dealer dealer = spy(new Dealer(gameRules));
         dealer.getHand().addCard(new Card(Rank.ACE));
-        dealer.getHand().addCard(new Card(Rank.SIX));
+        dealer.getHand().addCard(new Card(Rank.FOUR));
         dealer.play(deck);
 
         LOGGER.info("Dealer's hand: " + dealer.getHand().toString());
         assertFalse(dealer.getHand().isHard(), "Dealer's hand should still be soft");
+        verify(dealer, times(1)).dealCardToDealer(deck);
     }
+
+//    @Test
+//    public void testStandSoft17Play() {
+//        LOGGER.info("Starting testStandSoft17Play");
+//
+//        when(gameRules.isStandsOnSoft17()).thenReturn(true);
+//        Deck deck = mock(Deck.class);
+//        when(deck.dealCard()).thenReturn(new Card(Rank.TEN));
+//
+//        Dealer dealer = new Dealer(gameRules);
+//        dealer.getHand().addCard(new Card(Rank.ACE));
+//        dealer.getHand().addCard(new Card(Rank.SIX));
+//        dealer.play(deck);
+//
+//        LOGGER.info("Dealer's hand: " + dealer.getHand().toString());
+//        assertFalse(dealer.getHand().isHard(), "Dealer's hand should still be soft");
+//    }
 
 }
 

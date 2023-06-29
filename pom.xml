@@ -74,7 +74,7 @@
                 <version>1.10.3</version>
                 <configuration>
                     <targetClasses>
-                        <param>com.arthur.blackjack.component*</param>
+                        <param>com.arthur.blackjack.player*</param>
                     </targetClasses>
                     <targetTests>
                         <param>com.arthur.blackjack*</param>

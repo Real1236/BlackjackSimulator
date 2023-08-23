@@ -79,6 +79,17 @@
                     <targetTests>
                         <param>com.arthur.blackjack*</param>
                     </targetTests>
+                    <excludedMethods>
+                        <param>getId</param>
+                        <param>setId</param>
+                    </excludedMethods>
+                    <avoidCallsTo>
+                        <avoidCallsTo>java.util.logging</avoidCallsTo>
+                        <avoidCallsTo>org.apache.log4j</avoidCallsTo>
+                        <avoidCallsTo>org.slf4j</avoidCallsTo>
+                        <avoidCallsTo>org.apache.commons.logging</avoidCallsTo>
+                        <avoidCallsTo>java.lang.System</avoidCallsTo>
+                    </avoidCallsTo>
                 </configuration>
                 <dependencies>
                     <dependency>

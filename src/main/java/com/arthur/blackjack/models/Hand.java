@@ -7,7 +7,5 @@ public interface Hand {
     void addCard(Card card);
     void clearHand();
     Integer getHandValue();
-    Integer getBet();
-    void setBet(Integer bet);
     String toString();
 }

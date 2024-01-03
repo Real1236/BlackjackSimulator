@@ -44,7 +44,7 @@ public class Game {
             initializeHands();
             placeInitialBet();
             deal();
-            if (!GameUtils.isBlackjack(dealer.getHand()) && !GameUtils.isBlackjack(player.getHands().get(0))) {
+            if (!GameUtils.isOpen10Blackjack(dealer.getHand()) && !GameUtils.isBlackjack(player.getHands().get(0))) {
                 playerTurn();
             }
             dealerTurn();

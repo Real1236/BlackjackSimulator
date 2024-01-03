@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.arthur.blackjack.config.GameSettings;
 import com.arthur.blackjack.models.player.Dealer;
+import com.arthur.blackjack.models.card.Deck;
 import com.arthur.blackjack.models.hand.Hand;
 import com.arthur.blackjack.models.hand.HandFactory;
 import com.arthur.blackjack.models.player.Player;
@@ -19,14 +20,16 @@ public class Game {
 
     private Player player;
     private Dealer dealer;
+    private Deck deck;
     private HandFactory handFactory;
 
     private GameSettings settings;
 
-    public Game(Player player, Dealer dealer, HandFactory handFactory, GameSettings settings) {
+    public Game(Player player, Dealer dealer, Deck deck, HandFactory handFactory, GameSettings settings) {
         this.roundNumber = 1;
         this.player = player;
         this.dealer = dealer;
+        this.deck = deck;
         this.handFactory = handFactory;
         this.settings = settings;
     }
@@ -41,8 +44,6 @@ public class Game {
             placeInitialBet();
             deal();
         }
-
-        // logger.info("Player has ${} in their bankroll.", player.getBankroll());
     }
 
     private boolean playCondition() {
@@ -55,14 +56,20 @@ public class Game {
     }
 
     private void placeInitialBet() {
+        logger.info("Player has ${} in their bankroll.", player.getBankroll());
         int betSize = settings.getBetSize();
         player.subtractFromBankroll(betSize);
         logger.info("Player placed a bet of ${}.", betSize);
     }
 
     private void deal() {
-        Hand playerHand = handFactory.createPlayerHand();
-        
+        Hand playerHand = player.getHands().get(0);
+        playerHand.addCard(deck.dealCard());
+        playerHand.addCard(deck.dealCard());
+
+        Hand dealerHand = dealer.getHand();
+        dealerHand.addCard(deck.dealCard());
+        dealerHand.addCard(deck.dealCard());
     }
 
 }

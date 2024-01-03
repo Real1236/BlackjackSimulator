@@ -1,9 +1,9 @@
 package com.arthur.blackjack.models.player;
 
-import com.arthur.blackjack.models.hand.Hand;
+import com.arthur.blackjack.models.hand.DealerHand;
 
 public interface Dealer {
-    Hand getHand();
-    void setHand(Hand hand);
+    DealerHand getHand();
+    void setHand(DealerHand hand);
     void play();
 }

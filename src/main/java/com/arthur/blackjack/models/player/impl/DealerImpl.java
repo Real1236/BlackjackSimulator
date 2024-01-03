@@ -3,24 +3,25 @@ package com.arthur.blackjack.models.player.impl;
 import org.springframework.stereotype.Component;
 
 import com.arthur.blackjack.models.player.Dealer;
+import com.arthur.blackjack.models.hand.DealerHand;
 import com.arthur.blackjack.models.hand.Hand;
 
 @Component
 public class DealerImpl implements Dealer {
 
-    private Hand hand;
+    private DealerHand hand;
 
     public DealerImpl() {
         this.hand = null;
     }
 
     @Override
-    public Hand getHand() {
+    public DealerHand getHand() {
         return hand;
     }
 
     @Override
-    public void setHand(Hand hand) {
+    public void setHand(DealerHand hand) {
         this.hand = hand;
     }
 

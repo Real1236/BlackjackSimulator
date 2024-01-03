@@ -5,18 +5,19 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.arthur.blackjack.models.hand.Hand;
+import com.arthur.blackjack.config.GameSettings;
+import com.arthur.blackjack.models.hand.PlayerHand;
 import com.arthur.blackjack.models.player.Player;
 
 @Component
 public class PlayerImpl implements Player {
 
     private int bankroll;
-    private List<Hand> hands;
+    private List<PlayerHand> hands;
 
-    public PlayerImpl() {
-        this.bankroll = 1000;   // TODO: make this configurable
-        this.hands = new ArrayList<Hand>();
+    public PlayerImpl(GameSettings settings) {
+        this.bankroll = settings.getBankroll();
+        this.hands = new ArrayList<PlayerHand>();
     }
 
     @Override
@@ -35,12 +36,12 @@ public class PlayerImpl implements Player {
     }
 
     @Override
-    public List<Hand> getHands() {
+    public List<PlayerHand> getHands() {
         return this.hands;
     }
 
     @Override
-    public void addHand(Hand hand) {
+    public void addHand(PlayerHand hand) {
         this.hands.add(hand);
     }
 

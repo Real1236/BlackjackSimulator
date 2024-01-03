@@ -9,12 +9,10 @@ import com.arthur.blackjack.models.PlayerHand;
 @Component
 public class HandFactoryImpl implements HandFactory {
     public PlayerHand createPlayerHand() {
-        // TODO Auto-generated method stub
-        return null;
+        return new PlayerHandImpl();
     }
 
     public DealerHand createDealerHand() {
-        // TODO Auto-generated method stub
-        return null;
+        return new DealerHandImpl();
     }
 }

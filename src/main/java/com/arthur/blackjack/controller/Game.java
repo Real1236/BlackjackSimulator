@@ -53,10 +53,6 @@ public class Game {
         }
     }
 
-    // private boolean playCondition() {
-    //     return player.getBankroll() > 0 && roundNumber <= settings.getMaxRounds();
-    // }
-
     private void initializeHands() {
         player.addHand(handFactory.createPlayerHand());
         dealer.setHand(handFactory.createDealerHand());
@@ -66,6 +62,7 @@ public class Game {
         logger.info("Player has ${} in their bankroll.", player.getBankroll());
         int betSize = settings.getBetSize();
         player.subtractFromBankroll(betSize);
+        player.getHands().get(0).setBet(betSize);
         logger.info("Player placed a bet of ${}.", betSize);
     }
 

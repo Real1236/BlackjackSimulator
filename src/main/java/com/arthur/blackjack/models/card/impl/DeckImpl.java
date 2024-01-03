@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.config.GameSettings;
 import com.arthur.blackjack.models.card.Card;
@@ -11,6 +13,7 @@ import com.arthur.blackjack.models.card.CardFactory;
 import com.arthur.blackjack.models.card.Deck;
 import com.arthur.blackjack.models.card.Rank;
 
+@Component
 public class DeckImpl implements Deck {
 
     List<Card> cards;
@@ -33,7 +36,7 @@ public class DeckImpl implements Deck {
             for (int i = 0; i < 4; i++)
                 oneDeck.add(cardFactory.createCard(rank));
 
-        cards = new ArrayList<>(cards);
+        cards = new ArrayList<>(oneDeck);
         for (int i = 0; i < rules.getNumOfDecks() - 1; i++)
             cards.addAll(oneDeck);
 

@@ -37,6 +37,7 @@ public class Game {
     
     public void play() {
         logger.info("Starting a game of Blackjack!");
+        deck.reshuffleDeck();
 
         // Loop to play game
         while (GameUtils.playCondition(player.getBankroll(), roundNumber, settings.getMaxRounds())) {
@@ -79,8 +80,7 @@ public class Game {
     }
 
     private void playerTurn() {
-        // TODO: Implement playerTurn
-        return;
+        GameUtils.displayHandsHiddenUpcard(dealer.getHand(), player.getHands().get(0));
     }
 
     private void dealerTurn() {

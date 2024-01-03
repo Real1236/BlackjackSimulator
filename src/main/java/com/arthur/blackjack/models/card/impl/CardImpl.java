@@ -15,5 +15,9 @@ public class CardImpl implements Card {
     public Rank getRank() {
         return rank;
     }
+
+    public String toString() {
+        return rank.toString();
+    }
     
 }

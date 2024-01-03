@@ -1,4 +1,4 @@
-package com.arthur.blackjack.models.impl;
+package com.arthur.blackjack.models.card.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,10 +6,10 @@ import java.util.List;
 
 import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.config.GameSettings;
-import com.arthur.blackjack.models.Card;
-import com.arthur.blackjack.models.CardFactory;
-import com.arthur.blackjack.models.Deck;
-import com.arthur.blackjack.models.Rank;
+import com.arthur.blackjack.models.card.Card;
+import com.arthur.blackjack.models.card.CardFactory;
+import com.arthur.blackjack.models.card.Deck;
+import com.arthur.blackjack.models.card.Rank;
 
 public class DeckImpl implements Deck {
 

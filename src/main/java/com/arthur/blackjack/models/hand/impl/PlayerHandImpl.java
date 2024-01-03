@@ -1,11 +1,11 @@
-package com.arthur.blackjack.models.impl;
+package com.arthur.blackjack.models.hand.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.arthur.blackjack.models.Card;
-import com.arthur.blackjack.models.PlayerHand;
-import com.arthur.blackjack.models.Rank;
+import com.arthur.blackjack.models.card.Card;
+import com.arthur.blackjack.models.hand.PlayerHand;
+import com.arthur.blackjack.models.card.Rank;
 
 public class PlayerHandImpl implements PlayerHand {
 

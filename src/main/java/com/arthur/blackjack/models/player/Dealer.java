@@ -1,4 +1,6 @@
-package com.arthur.blackjack.models;
+package com.arthur.blackjack.models.player;
+
+import com.arthur.blackjack.models.hand.Hand;
 
 public interface Dealer {
     Hand getHand();

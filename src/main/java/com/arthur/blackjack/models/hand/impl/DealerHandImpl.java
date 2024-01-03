@@ -1,9 +1,9 @@
-package com.arthur.blackjack.models.impl;
+package com.arthur.blackjack.models.hand.impl;
 
 import java.util.List;
 
-import com.arthur.blackjack.models.Card;
-import com.arthur.blackjack.models.DealerHand;
+import com.arthur.blackjack.models.card.Card;
+import com.arthur.blackjack.models.hand.DealerHand;
 
 public class DealerHandImpl implements DealerHand {
 

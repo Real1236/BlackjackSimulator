@@ -1,9 +1,9 @@
-package com.arthur.blackjack.models.impl;
+package com.arthur.blackjack.models.player.impl;
 
 import org.springframework.stereotype.Component;
 
-import com.arthur.blackjack.models.Dealer;
-import com.arthur.blackjack.models.Hand;
+import com.arthur.blackjack.models.player.Dealer;
+import com.arthur.blackjack.models.hand.Hand;
 
 @Component
 public class DealerImpl implements Dealer {

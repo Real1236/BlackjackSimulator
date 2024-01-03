@@ -1,7 +1,7 @@
-package com.arthur.blackjack.models.impl;
+package com.arthur.blackjack.models.card.impl;
 
-import com.arthur.blackjack.models.Card;
-import com.arthur.blackjack.models.Rank;
+import com.arthur.blackjack.models.card.Card;
+import com.arthur.blackjack.models.card.Rank;
 
 public class CardImpl implements Card {
 

@@ -1,4 +1,4 @@
-package com.arthur.blackjack.models;
+package com.arthur.blackjack.models.hand;
 
 public interface PlayerHand extends Hand {
     Integer getBet();

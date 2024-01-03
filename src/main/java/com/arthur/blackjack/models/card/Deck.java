@@ -1,4 +1,6 @@
-package com.arthur.blackjack.models;
+package com.arthur.blackjack.models.card;
+
+import com.arthur.blackjack.models.card.Card;
 
 public interface Deck {
     void reshuffleDeck();

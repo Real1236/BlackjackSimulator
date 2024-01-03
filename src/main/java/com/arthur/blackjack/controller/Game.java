@@ -4,10 +4,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.arthur.blackjack.config.GameSettings;
-import com.arthur.blackjack.models.Dealer;
-import com.arthur.blackjack.models.Hand;
-import com.arthur.blackjack.models.HandFactory;
-import com.arthur.blackjack.models.Player;
+import com.arthur.blackjack.models.player.Dealer;
+import com.arthur.blackjack.models.hand.Hand;
+import com.arthur.blackjack.models.hand.HandFactory;
+import com.arthur.blackjack.models.player.Player;
 
 import org.apache.logging.log4j.LogManager;
 

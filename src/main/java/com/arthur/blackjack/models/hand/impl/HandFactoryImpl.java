@@ -1,10 +1,10 @@
-package com.arthur.blackjack.models.impl;
+package com.arthur.blackjack.models.hand.impl;
 
 import org.springframework.stereotype.Component;
 
-import com.arthur.blackjack.models.DealerHand;
-import com.arthur.blackjack.models.HandFactory;
-import com.arthur.blackjack.models.PlayerHand;
+import com.arthur.blackjack.models.hand.DealerHand;
+import com.arthur.blackjack.models.hand.HandFactory;
+import com.arthur.blackjack.models.hand.PlayerHand;
 
 @Component
 public class HandFactoryImpl implements HandFactory {

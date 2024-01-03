@@ -9,6 +9,7 @@ import com.arthur.blackjack.models.card.Deck;
 import com.arthur.blackjack.models.hand.Hand;
 import com.arthur.blackjack.models.hand.HandFactory;
 import com.arthur.blackjack.models.player.Player;
+import com.arthur.blackjack.utils.GameUtils;
 
 import org.apache.logging.log4j.LogManager;
 
@@ -38,17 +39,22 @@ public class Game {
         logger.info("Starting a game of Blackjack!");
 
         // Loop to play game
-        while (playCondition()) {
+        while (GameUtils.playCondition(player.getBankroll(), roundNumber, settings.getMaxRounds())) {
             logger.info("Starting round {}.\n---------------------------------", roundNumber++);
             initializeHands();
             placeInitialBet();
             deal();
+            if (!GameUtils.isBlackjack(dealer.getHand()) && !GameUtils.isBlackjack(player.getHands().get(0))) {
+                playerTurn();
+            }
+            dealerTurn();
+            payout();
         }
     }
 
-    private boolean playCondition() {
-        return player.getBankroll() > 0 && roundNumber <= settings.getMaxRounds();
-    }
+    // private boolean playCondition() {
+    //     return player.getBankroll() > 0 && roundNumber <= settings.getMaxRounds();
+    // }
 
     private void initializeHands() {
         player.addHand(handFactory.createPlayerHand());
@@ -72,4 +78,18 @@ public class Game {
         dealerHand.addCard(deck.dealCard());
     }
 
+    private void playerTurn() {
+        // TODO: Implement playerTurn
+        return;
+    }
+
+    private void dealerTurn() {
+        // TODO: Implement dealerTurn
+        return;
+    }
+
+    private void payout() {
+        // TODO: Implement payout
+        return;
+    }
 }

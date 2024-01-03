@@ -26,6 +26,7 @@ public final class GameUtils {
 
     public static void displayHandsHiddenUpcard(DealerHand dealerHand, PlayerHand playerHand) {
         logger.info("Dealer's hand: {} (Hidden).", dealerHand.getUpCard());
+        logger.info("Dealer's hand value: {}.", dealerHand.getUpCard().getRank().getValue());
 
         StringBuilder playerHandString = new StringBuilder("Player's hand: ");
         for (int i = 0; i < playerHand.getCards().size(); i++) {
@@ -35,5 +36,6 @@ public final class GameUtils {
             }
         }
         logger.info(playerHandString.toString());
+        logger.info("Player's hand value: {}.", playerHand.getHandValue());
     }
 }

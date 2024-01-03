@@ -1,40 +1,19 @@
 package com.arthur.blackjack.models.hand.impl;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import com.arthur.blackjack.models.card.Card;
 import com.arthur.blackjack.models.hand.DealerHand;
 
-public class DealerHandImpl implements DealerHand {
+public class DealerHandImpl extends AbstractHand implements DealerHand {
 
-    @Override
-    public List<Card> getCards() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getCards'");
-    }
-
-    @Override
-    public void addCard(Card card) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addCard'");
-    }
-
-    @Override
-    public void clearHand() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'clearHand'");
-    }
-
-    @Override
-    public Integer getHandValue() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getHandValue'");
+    public DealerHandImpl() {
+        super(new ArrayList<Card>());
     }
 
     @Override
     public Card getUpCard() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUpCard'");
+        return cards.get(0);
     }
     
 }

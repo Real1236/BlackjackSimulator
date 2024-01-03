@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 
 import com.arthur.blackjack.models.player.Dealer;
 import com.arthur.blackjack.models.hand.DealerHand;
-import com.arthur.blackjack.models.hand.Hand;
 
 @Component
 public class DealerImpl implements Dealer {

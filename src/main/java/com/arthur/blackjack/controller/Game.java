@@ -8,12 +8,9 @@ import com.arthur.blackjack.models.player.Dealer;
 import com.arthur.blackjack.models.card.Deck;
 import com.arthur.blackjack.models.hand.Hand;
 import com.arthur.blackjack.models.hand.HandFactory;
-import com.arthur.blackjack.models.hand.PlayerHand;
 import com.arthur.blackjack.models.player.Player;
-import com.arthur.blackjack.strategies.Strategy;
+import com.arthur.blackjack.strategies.StrategyFactory;
 import com.arthur.blackjack.utils.GameUtils;
-
-import java.util.Stack;
 
 import org.apache.logging.log4j.LogManager;
 
@@ -28,25 +25,27 @@ public class Game {
     private Deck deck;
     private HandFactory handFactory;
 
-    private GameSettings settings;
-    private Strategy playStrategy;
+    private PlayerTurnManager playerTurnManager;
 
-    public Game(Player player, Dealer dealer, Deck deck, HandFactory handFactory, GameSettings settings) {
+    private GameSettings settings;
+    private StrategyFactory strategyFactory;
+
+    public Game(Player player, Dealer dealer, Deck deck, HandFactory handFactory, PlayerTurnManager playerTurnManager, GameSettings settings, StrategyFactory strategyFactory) {
         this.roundNumber = 1;
         this.player = player;
         this.dealer = dealer;
         this.deck = deck;
+        this.playerTurnManager = playerTurnManager;
         this.handFactory = handFactory;
         this.settings = settings;
-    }
-
-    public void setStrategy(Strategy playStrategy) {
-        this.playStrategy = playStrategy;
+        this.strategyFactory = strategyFactory;
     }
     
     public void play() {
         logger.info("Starting a game of Blackjack!");
-        deck.reshuffleDeck();
+
+        deck.reshuffleDeck();   // Initialize Deck
+        playerTurnManager.setStrategy(strategyFactory.getStrategy("basic"));    // Set strategy
 
         // Loop to play game
         while (GameUtils.playCondition(player.getBankroll(), roundNumber, settings.getMaxRounds())) {
@@ -56,7 +55,7 @@ public class Game {
             placeInitialBet();
             deal();
             if (!GameUtils.isOpen10Blackjack(dealer.getHand()) && !GameUtils.isBlackjack(player.getHands().get(0))) {
-                playerTurn();
+                playerTurnManager.playerTurn();
             }
             dealerTurn();
             payout();
@@ -84,65 +83,6 @@ public class Game {
         Hand dealerHand = dealer.getHand();
         dealerHand.addCard(deck.dealCard());
         dealerHand.addCard(deck.dealCard());
-    }
-
-    private void playerTurn() {
-        Stack<PlayerHand> stack = new Stack<>();
-
-        // Handle multiple hands from splitting
-        while (!stack.empty()) {
-            PlayerHand hand = stack.pop();
-            GameUtils.displayHandsHiddenUpcard(dealer.getHand(), hand);
-            
-            if (split(hand, stack)) continue;
-            if (doubleDown(hand)) continue;
-            hitOrStand(hand);
-        }
-
-        GameUtils.displayHandsHiddenUpcard(dealer.getHand(), player.getHands().get(0));
-    }
-
-    private boolean split(PlayerHand hand, Stack<PlayerHand> stack) {
-        // If the player has a pair and enough money to split, there's an option to split
-        if (hand.getCards().get(0).getRank().getValue() == hand.getCards().get(1).getRank().getValue()
-                && player.getBankroll() >= hand.getBet()
-                && playStrategy.split()) {
-            PlayerHand newHand = handFactory.createPlayerHand();
-            newHand.addCard(hand.getCards().remove(1));
-            newHand.setBet(hand.getBet());
-            player.subtractFromBankroll(newHand.getBet());
-            hand.addCard(deck.dealCard());
-            newHand.addCard(deck.dealCard());
-            logger.info("Player split and placed a bet of ${}.", newHand.getBet());
-            logger.info("Player has ${} in their bankroll.", player.getBankroll());
-
-            stack.push(newHand);
-            stack.push(hand);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean doubleDown(PlayerHand hand) {
-        // If the player has enough money to double down, there's an option to double down
-        if (player.getBankroll() >= hand.getBet()
-                && playStrategy.doubleDown()) {
-            hand.addCard(deck.dealCard());
-            hand.setBet(hand.getBet() * 2);
-            player.subtractFromBankroll(hand.getBet());
-            logger.info("Player doubled down and placed a bet of ${}.", hand.getBet());
-            GameUtils.displayHandsHiddenUpcard(dealer.getHand(), hand);
-            return true;
-        }
-        return false;
-    }
-
-    private void hitOrStand(PlayerHand hand) {
-        while (hand.getHandValue() < 21 && playStrategy.hit()) {
-            hand.addCard(deck.dealCard());
-            logger.info("Player hit.");
-            GameUtils.displayHandsHiddenUpcard(dealer.getHand(), hand);
-        }
     }
 
     private void dealerTurn() {

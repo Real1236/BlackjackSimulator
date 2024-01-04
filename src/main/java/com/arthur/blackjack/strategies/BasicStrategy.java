@@ -10,5 +10,17 @@ public class BasicStrategy implements Strategy {
         // TODO Auto-generated method stub
         return false;
     }
+
+    @Override
+    public boolean doubleDown() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'doubleDown'");
+    }
+
+    @Override
+    public boolean hit() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'hit'");
+    }
     
 }

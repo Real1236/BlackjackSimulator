@@ -8,7 +8,7 @@ public class BasicStrategy implements Strategy {
     @Override
     public boolean split() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'split'");
+        return false;
     }
     
 }

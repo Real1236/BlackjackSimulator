@@ -8,8 +8,12 @@ import com.arthur.blackjack.models.player.Dealer;
 import com.arthur.blackjack.models.card.Deck;
 import com.arthur.blackjack.models.hand.Hand;
 import com.arthur.blackjack.models.hand.HandFactory;
+import com.arthur.blackjack.models.hand.PlayerHand;
 import com.arthur.blackjack.models.player.Player;
+import com.arthur.blackjack.strategies.Strategy;
 import com.arthur.blackjack.utils.GameUtils;
+
+import java.util.Stack;
 
 import org.apache.logging.log4j.LogManager;
 
@@ -25,6 +29,7 @@ public class Game {
     private HandFactory handFactory;
 
     private GameSettings settings;
+    private Strategy playStrategy;
 
     public Game(Player player, Dealer dealer, Deck deck, HandFactory handFactory, GameSettings settings) {
         this.roundNumber = 1;
@@ -33,6 +38,10 @@ public class Game {
         this.deck = deck;
         this.handFactory = handFactory;
         this.settings = settings;
+    }
+
+    public void setStrategy(Strategy playStrategy) {
+        this.playStrategy = playStrategy;
     }
     
     public void play() {
@@ -77,7 +86,35 @@ public class Game {
     }
 
     private void playerTurn() {
+        Stack<PlayerHand> stack = new Stack<>();
+
+        // Handle multiple hands from splitting
+        while (!stack.empty()) {
+            PlayerHand hand = stack.pop();
+            GameUtils.displayHandsHiddenUpcard(dealer.getHand(), hand);
+            
+            if (split(hand, stack)) continue;
+            
+        }
+
         GameUtils.displayHandsHiddenUpcard(dealer.getHand(), player.getHands().get(0));
+    }
+
+    private boolean split(PlayerHand hand, Stack<PlayerHand> stack) {
+        // If the player has a pair and enough money to split, there's an option to split
+        if (hand.getCards().get(0).getRank().getValue() == hand.getCards().get(1).getRank().getValue()
+                && player.getBankroll() >= hand.getBet()
+                && playStrategy.split()) {
+            PlayerHand newHand = handFactory.createPlayerHand();
+            newHand.addCard(hand.getCards().remove(1));
+            newHand.setBet(hand.getBet());
+            logger.info("Player chose to split and placed a bet of ${}.", newHand.getBet());
+
+            stack.push(newHand);
+            stack.push(hand);
+            return true;
+        }
+        return false;
     }
 
     private void dealerTurn() {

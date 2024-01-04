@@ -95,7 +95,8 @@ public class Game {
             GameUtils.displayHandsHiddenUpcard(dealer.getHand(), hand);
             
             if (split(hand, stack)) continue;
-            
+            if (doubleDown(hand)) continue;
+            hitOrStand(hand);
         }
 
         GameUtils.displayHandsHiddenUpcard(dealer.getHand(), player.getHands().get(0));
@@ -112,7 +113,7 @@ public class Game {
             player.subtractFromBankroll(newHand.getBet());
             hand.addCard(deck.dealCard());
             newHand.addCard(deck.dealCard());
-            logger.info("Player chose to split and placed a bet of ${}.", newHand.getBet());
+            logger.info("Player split and placed a bet of ${}.", newHand.getBet());
             logger.info("Player has ${} in their bankroll.", player.getBankroll());
 
             stack.push(newHand);
@@ -120,6 +121,28 @@ public class Game {
             return true;
         }
         return false;
+    }
+
+    private boolean doubleDown(PlayerHand hand) {
+        // If the player has enough money to double down, there's an option to double down
+        if (player.getBankroll() >= hand.getBet()
+                && playStrategy.doubleDown()) {
+            hand.addCard(deck.dealCard());
+            hand.setBet(hand.getBet() * 2);
+            player.subtractFromBankroll(hand.getBet());
+            logger.info("Player doubled down and placed a bet of ${}.", hand.getBet());
+            GameUtils.displayHandsHiddenUpcard(dealer.getHand(), hand);
+            return true;
+        }
+        return false;
+    }
+
+    private void hitOrStand(PlayerHand hand) {
+        while (hand.getHandValue() < 21 && playStrategy.hit()) {
+            hand.addCard(deck.dealCard());
+            logger.info("Player hit.");
+            GameUtils.displayHandsHiddenUpcard(dealer.getHand(), hand);
+        }
     }
 
     private void dealerTurn() {

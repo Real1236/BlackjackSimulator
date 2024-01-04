@@ -108,6 +108,8 @@ public class Game {
             PlayerHand newHand = handFactory.createPlayerHand();
             newHand.addCard(hand.getCards().remove(1));
             newHand.setBet(hand.getBet());
+            hand.addCard(deck.dealCard());
+            newHand.addCard(deck.dealCard());
             logger.info("Player chose to split and placed a bet of ${}.", newHand.getBet());
 
             stack.push(newHand);

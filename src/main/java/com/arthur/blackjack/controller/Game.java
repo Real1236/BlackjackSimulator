@@ -51,6 +51,7 @@ public class Game {
         // Loop to play game
         while (GameUtils.playCondition(player.getBankroll(), roundNumber, settings.getMaxRounds())) {
             logger.info("Starting round {}.\n---------------------------------", roundNumber++);
+            logger.info("Player has ${} in their bankroll.", player.getBankroll());
             initializeHands();
             placeInitialBet();
             deal();
@@ -68,11 +69,11 @@ public class Game {
     }
 
     private void placeInitialBet() {
-        logger.info("Player has ${} in their bankroll.", player.getBankroll());
         int betSize = settings.getBetSize();
         player.subtractFromBankroll(betSize);
         player.getHands().get(0).setBet(betSize);
         logger.info("Player placed a bet of ${}.", betSize);
+        logger.info("Player has ${} in their bankroll.", player.getBankroll());
     }
 
     private void deal() {
@@ -108,9 +109,11 @@ public class Game {
             PlayerHand newHand = handFactory.createPlayerHand();
             newHand.addCard(hand.getCards().remove(1));
             newHand.setBet(hand.getBet());
+            player.subtractFromBankroll(newHand.getBet());
             hand.addCard(deck.dealCard());
             newHand.addCard(deck.dealCard());
             logger.info("Player chose to split and placed a bet of ${}.", newHand.getBet());
+            logger.info("Player has ${} in their bankroll.", player.getBankroll());
 
             stack.push(newHand);
             stack.push(hand);

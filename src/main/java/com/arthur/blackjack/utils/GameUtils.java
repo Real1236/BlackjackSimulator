@@ -3,6 +3,8 @@ package com.arthur.blackjack.utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.arthur.blackjack.models.card.Card;
+import com.arthur.blackjack.models.card.Rank;
 import com.arthur.blackjack.models.hand.DealerHand;
 import com.arthur.blackjack.models.hand.Hand;
 import com.arthur.blackjack.models.hand.PlayerHand;
@@ -22,6 +24,22 @@ public final class GameUtils {
 
     public static boolean isOpen10Blackjack(DealerHand hand) {
         return isBlackjack(hand) && hand.getUpCard().getRank().getValue() == 10;
+    }
+
+    public static boolean isHard(Hand hand) {
+        int total = 0;
+        int numAces = 0;
+        for (Card card : hand.getCards()) {
+            total += card.getRank().getValue();
+            if (card.getRank() == Rank.ACE)
+                numAces++;
+        }
+        int numAcesDeducted = 0;
+        while (numAcesDeducted < numAces && total > 21) {
+            total -= 10;
+            numAcesDeducted++;
+        }
+        return numAces == numAcesDeducted;
     }
 
     public static void displayHandsHiddenUpcard(DealerHand dealerHand, PlayerHand playerHand) {

@@ -84,8 +84,10 @@ public class Game {
     }
 
     private void dealerTurn() {
-        // TODO: Implement dealerTurn
-        return;
+        // Player if at least one player hand didn't bust
+        if (player.getHands().stream().anyMatch(hand -> hand.getHandValue() <= 21)) {
+            dealer.play();
+        }
     }
 
     private void payout() {

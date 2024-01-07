@@ -38,19 +38,22 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
     }
 
     public void playerTurn() {
-        Stack<PlayerHand> stack = new Stack<>();
+        // Only play turn if dealer doesn't have blackjack and player doesn't have blackjack
+        if (!GameUtils.isOpen10Blackjack(dealer.getHand()) && !GameUtils.isBlackjack(player.getHands().get(0))) {
+            Stack<PlayerHand> stack = new Stack<>();
 
-        // Handle multiple hands from splitting
-        while (!stack.empty()) {
-            PlayerHand hand = stack.pop();
-            GameUtils.displayHandsHiddenUpcard(dealer.getHand(), hand);
-            
-            if (split(hand, stack)) continue;
-            if (doubleDown(hand)) continue;
-            hitOrStand(hand);
+            // Handle multiple hands from splitting
+            while (!stack.empty()) {
+                PlayerHand hand = stack.pop();
+                GameUtils.displayHandsHiddenUpcard(dealer.getHand(), hand);
+                
+                if (split(hand, stack)) continue;
+                if (doubleDown(hand)) continue;
+                hitOrStand(hand);
+            }
+
+            GameUtils.displayHandsHiddenUpcard(dealer.getHand(), player.getHands().get(0));
         }
-
-        GameUtils.displayHandsHiddenUpcard(dealer.getHand(), player.getHands().get(0));
     }
 
     private boolean split(PlayerHand hand, Stack<PlayerHand> stack) {

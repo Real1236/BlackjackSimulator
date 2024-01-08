@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BasicStrategy extends Strategy {
-    private final String filePath = "src/main/resources/BasicStrategy.xlsx";
+    private final String filePath = "src/main/resources/strategies/BasicStrategy.xlsx";
 
     public BasicStrategy() {
         super();
@@ -14,5 +14,5 @@ public class BasicStrategy extends Strategy {
     protected String getFilePath() {
         return filePath;
     }
-    
+
 }

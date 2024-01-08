@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -21,19 +21,20 @@ public abstract class Strategy {
 
     /**
      * Each hashmap represents a table of decisions for a particular hand.
-     * The key is a pair of integers representing the player's hand value and the dealer's upcard value.
+     * The key is a pair of integers representing the player's hand value and the
+     * dealer's upcard value.
      * The value is the action to take for that hand.
      */
-    protected Map<Pair<Integer, Integer>, Action> hitTable;
+    protected Map<Pair<Integer, Integer>, Action> hardTable;
     protected Map<Pair<Integer, Integer>, Action> softTable;
     protected Map<Pair<Integer, Integer>, Action> splitTable;
 
     public Strategy() {
         String filePath = getFilePath();
         try (FileInputStream fis = new FileInputStream(new File(filePath));
-            Workbook workbook = new XSSFWorkbook(fis)) {
+                Workbook workbook = new XSSFWorkbook(fis)) {
 
-            hitTable = getTable(workbook, "Hit");
+            hardTable = getTable(workbook, "Hard");
             softTable = getTable(workbook, "Soft");
             splitTable = getTable(workbook, "Split");
             System.out.println("Successfully read Excel file");
@@ -47,7 +48,10 @@ public abstract class Strategy {
         Map<Pair<Integer, Integer>, Action> table = new HashMap<>();
         int rowIndex = 0;
         for (Row row : sheet) {
-            if (rowIndex++ == 0) continue; // Skip the header row
+            if (row.getCell(0).getCellType() == CellType.BLANK) // Check if the row is empty
+                break;
+            if (rowIndex++ == 0) // Skip the first row
+                continue;
 
             int playerValue = (int) row.getCell(0).getNumericCellValue();
             for (int i = 1; i < row.getLastCellNum(); i++) {
@@ -87,18 +91,18 @@ public abstract class Strategy {
     public boolean split(int playerOneCardValue, int dealerUpcardValue) {
         throw new UnsupportedOperationException("Not implemented");
     }
-    //     String filePath = getFilePath();
-    //     try (FileInputStream fis = new FileInputStream(new File(filePath));
-    //         Workbook workbook = new XSSFWorkbook(fis)) {
+    // String filePath = getFilePath();
+    // try (FileInputStream fis = new FileInputStream(new File(filePath));
+    // Workbook workbook = new XSSFWorkbook(fis)) {
 
-    //         Sheet sheet = workbook.getSheet("Split");
-    //         Row row = sheet.getRow(playerValue);
-    //         Cell cell = row.getCell(getColumnIndex(dealerCard));
+    // Sheet sheet = workbook.getSheet("Split");
+    // Row row = sheet.getRow(playerValue);
+    // Cell cell = row.getCell(getColumnIndex(dealerCard));
 
-    //         String decision = cell.getStringCellValue();
-    //         return decision.equals("Y");  // Assuming "Y" means split
-    //     } catch (IOException e) {
-    //         throw new RuntimeException("Failed to read Excel file", e);
-    //     }
+    // String decision = cell.getStringCellValue();
+    // return decision.equals("Y"); // Assuming "Y" means split
+    // } catch (IOException e) {
+    // throw new RuntimeException("Failed to read Excel file", e);
+    // }
     // }
 }

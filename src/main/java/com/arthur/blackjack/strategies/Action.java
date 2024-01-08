@@ -1,12 +1,13 @@
 package com.arthur.blackjack.strategies;
 
 public enum Action {
-    HIT("h"),
-    STAND("s"),
-    DOUBLE_DOWN("d"),
-    SPLIT("p"),
-    SURRENDER("r"),
-    DOUBLE_STAND("ds");
+    HIT("H"),
+    STAND("S"),
+    DOUBLE_DOWN("D"),
+    SPLIT("Y"),
+    NO_SPLIT("N"),
+    SURRENDER("R"),
+    DOUBLE_STAND("Ds");
 
     private final String abbreviation;
 

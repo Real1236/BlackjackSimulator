@@ -18,6 +18,7 @@ public class DealerImpl implements Dealer {
 
     public DealerImpl(Deck deck, GameRules gameRules) {
         this.hand = null;
+        this.deck = deck;
         this.gameRules = gameRules;
     }
 

@@ -57,9 +57,13 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
 
     private boolean split(PlayerHand hand, Stack<PlayerHand> stack) {
         // If the player has a pair and enough money to split, there's an option to split
-        if (hand.getCards().get(0).getRank().getValue() == hand.getCards().get(1).getRank().getValue()
+        int playerHandFirstCardValue = hand.getCards().get(0).getRank().getValue();
+        int playerHandSecondCardValue = hand.getCards().get(1).getRank().getValue();
+        int dealerUpcardValue = dealer.getHand().getCards().get(0).getRank().getValue();
+
+        if (playerHandFirstCardValue == playerHandSecondCardValue
                 && player.getBankroll() >= hand.getBet()
-                && playStrategy.split()) {
+                && playStrategy.split(playerHandFirstCardValue, dealerUpcardValue)) {
             PlayerHand newHand = handFactory.createPlayerHand();
             newHand.addCard(hand.getCards().remove(1));
             newHand.setBet(hand.getBet());

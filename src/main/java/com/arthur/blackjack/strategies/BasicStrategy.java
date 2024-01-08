@@ -3,24 +3,16 @@ package com.arthur.blackjack.strategies;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BasicStrategy implements Strategy {
+public class BasicStrategy extends Strategy {
+    private final String filePath = "src/main/resources/BasicStrategy.xlsx";
 
-    @Override
-    public boolean split() {
-        // TODO Auto-generated method stub
-        return false;
+    public BasicStrategy() {
+        super();
     }
 
     @Override
-    public boolean doubleDown() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'doubleDown'");
-    }
-
-    @Override
-    public boolean hit() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'hit'");
+    protected String getFilePath() {
+        return filePath;
     }
     
 }

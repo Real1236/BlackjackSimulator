@@ -38,7 +38,7 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
     }
 
     public void playerTurn() {
-        // Only play turn if dealer doesn't have blackjack and player doesn't have blackjack
+        // Only play turn if dealer and player both don't have blackjack
         if (!GameUtils.isOpen10Blackjack(dealer.getHand()) && !GameUtils.isBlackjack(player.getHands().get(0))) {
             Stack<PlayerHand> stack = new Stack<>();
             stack.addAll(player.getHands());
@@ -47,21 +47,24 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
             while (!stack.empty()) {
                 PlayerHand hand = stack.pop();
                 GameUtils.displayHandsHiddenUpcard(dealer.getHand(), hand);
-                
-                if (split(hand, stack)) continue;
-                if (doubleDown(hand)) continue;
+
+                if (split(hand, stack))
+                    continue;
+                if (doubleDown(hand))
+                    continue;
                 hitOrStand(hand);
             }
         }
     }
 
     private boolean split(PlayerHand hand, Stack<PlayerHand> stack) {
-        // If the player has a pair and enough money to split, there's an option to split
+        // If the player has a pair and enough money to split, player can split
         int playerHandFirstCardValue = hand.getCards().get(0).getRank().getValue();
         int playerHandSecondCardValue = hand.getCards().get(1).getRank().getValue();
         int dealerUpcardValue = dealer.getHand().getCards().get(0).getRank().getValue();
 
         if (playerHandFirstCardValue == playerHandSecondCardValue
+                && hand.getCards().size() == 2
                 && player.getBankroll() >= hand.getBet()
                 && playStrategy.split(playerHandFirstCardValue, dealerUpcardValue)) {
             PlayerHand newHand = handFactory.createPlayerHand();
@@ -81,7 +84,7 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
     }
 
     private boolean doubleDown(PlayerHand hand) {
-        // If the player has enough money to double down, there's an option to double down
+        // If the player has enough money to double down, player can double down
         if (player.getBankroll() >= hand.getBet()
                 && playStrategy.doubleDown()) {
             hand.addCard(deck.dealCard());
@@ -101,5 +104,5 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
             GameUtils.displayHandsHiddenUpcard(dealer.getHand(), hand);
         }
     }
-    
+
 }

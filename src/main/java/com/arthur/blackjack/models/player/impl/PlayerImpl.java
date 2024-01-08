@@ -12,7 +12,7 @@ import com.arthur.blackjack.models.player.Player;
 @Component
 public class PlayerImpl implements Player {
 
-    private int bankroll;
+    private double bankroll;
     private List<PlayerHand> hands;
 
     public PlayerImpl(GameSettings settings) {
@@ -21,17 +21,17 @@ public class PlayerImpl implements Player {
     }
 
     @Override
-    public int getBankroll() {
+    public double getBankroll() {
         return this.bankroll;
     }
 
     @Override
-    public void subtractFromBankroll(int amount) {
+    public void subtractFromBankroll(double amount) {
         this.bankroll -= amount;
     }
 
     @Override
-    public void addToBankroll(int amount) {
+    public void addToBankroll(double amount) {
         this.bankroll += amount;
     }
 

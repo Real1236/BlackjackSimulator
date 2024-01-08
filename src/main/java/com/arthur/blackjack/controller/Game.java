@@ -8,9 +8,12 @@ import com.arthur.blackjack.models.player.Dealer;
 import com.arthur.blackjack.models.card.Deck;
 import com.arthur.blackjack.models.hand.Hand;
 import com.arthur.blackjack.models.hand.HandFactory;
+import com.arthur.blackjack.models.hand.PlayerHand;
 import com.arthur.blackjack.models.player.Player;
 import com.arthur.blackjack.strategies.StrategyFactory;
 import com.arthur.blackjack.utils.GameUtils;
+
+import java.util.Stack;
 
 import org.apache.logging.log4j.LogManager;
 
@@ -51,12 +54,21 @@ public class Game {
         while (GameUtils.playCondition(player.getBankroll(), roundNumber, settings.getMaxRounds())) {
             logger.info("Starting round {}.\n---------------------------------", roundNumber++);
             logger.info("Player has ${} in their bankroll.", player.getBankroll());
+            checkReshuffle();
             initializeHands();
             placeInitialBet();
             deal();
             playerTurnManager.playerTurn();
             dealerTurn();
             payout();
+            player.clearHands();
+        }
+    }
+
+    private void checkReshuffle() {
+        if (deck.checkReshuffle()) {
+            logger.info("Reshuffling deck.");
+            deck.reshuffleDeck();
         }
     }
 
@@ -91,7 +103,47 @@ public class Game {
     }
 
     private void payout() {
-        // TODO: Implement payout
-        return;
+        Stack<PlayerHand> stack = new Stack<>();
+        stack.addAll(player.getHands());
+        int handNumber = 1;
+
+        while (!stack.empty()) {
+            PlayerHand hand = stack.pop();
+
+            // Bust
+            if (hand.getHandValue() > 21) {
+                logger.info("Hand {} busted with a hand value of {}.", handNumber, hand.getHandValue());
+            } 
+            
+            // Blackjack
+            else if (GameUtils.isBlackjack(hand)) {
+                logger.info("Hand {} has a blackjack!", handNumber);
+                if (GameUtils.isBlackjack(dealer.getHand())) {
+                    logger.info("Dealer also has a blackjack. Player pushed.");
+                    player.addToBankroll(hand.getBet());
+                } else {
+                    player.addToBankroll(hand.getBet() * 2.5);
+                    logger.info("Player won ${}.", hand.getBet() * 2.5);
+                }
+            }
+            
+            // Dealer bust
+            else if (dealer.getHand().getHandValue() > 21) {
+                logger.info("Dealer busted with a hand value of {}.", dealer.getHand().getHandValue());
+                player.addToBankroll(hand.getBet() * 2);
+                logger.info("Player won ${}.", hand.getBet() * 2);
+            } 
+            
+            // Compare hands
+            else if (hand.getHandValue() > dealer.getHand().getHandValue()) {
+                player.addToBankroll(hand.getBet() * 2);
+                logger.info("Player won ${}.", hand.getBet() * 2);
+            } else if (hand.getHandValue() == dealer.getHand().getHandValue()) {
+                player.addToBankroll(hand.getBet());
+                logger.info("Player pushed.");
+            } else {
+                logger.info("Player lost ${}.", hand.getBet());
+            }
+        }
     }
 }

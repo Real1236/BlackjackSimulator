@@ -14,7 +14,7 @@ public final class GameUtils {
 
     private GameUtils() {}
 
-    public static boolean playCondition(int bankroll, int roundNumber, int maxRounds) {
+    public static boolean playCondition(double bankroll, int roundNumber, int maxRounds) {
         return bankroll > 0 && roundNumber <= maxRounds;
     }
 

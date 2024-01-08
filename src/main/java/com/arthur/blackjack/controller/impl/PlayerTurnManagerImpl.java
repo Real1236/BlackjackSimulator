@@ -41,6 +41,7 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
         // Only play turn if dealer doesn't have blackjack and player doesn't have blackjack
         if (!GameUtils.isOpen10Blackjack(dealer.getHand()) && !GameUtils.isBlackjack(player.getHands().get(0))) {
             Stack<PlayerHand> stack = new Stack<>();
+            stack.addAll(player.getHands());
 
             // Handle multiple hands from splitting
             while (!stack.empty()) {

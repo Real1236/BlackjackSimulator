@@ -51,8 +51,6 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
                 if (doubleDown(hand)) continue;
                 hitOrStand(hand);
             }
-
-            GameUtils.displayHandsHiddenUpcard(dealer.getHand(), player.getHands().get(0));
         }
     }
 

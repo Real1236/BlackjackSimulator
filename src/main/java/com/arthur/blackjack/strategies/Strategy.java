@@ -102,6 +102,6 @@ public abstract class Strategy {
      * @return true if the hand should be split, false otherwise
      */
     public boolean split(int playerOneCardValue, int dealerUpcardValue) {
-        throw new UnsupportedOperationException("Not implemented");
+        return splitTable.get(Pair.of(playerOneCardValue, dealerUpcardValue)) == Action.SPLIT;
     }
 }

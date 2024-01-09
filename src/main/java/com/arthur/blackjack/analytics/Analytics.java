@@ -53,17 +53,17 @@ public class Analytics {
     }
 
     public void writeResults(Integer round, Integer money) {
-        Row row = sheet.getRow(round + 1);
+        Row row = sheet.getRow(round);
         if (row == null)
-            row = sheet.createRow(round + 1);
+            row = sheet.createRow(round);
         row.createCell(0).setCellValue(round);
         row.createCell(1).setCellValue(money);
     }
 
     public void recordRoundResult(Integer round, RoundResult result) {
-        Row row = sheet.getRow(round + 1);
+        Row row = sheet.getRow(round);
         if (row == null)
-            row = sheet.createRow(round + 1);
+            row = sheet.createRow(round);
 
         Cell cell = row.getCell(result.getColIndex());
         if (cell == null) {

@@ -65,14 +65,16 @@ public class Game {
         // Set strategy and analytics
         playerTurnManager.setStrategy(strategyFactory.getStrategy("basic"));
         analytics.createNewResultsSheet(1, settings.getBetSize()); // TODO - make game number dynamic
-        analytics.writeResults(roundNumber, (int) player.getBankroll());
 
         deck.reshuffleDeck(); // Initialize Deck
 
         // Loop to play game
         while (GameUtils.playCondition(player.getBankroll(), roundNumber, settings.getMaxRounds())) {
-            logger.info("Starting round {}.\n---------------------------------", roundNumber++);
+            logger.info("Starting round {}.\n---------------------------------", roundNumber);
             logger.info("Player has ${} in their bankroll.", player.getBankroll());
+
+            // Analytics
+            analytics.writeResults(roundNumber, (int) player.getBankroll());
 
             // Round flow
             checkReshuffle();
@@ -83,9 +85,7 @@ public class Game {
             dealerTurn();
             payout();
             player.clearHands();
-
-            // Analytics
-            analytics.writeResults(roundNumber, (int) player.getBankroll());
+            roundNumber++;
         }
 
         // Evaluate formulas and export results

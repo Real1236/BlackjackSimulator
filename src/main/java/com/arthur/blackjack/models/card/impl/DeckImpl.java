@@ -50,9 +50,8 @@ public class DeckImpl implements Deck {
 
     @Override
     public boolean checkReshuffle() {
-        double percentOfShoeRemaining = ((double) cards.size()) / (rules.getNumOfDecks() * 52);
-        int depth = (int) ((1 - percentOfShoeRemaining) * 100);
+        double depth = 1 - ((double) cards.size()) / (rules.getNumOfDecks() * 52);
         return (depth >= rules.getDepthToReshuffle());
     }
-    
+
 }

@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.controller.PlayerTurnManager;
 import com.arthur.blackjack.models.card.Deck;
 import com.arthur.blackjack.models.hand.HandFactory;
@@ -25,12 +26,14 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
     private HandFactory handFactory;
 
     private Strategy playStrategy;
+    private GameRules rules;
 
-    public PlayerTurnManagerImpl(Player player, Dealer dealer, Deck deck, HandFactory handFactory) {
+    public PlayerTurnManagerImpl(Player player, Dealer dealer, Deck deck, HandFactory handFactory, GameRules rules) {
         this.player = player;
         this.dealer = dealer;
         this.deck = deck;
         this.handFactory = handFactory;
+        this.rules = rules;
     }
 
     public void setStrategy(Strategy strategy) {
@@ -66,6 +69,7 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
         if (playerHandFirstCardValue == playerHandSecondCardValue
                 && hand.getCards().size() == 2
                 && player.getBankroll() >= hand.getBet()
+                && player.getHands().size() < rules.getResplitLimit()
                 && playStrategy.split(playerHandFirstCardValue, dealerUpcardValue)) {
             PlayerHand newHand = handFactory.createPlayerHand();
             newHand.addCard(hand.getCards().remove(1));

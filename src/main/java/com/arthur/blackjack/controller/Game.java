@@ -16,8 +16,6 @@ import com.arthur.blackjack.models.player.Player;
 import com.arthur.blackjack.strategies.StrategyFactory;
 import com.arthur.blackjack.utils.GameUtils;
 
-import java.util.Stack;
-
 import org.apache.logging.log4j.LogManager;
 
 @Component
@@ -131,12 +129,10 @@ public class Game {
     }
 
     private void payout() {
-        Stack<PlayerHand> stack = new Stack<>();
-        stack.addAll(player.getHands());
         int handNumber = 1;
-
-        while (!stack.empty()) {
-            PlayerHand hand = stack.pop();
+        for (PlayerHand hand : player.getHands()) {
+            logger.info("Comparing player hand {} to dealer's hand.", handNumber);
+            GameUtils.displayHands(dealer.getHand(), hand);
 
             // Analytics
             RoundResult result = null;
@@ -165,26 +161,27 @@ public class Game {
             else if (dealer.getHand().getHandValue() > 21) {
                 logger.info("Dealer busted with a hand value of {}.", dealer.getHand().getHandValue());
                 player.addToBankroll(hand.getBet() * 2);
-                logger.info("Player won ${}.", hand.getBet() * 2);
+                logger.info("Player hand {} won ${}.", handNumber, hand.getBet() * 2);
                 result = hand.getBet() == settings.getBetSize() ? RoundResult.WIN : RoundResult.DOUBLE_WIN;
             }
 
             // Compare hands
             else if (hand.getHandValue() > dealer.getHand().getHandValue()) {
                 player.addToBankroll(hand.getBet() * 2);
-                logger.info("Player won ${}.", hand.getBet() * 2);
+                logger.info("Player hand {} won ${}.", handNumber, hand.getBet() * 2);
                 result = hand.getBet() == settings.getBetSize() ? RoundResult.WIN : RoundResult.DOUBLE_WIN;
             } else if (hand.getHandValue() == dealer.getHand().getHandValue()) {
                 player.addToBankroll(hand.getBet());
-                logger.info("Player pushed.");
+                logger.info("Player hand {} pushed.", handNumber);
                 result = RoundResult.PUSH;
             } else {
-                logger.info("Player lost ${}.", hand.getBet());
+                logger.info("Player hand {} lost ${}.", handNumber, hand.getBet());
                 result = hand.getBet() == settings.getBetSize() ? RoundResult.LOSE : RoundResult.DOUBLE_LOSE;
             }
 
             // Analytics
             analytics.recordRoundResult(roundNumber, result);
+            handNumber++;
         }
     }
 }

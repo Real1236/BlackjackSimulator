@@ -78,7 +78,7 @@ public class AnalyticsImpl implements Analytics {
     public void evaluateFormulas() {
         FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
         for (int row = 1; row < 13; row++) {
-            Cell c = sheet.getRow(row).getCell(12);
+            Cell c = sheet.getRow(row).getCell(14);
             if (c == null || c.getCellType() != CellType.FORMULA)
                 continue;
 

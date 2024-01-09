@@ -155,8 +155,8 @@ public class Game {
                     player.addToBankroll(hand.getBet());
                     result = RoundResult.PUSH;
                 } else {
-                    player.addToBankroll(hand.getBet() * rules.getBlackjackPayout() + 1);
-                    logger.info("Player won ${}.", hand.getBet() * 2.5);
+                    player.addToBankroll(hand.getBet() * (rules.getBlackjackPayout() + 1));
+                    logger.info("Player won ${}.", hand.getBet() * (rules.getBlackjackPayout() + 1));
                     result = RoundResult.BLACKJACK;
                 }
             }

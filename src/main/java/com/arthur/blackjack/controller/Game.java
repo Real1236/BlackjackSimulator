@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.arthur.blackjack.analytics.Analytics;
 import com.arthur.blackjack.analytics.RoundResult;
+import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.config.GameSettings;
 import com.arthur.blackjack.models.player.Dealer;
 import com.arthur.blackjack.models.card.Deck;
@@ -33,6 +34,7 @@ public class Game {
     private PlayerTurnManager playerTurnManager;
 
     private GameSettings settings;
+    private GameRules rules;
     private StrategyFactory strategyFactory;
     private Analytics analytics;
 
@@ -42,6 +44,7 @@ public class Game {
             HandFactory handFactory,
             PlayerTurnManager playerTurnManager,
             GameSettings settings,
+            GameRules rules,
             StrategyFactory strategyFactory,
             Analytics analytics) {
         this.roundNumber = 1;
@@ -50,6 +53,7 @@ public class Game {
         this.deck = deck;
         this.playerTurnManager = playerTurnManager;
         this.handFactory = handFactory;
+        this.rules = rules;
         this.settings = settings;
         this.strategyFactory = strategyFactory;
         this.analytics = analytics;
@@ -151,7 +155,7 @@ public class Game {
                     player.addToBankroll(hand.getBet());
                     result = RoundResult.PUSH;
                 } else {
-                    player.addToBankroll(hand.getBet() * 2.5);
+                    player.addToBankroll(hand.getBet() * rules.getBlackjackPayout() + 1);
                     logger.info("Player won ${}.", hand.getBet() * 2.5);
                     result = RoundResult.BLACKJACK;
                 }

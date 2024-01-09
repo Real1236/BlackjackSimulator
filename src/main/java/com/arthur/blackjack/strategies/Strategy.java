@@ -13,6 +13,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.arthur.blackjack.models.hand.Hand;
+import com.arthur.blackjack.utils.GameUtils;
+
 /**
  * The Strategy interface represents a strategy for playing blackjack.
  * It defines methods for making decisions during the game.
@@ -25,25 +28,25 @@ public abstract class Strategy {
      * dealer's upcard value.
      * The value is the action to take for that hand.
      */
-    protected Map<Pair<Integer, Integer>, Action> hardTable;
-    protected Map<Pair<Integer, Integer>, Action> softTable;
-    protected Map<Pair<Integer, Integer>, Action> splitTable;
+    private Map<Pair<Integer, Integer>, Action> hardTable;
+    private Map<Pair<Integer, Integer>, Action> softTable;
+    private Map<Pair<Integer, Integer>, Action> splitTable;
 
     public Strategy() {
         String filePath = getFilePath();
         try (FileInputStream fis = new FileInputStream(new File(filePath));
                 Workbook workbook = new XSSFWorkbook(fis)) {
 
-            hardTable = getTable(workbook, "Hard");
-            softTable = getTable(workbook, "Soft");
-            splitTable = getTable(workbook, "Split");
+            this.hardTable = getTable(workbook, "Hard");
+            this.softTable = getTable(workbook, "Soft");
+            this.splitTable = getTable(workbook, "Split");
             System.out.println("Successfully read Excel file");
         } catch (IOException e) {
             throw new RuntimeException("Failed to read Excel file", e);
         }
     }
 
-    protected Map<Pair<Integer, Integer>, Action> getTable(Workbook workbook, String sheetName) {
+    private Map<Pair<Integer, Integer>, Action> getTable(Workbook workbook, String sheetName) {
         Sheet sheet = workbook.getSheet(sheetName);
         Map<Pair<Integer, Integer>, Action> table = new HashMap<>();
         int rowIndex = 0;
@@ -70,8 +73,14 @@ public abstract class Strategy {
      * 
      * @return true if another card should be drawn, false otherwise
      */
-    public boolean hit() {
-        throw new UnsupportedOperationException("Not implemented");
+    public boolean hit(Hand playerHand, int dealerUpcardValue) {
+        int playerHandValue = playerHand.getHandValue();
+        Action action = null;
+        if (GameUtils.isHard(playerHand))
+            action = hardTable.get(Pair.of(playerHandValue, dealerUpcardValue));
+        else
+            action = hardTable.get(Pair.of(playerHandValue, dealerUpcardValue));
+        return action == Action.HIT || action == Action.DOUBLE_DOWN;
     }
 
     /**

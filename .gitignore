@@ -34,3 +34,8 @@ build/
 
 ### Others ###
 logs/
+
+
+### Analytics ###
+/*.xlsx
+src/main/resources/analytics/Results.xlsx

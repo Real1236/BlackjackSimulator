@@ -3,6 +3,8 @@ package com.arthur.blackjack.controller;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import com.arthur.blackjack.analytics.Analytics;
+import com.arthur.blackjack.analytics.RoundResult;
 import com.arthur.blackjack.config.GameSettings;
 import com.arthur.blackjack.models.player.Dealer;
 import com.arthur.blackjack.models.card.Deck;
@@ -32,8 +34,16 @@ public class Game {
 
     private GameSettings settings;
     private StrategyFactory strategyFactory;
+    private Analytics analytics;
 
-    public Game(Player player, Dealer dealer, Deck deck, HandFactory handFactory, PlayerTurnManager playerTurnManager, GameSettings settings, StrategyFactory strategyFactory) {
+    public Game(Player player,
+            Dealer dealer,
+            Deck deck,
+            HandFactory handFactory,
+            PlayerTurnManager playerTurnManager,
+            GameSettings settings,
+            StrategyFactory strategyFactory,
+            Analytics analytics) {
         this.roundNumber = 1;
         this.player = player;
         this.dealer = dealer;
@@ -42,18 +52,25 @@ public class Game {
         this.handFactory = handFactory;
         this.settings = settings;
         this.strategyFactory = strategyFactory;
+        this.analytics = analytics;
     }
-    
+
     public void play() {
         logger.info("Starting a game of Blackjack!");
 
-        deck.reshuffleDeck();   // Initialize Deck
-        playerTurnManager.setStrategy(strategyFactory.getStrategy("basic"));    // Set strategy
+        // Set strategy and analytics
+        playerTurnManager.setStrategy(strategyFactory.getStrategy("basic"));
+        analytics.createNewResultsSheet(1, settings.getBetSize()); // TODO - make game number dynamic
+        analytics.writeResults(roundNumber, (int) player.getBankroll());
+
+        deck.reshuffleDeck(); // Initialize Deck
 
         // Loop to play game
         while (GameUtils.playCondition(player.getBankroll(), roundNumber, settings.getMaxRounds())) {
             logger.info("Starting round {}.\n---------------------------------", roundNumber++);
             logger.info("Player has ${} in their bankroll.", player.getBankroll());
+
+            // Round flow
             checkReshuffle();
             initializeHands();
             placeInitialBet();
@@ -62,7 +79,14 @@ public class Game {
             dealerTurn();
             payout();
             player.clearHands();
+
+            // Analytics
+            analytics.writeResults(roundNumber, (int) player.getBankroll());
         }
+
+        // Evaluate formulas and export results
+        analytics.evaluateFormulas();
+        analytics.saveExcel();
     }
 
     private void checkReshuffle() {
@@ -110,40 +134,53 @@ public class Game {
         while (!stack.empty()) {
             PlayerHand hand = stack.pop();
 
+            // Analytics
+            RoundResult result = null;
+
             // Bust
             if (hand.getHandValue() > 21) {
                 logger.info("Hand {} busted with a hand value of {}.", handNumber, hand.getHandValue());
-            } 
-            
+                result = hand.getBet() == settings.getBetSize() ? RoundResult.BUST : RoundResult.DOUBLE_BUST;
+            }
+
             // Blackjack
             else if (GameUtils.isBlackjack(hand)) {
                 logger.info("Hand {} has a blackjack!", handNumber);
                 if (GameUtils.isBlackjack(dealer.getHand())) {
                     logger.info("Dealer also has a blackjack. Player pushed.");
                     player.addToBankroll(hand.getBet());
+                    result = RoundResult.PUSH;
                 } else {
                     player.addToBankroll(hand.getBet() * 2.5);
                     logger.info("Player won ${}.", hand.getBet() * 2.5);
+                    result = RoundResult.BLACKJACK;
                 }
             }
-            
+
             // Dealer bust
             else if (dealer.getHand().getHandValue() > 21) {
                 logger.info("Dealer busted with a hand value of {}.", dealer.getHand().getHandValue());
                 player.addToBankroll(hand.getBet() * 2);
                 logger.info("Player won ${}.", hand.getBet() * 2);
-            } 
-            
+                result = hand.getBet() == settings.getBetSize() ? RoundResult.WIN : RoundResult.DOUBLE_WIN;
+            }
+
             // Compare hands
             else if (hand.getHandValue() > dealer.getHand().getHandValue()) {
                 player.addToBankroll(hand.getBet() * 2);
                 logger.info("Player won ${}.", hand.getBet() * 2);
+                result = hand.getBet() == settings.getBetSize() ? RoundResult.WIN : RoundResult.DOUBLE_WIN;
             } else if (hand.getHandValue() == dealer.getHand().getHandValue()) {
                 player.addToBankroll(hand.getBet());
                 logger.info("Player pushed.");
+                result = RoundResult.PUSH;
             } else {
                 logger.info("Player lost ${}.", hand.getBet());
+                result = hand.getBet() == settings.getBetSize() ? RoundResult.LOSE : RoundResult.DOUBLE_LOSE;
             }
+
+            // Analytics
+            analytics.recordRoundResult(roundNumber, result);
         }
     }
 }

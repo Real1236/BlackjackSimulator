@@ -98,7 +98,8 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
     }
 
     private void hitOrStand(PlayerHand hand) {
-        while (hand.getHandValue() < 21 && playStrategy.hit()) {
+        while (hand.getHandValue() < 21
+                && playStrategy.hit(hand, dealer.getHand().getUpCard().getRank().getValue())) {
             hand.addCard(deck.dealCard());
             logger.info("Player hit.");
             GameUtils.displayHandsHiddenUpcard(dealer.getHand(), hand);

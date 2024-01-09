@@ -1,11 +1,7 @@
 package com.arthur.blackjack.strategies;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.arthur.blackjack.models.hand.Hand;
+import com.arthur.blackjack.utils.GameUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -13,8 +9,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.arthur.blackjack.models.hand.Hand;
-import com.arthur.blackjack.utils.GameUtils;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The Strategy interface represents a strategy for playing blackjack.
@@ -28,14 +26,14 @@ public abstract class Strategy {
      * dealer's upcard value.
      * The value is the action to take for that hand.
      */
-    private Map<Pair<Integer, Integer>, Action> hardTable;
-    private Map<Pair<Integer, Integer>, Action> softTable;
-    private Map<Pair<Integer, Integer>, Action> splitTable;
+    private final Map<Pair<Integer, Integer>, Action> hardTable;
+    private final Map<Pair<Integer, Integer>, Action> softTable;
+    private final Map<Pair<Integer, Integer>, Action> splitTable;
 
     public Strategy() {
         String filePath = getFilePath();
-        try (FileInputStream fis = new FileInputStream(new File(filePath));
-                Workbook workbook = new XSSFWorkbook(fis)) {
+        try (FileInputStream fis = new FileInputStream(filePath);
+             Workbook workbook = new XSSFWorkbook(fis)) {
 
             this.hardTable = getTable(workbook, "Hard");
             this.softTable = getTable(workbook, "Soft");
@@ -81,7 +79,7 @@ public abstract class Strategy {
      */
     public boolean hit(Hand playerHand, int dealerUpcardValue) {
         int playerHandValue = playerHand.getHandValue();
-        Action action = null;
+        Action action;
         if (GameUtils.isHard(playerHand))
             action = hardTable.get(Pair.of(playerHandValue, dealerUpcardValue));
         else

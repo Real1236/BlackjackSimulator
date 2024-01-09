@@ -6,9 +6,9 @@ import com.arthur.blackjack.config.GameSettings;
 
 @Component
 public class GameSettingsImpl implements GameSettings {
-    private int bankroll;
-    private int betSize;
-    private int maxRounds;
+    private final int bankroll;
+    private final int betSize;
+    private final int maxRounds;
 
     public GameSettingsImpl() {
         this.bankroll = 1000;

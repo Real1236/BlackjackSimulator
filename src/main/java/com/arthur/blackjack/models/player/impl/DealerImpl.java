@@ -12,9 +12,9 @@ import com.arthur.blackjack.models.hand.DealerHand;
 public class DealerImpl implements Dealer {
 
     private DealerHand hand;
-    private Deck deck;
+    private final Deck deck;
 
-    private GameRules gameRules;
+    private final GameRules gameRules;
 
     public DealerImpl(Deck deck, GameRules gameRules) {
         this.hand = null;

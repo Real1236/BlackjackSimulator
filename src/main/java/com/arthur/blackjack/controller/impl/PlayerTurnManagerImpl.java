@@ -20,13 +20,13 @@ import com.arthur.blackjack.utils.GameUtils;
 public class PlayerTurnManagerImpl implements PlayerTurnManager {
     private static final Logger logger = LogManager.getLogger(PlayerTurnManagerImpl.class);
 
-    private Player player;
-    private Dealer dealer;
-    private Deck deck;
-    private HandFactory handFactory;
+    private final Player player;
+    private final Dealer dealer;
+    private final Deck deck;
+    private final HandFactory handFactory;
 
     private Strategy playStrategy;
-    private GameRules rules;
+    private final GameRules rules;
 
     public PlayerTurnManagerImpl(Player player, Dealer dealer, Deck deck, HandFactory handFactory, GameRules rules) {
         this.player = player;

@@ -6,17 +6,17 @@ import com.arthur.blackjack.config.GameRules;
 
 @Component
 public class FanDuelAmericanRules implements GameRules {
-    private int numOfDecks;
-    private boolean standsOnSoft17;
-    private boolean doubleAfterSplit;
-    private int resplitLimit;
-    private boolean resplitAces;
-    private boolean hitSplitAces;
-    private boolean loseOnlyOGBetAgainstDealerBJ;
-    private boolean surrender;
-    private double blackjackPayout;
-    private boolean dealerPeeks;
-    private double depthToReshuffle;
+    private final int numOfDecks;
+    private final boolean standsOnSoft17;
+    private final boolean doubleAfterSplit;
+    private final int resplitLimit;
+    private final boolean resplitAces;
+    private final boolean hitSplitAces;
+    private final boolean loseOnlyOGBetAgainstDealerBJ;
+    private final boolean surrender;
+    private final double blackjackPayout;
+    private final boolean dealerPeeks;
+    private final double depthToReshuffle;
 
     public FanDuelAmericanRules() {
         this.numOfDecks = 8;

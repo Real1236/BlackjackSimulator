@@ -13,11 +13,11 @@ import com.arthur.blackjack.models.player.Player;
 public class PlayerImpl implements Player {
 
     private double bankroll;
-    private List<PlayerHand> hands;
+    private final List<PlayerHand> hands;
 
     public PlayerImpl(GameSettings settings) {
         this.bankroll = settings.getBankroll();
-        this.hands = new ArrayList<PlayerHand>();
+        this.hands = new ArrayList<>();
     }
 
     @Override

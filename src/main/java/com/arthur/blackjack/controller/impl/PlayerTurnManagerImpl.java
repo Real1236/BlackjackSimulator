@@ -61,11 +61,11 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
     }
 
     private boolean split(PlayerHand hand, Stack<PlayerHand> stack) {
-        // If the player has a pair and enough money to split, player can split
         int playerHandFirstCardValue = hand.getCards().get(0).getRank().getValue();
         int playerHandSecondCardValue = hand.getCards().get(1).getRank().getValue();
         int dealerUpcardValue = dealer.getHand().getCards().get(0).getRank().getValue();
 
+        // Must have pair, only 2 cards, enough money, and not exceed resplit limit
         if (playerHandFirstCardValue == playerHandSecondCardValue
                 && hand.getCards().size() == 2
                 && player.getBankroll() >= hand.getBet()
@@ -88,8 +88,10 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
     }
 
     private boolean doubleDown(PlayerHand hand) {
-        // If the player has enough money to double down, player can double down
+        // Must have enough money, only 2 cards, and double after split or only 1 hand
         if (player.getBankroll() >= hand.getBet()
+                && hand.getCards().size() == 2
+                && (rules.isDoubleAfterSplit() || player.getHands().size() == 1)
                 && playStrategy.doubleDown(hand, dealer.getHand().getUpCard().getRank().getValue())) {
             hand.addCard(deck.dealCard());
             hand.setBet(hand.getBet() * 2);

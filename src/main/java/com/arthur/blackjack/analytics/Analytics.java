@@ -49,7 +49,7 @@ public class Analytics {
 
     public void createNewResultsSheet(int gameNum, int bet) {
         sheet = workbook.cloneSheet(0, "Results" + gameNum);
-        sheet.getRow(0).createCell(12).setCellValue(bet);
+        sheet.getRow(0).createCell(14).setCellValue(bet);
     }
 
     public void writeResults(Integer round, Integer money) {
@@ -90,7 +90,7 @@ public class Analytics {
         }
 
         Row resultDistribution = sheet.getRow(8);
-        for (int col = 11; col < 19; col++) {
+        for (int col = 13; col < 21; col++) {
             Cell c = resultDistribution.getCell(col);
             if (c.getCellType() != CellType.FORMULA)
                 continue;

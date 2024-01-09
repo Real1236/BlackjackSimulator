@@ -45,15 +45,24 @@ public final class GameUtils {
     public static void displayHandsHiddenUpcard(DealerHand dealerHand, PlayerHand playerHand) {
         logger.info("Dealer's hand: {} (Hidden).", dealerHand.getUpCard());
         logger.info("Dealer's hand value: {}.", dealerHand.getUpCard().getRank().getValue());
-
-        StringBuilder playerHandString = new StringBuilder("Player's hand: ");
-        for (int i = 0; i < playerHand.getCards().size(); i++) {
-            playerHandString.append(playerHand.getCards().get(i));
-            if (i < playerHand.getCards().size() - 1) {
-                playerHandString.append(", ");
-            }
-        }
-        logger.info(playerHandString.toString());
+        logger.info(buildHand("Player", playerHand));
         logger.info("Player's hand value: {}.", playerHand.getHandValue());
+    }
+
+    public static void displayHands(Hand dealerHand, Hand playerHand) {
+        logger.info(buildHand("Dealer", dealerHand));
+        logger.info("Dealer's hand value: {}.", dealerHand.getHandValue());
+        logger.info(buildHand("Player", playerHand));
+        logger.info("Player's hand value: {}.", playerHand.getHandValue());
+    }
+
+    private static String buildHand(String dealerOrPlayer, Hand hand) {
+        StringBuilder handString = new StringBuilder(dealerOrPlayer + "'s hand: ");
+        for (int i = 0; i < hand.getCards().size(); i++) {
+            handString.append(hand.getCards().get(i));
+            if (i < hand.getCards().size() - 1)
+                handString.append(", ");
+        }
+        return handString.toString();
     }
 }

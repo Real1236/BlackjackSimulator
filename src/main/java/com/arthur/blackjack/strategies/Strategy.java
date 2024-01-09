@@ -79,7 +79,7 @@ public abstract class Strategy {
         if (GameUtils.isHard(playerHand))
             action = hardTable.get(Pair.of(playerHandValue, dealerUpcardValue));
         else
-            action = hardTable.get(Pair.of(playerHandValue, dealerUpcardValue));
+            action = softTable.get(Pair.of(playerHandValue, dealerUpcardValue));
         return action == Action.HIT || action == Action.DOUBLE_DOWN;
     }
 
@@ -93,7 +93,7 @@ public abstract class Strategy {
         if (GameUtils.isHard(playerHand))
             return hardTable.get(Pair.of(playerHandValue, dealerUpcardValue)) == Action.DOUBLE_DOWN;
         else
-            return hardTable.get(Pair.of(playerHandValue, dealerUpcardValue)) == Action.DOUBLE_DOWN;
+            return softTable.get(Pair.of(playerHandValue, dealerUpcardValue)) == Action.DOUBLE_DOWN;
     }
 
     /**
@@ -104,18 +104,4 @@ public abstract class Strategy {
     public boolean split(int playerOneCardValue, int dealerUpcardValue) {
         throw new UnsupportedOperationException("Not implemented");
     }
-    // String filePath = getFilePath();
-    // try (FileInputStream fis = new FileInputStream(new File(filePath));
-    // Workbook workbook = new XSSFWorkbook(fis)) {
-
-    // Sheet sheet = workbook.getSheet("Split");
-    // Row row = sheet.getRow(playerValue);
-    // Cell cell = row.getCell(getColumnIndex(dealerCard));
-
-    // String decision = cell.getStringCellValue();
-    // return decision.equals("Y"); // Assuming "Y" means split
-    // } catch (IOException e) {
-    // throw new RuntimeException("Failed to read Excel file", e);
-    // }
-    // }
 }

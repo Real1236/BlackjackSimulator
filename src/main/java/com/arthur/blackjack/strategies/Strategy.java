@@ -40,7 +40,6 @@ public abstract class Strategy {
             this.hardTable = getTable(workbook, "Hard");
             this.softTable = getTable(workbook, "Soft");
             this.splitTable = getTable(workbook, "Split");
-            System.out.println("Successfully read Excel file");
         } catch (IOException e) {
             throw new RuntimeException("Failed to read Excel file", e);
         }

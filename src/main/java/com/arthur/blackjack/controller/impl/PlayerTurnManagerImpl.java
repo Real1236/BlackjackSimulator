@@ -94,8 +94,8 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
                 && (rules.isDoubleAfterSplit() || player.getHands().size() == 1)
                 && playStrategy.doubleDown(hand, dealer.getHand().getUpCard().getRank().getValue())) {
             hand.addCard(deck.dealCard());
-            hand.setBet(hand.getBet() * 2);
             player.subtractFromBankroll(hand.getBet());
+            hand.setBet(hand.getBet() * 2);
             logger.info("Player doubled down and placed a bet of ${}.", hand.getBet());
             GameUtils.displayHandsHiddenUpcard(dealer.getHand(), hand);
             return true;

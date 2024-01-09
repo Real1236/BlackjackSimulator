@@ -24,17 +24,17 @@ public class Game {
 
     private int roundNumber;
 
-    private Player player;
-    private Dealer dealer;
-    private Deck deck;
-    private HandFactory handFactory;
+    private final Player player;
+    private final Dealer dealer;
+    private final Deck deck;
+    private final HandFactory handFactory;
 
-    private PlayerTurnManager playerTurnManager;
+    private final PlayerTurnManager playerTurnManager;
 
-    private GameSettings settings;
-    private GameRules rules;
-    private StrategyFactory strategyFactory;
-    private Analytics analytics;
+    private final GameSettings settings;
+    private final GameRules rules;
+    private final StrategyFactory strategyFactory;
+    private final Analytics analytics;
 
     public Game(Player player,
             Dealer dealer,
@@ -135,7 +135,7 @@ public class Game {
             GameUtils.displayHands(dealer.getHand(), hand);
 
             // Analytics
-            RoundResult result = null;
+            RoundResult result;
 
             // Bust
             if (hand.getHandValue() > 21) {

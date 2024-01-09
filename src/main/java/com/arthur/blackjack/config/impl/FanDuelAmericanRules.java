@@ -23,10 +23,10 @@ public class FanDuelAmericanRules implements GameRules {
         this.standsOnSoft17 = false;
         this.doubleAfterSplit = true;
         this.resplitLimit = 2;
-        this.resplitAces = false;
-        this.hitSplitAces = false;
-        this.loseOnlyOGBetAgainstDealerBJ = false;
-        this.surrender = false;
+        this.resplitAces = false; // TODO
+        this.hitSplitAces = false; // TODO
+        this.loseOnlyOGBetAgainstDealerBJ = false; // TODO
+        this.surrender = false; // TODO
         this.blackjackPayout = 1.5;
         this.dealerPeeks = true;
         this.depthToReshuffle = 0.5;

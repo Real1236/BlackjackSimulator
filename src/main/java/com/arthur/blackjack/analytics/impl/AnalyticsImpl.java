@@ -1,4 +1,4 @@
-package com.arthur.blackjack.analytics;
+package com.arthur.blackjack.analytics.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.UUID;
 
+import com.arthur.blackjack.analytics.Analytics;
+import com.arthur.blackjack.analytics.RoundResult;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -11,7 +11,7 @@ public class GameSettingsImpl implements GameSettings {
     private int maxRounds;
 
     public GameSettingsImpl() {
-        this.bankroll = 1000;
+        this.bankroll = 300000;
         this.betSize = 10;
         this.maxRounds = (int) Math.pow(10, 6);
     }
@@ -30,5 +30,5 @@ public class GameSettingsImpl implements GameSettings {
     public int getMaxRounds() {
         return this.maxRounds;
     }
-    
+
 }

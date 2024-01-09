@@ -110,6 +110,7 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
             logger.info("Player hit.");
             GameUtils.displayHandsHiddenUpcard(dealer.getHand(), hand);
         }
+        logger.info("Player stood.");
     }
 
 }

@@ -86,7 +86,7 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
     private boolean doubleDown(PlayerHand hand) {
         // If the player has enough money to double down, player can double down
         if (player.getBankroll() >= hand.getBet()
-                && playStrategy.doubleDown()) {
+                && playStrategy.doubleDown(hand, dealer.getHand().getUpCard().getRank().getValue())) {
             hand.addCard(deck.dealCard());
             hand.setBet(hand.getBet() * 2);
             player.subtractFromBankroll(hand.getBet());

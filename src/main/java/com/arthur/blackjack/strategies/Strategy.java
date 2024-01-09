@@ -88,8 +88,12 @@ public abstract class Strategy {
      * 
      * @return true if the hand should be doubled down, false otherwise
      */
-    public boolean doubleDown() {
-        throw new UnsupportedOperationException("Not implemented");
+    public boolean doubleDown(Hand playerHand, int dealerUpcardValue) {
+        int playerHandValue = playerHand.getHandValue();
+        if (GameUtils.isHard(playerHand))
+            return hardTable.get(Pair.of(playerHandValue, dealerUpcardValue)) == Action.DOUBLE_DOWN;
+        else
+            return hardTable.get(Pair.of(playerHandValue, dealerUpcardValue)) == Action.DOUBLE_DOWN;
     }
 
     /**

@@ -25,12 +25,7 @@ public abstract class AbstractHand implements Hand {
     }
 
     @Override
-    public void clearHand() {
-        cards.clear();
-    }
-
-    @Override
-    public Integer getHandValue() {
+    public int getHandValue() {
         int total = 0;
         int numAces = 0;
         for (Card card : cards) {

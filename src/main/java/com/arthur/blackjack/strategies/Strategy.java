@@ -45,6 +45,15 @@ public abstract class Strategy {
         }
     }
 
+    /**
+     * Retrieves a table of actions based on player value and dealer card from a
+     * given workbook and sheet.
+     *
+     * @param workbook  the workbook containing the sheet
+     * @param sheetName the name of the sheet to retrieve the table from
+     * @return a map of pairs of player value and dealer card to corresponding
+     *         actions
+     */
     private Map<Pair<Integer, Integer>, Action> getTable(Workbook workbook, String sheetName) {
         Sheet sheet = workbook.getSheet(sheetName);
         Map<Pair<Integer, Integer>, Action> table = new HashMap<>();
@@ -64,8 +73,6 @@ public abstract class Strategy {
         }
         return table;
     }
-
-    protected abstract String getFilePath();
 
     /**
      * Determines whether to hit (draw another card) on the current hand.
@@ -103,4 +110,6 @@ public abstract class Strategy {
     public boolean split(int playerOneCardValue, int dealerUpcardValue) {
         return splitTable.get(Pair.of(playerOneCardValue, dealerUpcardValue)) == Action.SPLIT;
     }
+
+    protected abstract String getFilePath();
 }

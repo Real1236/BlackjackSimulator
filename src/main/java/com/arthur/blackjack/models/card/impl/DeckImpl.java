@@ -12,6 +12,7 @@ import com.arthur.blackjack.models.card.Card;
 import com.arthur.blackjack.models.card.CardFactory;
 import com.arthur.blackjack.models.card.Deck;
 import com.arthur.blackjack.models.card.Rank;
+import com.arthur.blackjack.strategies.Strategy;
 
 @Component
 public class DeckImpl implements Deck {
@@ -22,11 +23,17 @@ public class DeckImpl implements Deck {
 
     GameSettings settings;
     GameRules rules;
+    Strategy strategy;
 
     public DeckImpl(CardFactory cardFactory, GameSettings settings, GameRules rules) {
         this.cardFactory = cardFactory;
         this.settings = settings;
         this.rules = rules;
+    }
+
+    @Override
+    public void setStrategy(Strategy strategy) {
+        this.strategy = strategy;
     }
 
     @Override
@@ -45,6 +52,8 @@ public class DeckImpl implements Deck {
 
     @Override
     public Card dealCard() {
+        Card card = cards.removeLast();
+
         return cards.removeLast();
     }
 

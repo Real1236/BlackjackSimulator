@@ -13,6 +13,7 @@ import com.arthur.blackjack.models.hand.Hand;
 import com.arthur.blackjack.models.hand.HandFactory;
 import com.arthur.blackjack.models.hand.PlayerHand;
 import com.arthur.blackjack.models.player.Player;
+import com.arthur.blackjack.strategies.Strategy;
 import com.arthur.blackjack.strategies.StrategyFactory;
 import com.arthur.blackjack.utils.GameUtils;
 
@@ -61,7 +62,9 @@ public class Game {
         logger.info("Starting a game of Blackjack!");
 
         // Set strategy and analytics
-        playerTurnManager.setStrategy(strategyFactory.getStrategy("basic"));
+        Strategy strategy = strategyFactory.getStrategy("basic");
+        playerTurnManager.setStrategy(strategy);
+        deck.setStrategy(strategy);
         analytics.createNewResultsSheet(1, settings.getBetSize()); // TODO - make game number dynamic
 
         deck.reshuffleDeck(); // Initialize Deck

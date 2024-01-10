@@ -24,7 +24,7 @@ public class FanDuelAmericanRules implements GameRules {
         this.doubleAfterSplit = true;
         this.resplitLimit = 2;
         this.resplitAces = false;
-        this.hitSplitAces = false; // TODO
+        this.hitSplitAces = false;
         this.loseOnlyOGBetAgainstDealerBJ = false; // TODO
         this.surrender = false; // TODO
         this.blackjackPayout = 1.5;

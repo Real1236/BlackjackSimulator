@@ -28,7 +28,10 @@ public class CustomCountingStrategy extends AbstractStrategy {
                     break;
                 }
             }
+
+            // Evaluate all sheets and update strategy tables
             workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+            updateStrategyTables(workbook);
         } catch (IOException e) {
             throw new RuntimeException("Failed to read Excel file", e);
         }

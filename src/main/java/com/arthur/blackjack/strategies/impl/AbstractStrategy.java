@@ -25,21 +25,24 @@ public abstract class AbstractStrategy implements Strategy {
      * dealer's upcard value.
      * The value is the action to take for that hand.
      */
-    private final Map<Pair<Integer, Integer>, Action> hardTable;
-    private final Map<Pair<Integer, Integer>, Action> softTable;
-    private final Map<Pair<Integer, Integer>, Action> splitTable;
+    protected Map<Pair<Integer, Integer>, Action> hardTable;
+    protected Map<Pair<Integer, Integer>, Action> softTable;
+    protected Map<Pair<Integer, Integer>, Action> splitTable;
 
     public AbstractStrategy() {
         String filePath = getFilePath();
         try (FileInputStream fis = new FileInputStream(filePath);
-             Workbook workbook = new XSSFWorkbook(fis)) {
-
-            this.hardTable = getTable(workbook, "Hard");
-            this.softTable = getTable(workbook, "Soft");
-            this.splitTable = getTable(workbook, "Split");
+                Workbook workbook = new XSSFWorkbook(fis)) {
+            updateStrategyTables(workbook);
         } catch (IOException e) {
             throw new RuntimeException("Failed to read Excel file", e);
         }
+    }
+
+    protected void updateStrategyTables(Workbook workbook) {
+        this.hardTable = getTable(workbook, "Hard");
+        this.softTable = getTable(workbook, "Soft");
+        this.splitTable = getTable(workbook, "Split");
     }
 
     /**

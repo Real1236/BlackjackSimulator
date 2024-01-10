@@ -1,8 +1,9 @@
 package com.arthur.blackjack.controller;
 
-import com.arthur.blackjack.strategies.impl.AbstractStrategy;
+import com.arthur.blackjack.strategies.Strategy;
 
 public interface PlayerTurnManager {
-    void setStrategy(AbstractStrategy strategy);
+    void setStrategy(Strategy strategy);
+
     void playerTurn();
 }

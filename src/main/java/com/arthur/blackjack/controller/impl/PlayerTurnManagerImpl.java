@@ -14,7 +14,7 @@ import com.arthur.blackjack.models.hand.HandFactory;
 import com.arthur.blackjack.models.hand.PlayerHand;
 import com.arthur.blackjack.models.player.Dealer;
 import com.arthur.blackjack.models.player.Player;
-import com.arthur.blackjack.strategies.Strategy;
+import com.arthur.blackjack.strategies.impl.AbstractStrategy;
 import com.arthur.blackjack.utils.GameUtils;
 
 @Component
@@ -26,7 +26,7 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
     private final Deck deck;
     private final HandFactory handFactory;
 
-    private Strategy playStrategy;
+    private AbstractStrategy playStrategy;
     private final GameRules rules;
 
     public PlayerTurnManagerImpl(Player player, Dealer dealer, Deck deck, HandFactory handFactory, GameRules rules) {
@@ -37,7 +37,7 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
         this.rules = rules;
     }
 
-    public void setStrategy(Strategy strategy) {
+    public void setStrategy(AbstractStrategy strategy) {
         this.playStrategy = strategy;
     }
 

@@ -53,8 +53,8 @@ public class DeckImpl implements Deck {
     @Override
     public Card dealCard() {
         Card card = cards.removeLast();
-
-        return cards.removeLast();
+        strategy.countCard(card);
+        return card;
     }
 
     @Override

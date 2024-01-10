@@ -13,7 +13,7 @@ public class GameSettingsImpl implements GameSettings {
     public GameSettingsImpl() {
         this.bankroll = 1000;
         this.betSize = 10;
-        this.maxRounds = (int) Math.pow(10, 6);
+        this.maxRounds = (int) Math.pow(10, 5);
     }
 
     @Override

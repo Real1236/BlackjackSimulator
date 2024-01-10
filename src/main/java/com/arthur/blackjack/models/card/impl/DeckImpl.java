@@ -48,12 +48,13 @@ public class DeckImpl implements Deck {
             cards.addAll(oneDeck);
 
         Collections.shuffle(cards);
+        strategy.resetDeckComposition(); // Reset the deck composition in the Excel
     }
 
     @Override
     public Card dealCard() {
         Card card = cards.removeLast();
-        strategy.countCard(card);
+        strategy.countCard(card); // Count the card that was dealt
         return card;
     }
 

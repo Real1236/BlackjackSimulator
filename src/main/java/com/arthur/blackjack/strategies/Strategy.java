@@ -38,6 +38,11 @@ public interface Strategy {
     void countCard(Card card);
 
     /**
+     * Resets the deck composition in the Excel
+     */
+    void resetDeckComposition();
+
+    /**
      * Returns file path of Excel that contains strategy logic
      *
      * @return String

@@ -8,9 +8,17 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.models.card.Card;
 
 public class CustomCountingStrategy extends AbstractStrategy {
+
+    private final GameRules rules;
+
+    public CustomCountingStrategy(GameRules rules) {
+        super();
+        this.rules = rules;
+    }
 
     @Override
     public void countCard(Card card) {
@@ -27,6 +35,28 @@ public class CustomCountingStrategy extends AbstractStrategy {
                     quantityRow.getCell(i).setCellValue(quantity - 1);
                     break;
                 }
+            }
+
+            // Evaluate all sheets and update strategy tables
+            workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+            updateStrategyTables(workbook);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read Excel file", e);
+        }
+    }
+
+    @Override
+    public void resetDeckComposition() {
+        String filePath = getFilePath();
+        try (FileInputStream fis = new FileInputStream(filePath);
+                Workbook workbook = new XSSFWorkbook(fis)) {
+            // Reset the quantity of all cards in the deck
+            Sheet deckSheet = workbook.getSheet("Deck");
+            Row quantityRow = deckSheet.getRow(1);
+            for (int i = 1; i < 11; i++) {
+                quantityRow.getCell(i).setCellValue(rules.getNumOfDecks() * 4);
+                if (i == 10) // Face cards
+                    quantityRow.getCell(i).setCellValue(rules.getNumOfDecks() * 16);
             }
 
             // Evaluate all sheets and update strategy tables

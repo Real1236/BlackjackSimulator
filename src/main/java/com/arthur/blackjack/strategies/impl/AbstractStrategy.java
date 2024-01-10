@@ -1,6 +1,5 @@
 package com.arthur.blackjack.strategies.impl;
 
-import com.arthur.blackjack.models.card.Card;
 import com.arthur.blackjack.models.hand.Hand;
 import com.arthur.blackjack.strategies.Action;
 import com.arthur.blackjack.strategies.Strategy;
@@ -98,10 +97,4 @@ public abstract class AbstractStrategy implements Strategy {
     public boolean split(int playerOneCardValue, int dealerUpcardValue) {
         return splitTable.get(Pair.of(playerOneCardValue, dealerUpcardValue)) == Action.SPLIT;
     }
-
-    @Override
-    public abstract void countCard(Card card);
-
-    @Override
-    public abstract String getFilePath();
 }

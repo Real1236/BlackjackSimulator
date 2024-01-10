@@ -16,6 +16,11 @@ public class BasicStrategy extends AbstractStrategy {
     }
 
     @Override
+    public void resetDeckComposition() {
+
+    }
+
+    @Override
     public String getFilePath() {
         return "src/main/resources/strategies/BasicStrategy.xlsx";
     }

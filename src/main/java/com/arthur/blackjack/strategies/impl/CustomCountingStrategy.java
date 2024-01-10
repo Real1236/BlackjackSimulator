@@ -7,10 +7,12 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Component;
 
 import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.models.card.Card;
 
+@Component
 public class CustomCountingStrategy extends AbstractStrategy {
 
     private final GameRules rules;

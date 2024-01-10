@@ -43,6 +43,13 @@ public interface Strategy {
     void resetDeckComposition();
 
     /**
+     * Returns the expected value of the scenario
+     *
+     * @return double
+     */
+    double getEv();
+
+    /**
      * Returns file path of Excel that contains strategy logic
      *
      * @return String

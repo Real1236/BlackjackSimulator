@@ -21,6 +21,11 @@ public class BasicStrategy extends AbstractStrategy {
     }
 
     @Override
+    public double getEv() {
+        return 0;
+    }
+
+    @Override
     public String getFilePath() {
         return "src/main/resources/strategies/BasicStrategy.xlsx";
     }

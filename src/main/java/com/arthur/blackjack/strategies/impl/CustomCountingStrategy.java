@@ -70,6 +70,18 @@ public class CustomCountingStrategy extends AbstractStrategy {
     }
 
     @Override
+    public double getEv() {
+        String filePath = getFilePath();
+        try (FileInputStream fis = new FileInputStream(filePath);
+                Workbook workbook = new XSSFWorkbook(fis)) {
+            Sheet evSheet = workbook.getSheet("ev");
+            return evSheet.getRow(44).getCell(1).getNumericCellValue();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read Excel file", e);
+        }
+    }
+
+    @Override
     public String getFilePath() {
         return "src/main/resources/strategies/CustomCardCounting.xlsx";
     }

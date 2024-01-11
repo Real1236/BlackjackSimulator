@@ -10,6 +10,13 @@ import com.arthur.blackjack.models.hand.Hand;
 public interface Strategy {
 
     /**
+     * Determines the bet amount for the current hand.
+     *
+     * @return the bet amount
+     */
+    int getBet();
+
+    /**
      * Determines whether to hit (draw another card) on the current hand.
      *
      * @return true if another card should be drawn, false otherwise
@@ -41,13 +48,6 @@ public interface Strategy {
      * Resets the deck composition in the Excel
      */
     void resetDeckComposition();
-
-    /**
-     * Returns the expected value of the scenario
-     *
-     * @return double
-     */
-    double getEv();
 
     /**
      * Returns file path of Excel that contains strategy logic

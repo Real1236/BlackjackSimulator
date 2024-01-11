@@ -10,16 +10,46 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
 import com.arthur.blackjack.config.GameRules;
+import com.arthur.blackjack.config.GameSettings;
 import com.arthur.blackjack.models.card.Card;
+import com.arthur.blackjack.models.player.Player;
 
 @Component
 public class CustomCountingStrategy extends AbstractStrategy {
 
-    private final GameRules rules;
+    private Player player;
 
-    public CustomCountingStrategy(GameRules rules) {
+    private final GameRules rules;
+    private final GameSettings settings;
+
+    public CustomCountingStrategy(Player player, GameRules rules, GameSettings settings) {
         super();
+        this.player = player;
         this.rules = rules;
+        this.settings = settings;
+    }
+
+    @Override
+    public int getBet() {
+        double ev = getEv();
+        if (ev <= 0)
+            return settings.getBetSize();
+
+        // TODO: Update betting strategy
+        int roundedBet = (int) Math.round(ev * player.getBankroll());
+        int multipleOfFive = roundedBet - (roundedBet % 5);
+        return Math.max(multipleOfFive, settings.getBetSize());
+    }
+
+    private double getEv() {
+        String filePath = getFilePath();
+        try (FileInputStream fis = new FileInputStream(filePath);
+                Workbook workbook = new XSSFWorkbook(fis)) {
+            Sheet evSheet = workbook.getSheet("ev");
+            return evSheet.getRow(44).getCell(1).getNumericCellValue();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read Excel file", e);
+        }
     }
 
     @Override
@@ -64,18 +94,6 @@ public class CustomCountingStrategy extends AbstractStrategy {
             // Evaluate all sheets and update strategy tables
             workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
             updateStrategyTables(workbook);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read Excel file", e);
-        }
-    }
-
-    @Override
-    public double getEv() {
-        String filePath = getFilePath();
-        try (FileInputStream fis = new FileInputStream(filePath);
-                Workbook workbook = new XSSFWorkbook(fis)) {
-            Sheet evSheet = workbook.getSheet("ev");
-            return evSheet.getRow(44).getCell(1).getNumericCellValue();
         } catch (IOException e) {
             throw new RuntimeException("Failed to read Excel file", e);
         }

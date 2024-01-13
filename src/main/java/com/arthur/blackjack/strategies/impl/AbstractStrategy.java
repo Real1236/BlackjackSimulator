@@ -32,13 +32,14 @@ public abstract class AbstractStrategy implements Strategy {
         String filePath = getFilePath();
         try (FileInputStream fis = new FileInputStream(filePath);
                 Workbook workbook = new XSSFWorkbook(fis)) {
-            updateStrategyTables(workbook);
+            recalculate(workbook);
         } catch (IOException e) {
             throw new RuntimeException("Failed to read Excel file", e);
         }
     }
 
-    protected void updateStrategyTables(Workbook workbook) {
+    protected void recalculate(Workbook workbook) {
+        workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
         this.hardTable = getTable(workbook, "Hard");
         this.softTable = getTable(workbook, "Soft");
         this.splitTable = getTable(workbook, "Split");

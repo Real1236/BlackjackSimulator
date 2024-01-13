@@ -1,13 +1,22 @@
 package com.arthur.blackjack.strategies.impl;
 
+import com.arthur.blackjack.config.GameSettings;
 import com.arthur.blackjack.models.card.Card;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BasicStrategy extends AbstractStrategy {
 
-    public BasicStrategy() {
+    private final GameSettings settings;
+
+    public BasicStrategy(GameSettings settings) {
         super();
+        this.settings = settings;
+    }
+
+    @Override
+    public int getBetSize() {
+        return settings.getBetSize();
     }
 
     @Override

@@ -79,7 +79,7 @@ public class Game {
             logger.info("Player has ${} in their bankroll.", player.getBankroll());
 
             // Analytics
-            analytics.writeResults(roundNumber, (int) player.getBankroll());
+            analytics.recordNewRound(roundNumber, (int) player.getBankroll());
 
             // Round flow
             checkReshuffle();
@@ -114,6 +114,7 @@ public class Game {
         this.roundBetSize = strategy.getBetSize();
         player.subtractFromBankroll(this.roundBetSize);
         player.getHands().get(0).setBet(this.roundBetSize);
+        analytics.recordInitialBet(roundNumber, this.roundBetSize);
         logger.info("Player placed a bet of ${}.", this.roundBetSize);
         logger.info("Player has ${} in their bankroll.", player.getBankroll());
     }

@@ -3,6 +3,8 @@ package com.arthur.blackjack.strategies.impl;
 import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.config.GameSettings;
 import com.arthur.blackjack.models.card.Card;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -14,6 +16,7 @@ import java.io.IOException;
 
 @Component
 public class CustomCountingStrategy extends AbstractStrategy {
+    private static final Logger logger = LogManager.getLogger(CustomCountingStrategy.class);
 
     private final Workbook workbook;
 
@@ -35,13 +38,13 @@ public class CustomCountingStrategy extends AbstractStrategy {
     public int getBetSize() {
         // Maintain this cell location
         double playerEdge = workbook.getSheet("ev").getRow(44).getCell(1).getNumericCellValue();
-        System.out.println("Player edge: " + playerEdge);
+        logger.info("Player edge: " + playerEdge);
 
         // Follows strategy from: https://www.countingedge.com/card-counting/true-count/
         double betMultiple = 1000 * playerEdge + 1;
         double betSize = betMultiple * settings.getBetSize();
 
-        // Round down to nearest multiple of 5
+        // Round down to the nearest multiple of 5
         return Math.max((int) Math.floor(betSize / 5) * 5, settings.getBetSize());
     }
 

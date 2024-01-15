@@ -10,11 +10,11 @@ import com.arthur.blackjack.models.hand.Hand;
 public interface Strategy {
 
     /**
-     * Determines the bet amount for the current hand.
+     * Returns the bet size for the current hand.
      *
-     * @return the bet amount
+     * @return the bet size
      */
-    int getBet();
+    int getBetSize();
 
     /**
      * Determines whether to hit (draw another card) on the current hand.

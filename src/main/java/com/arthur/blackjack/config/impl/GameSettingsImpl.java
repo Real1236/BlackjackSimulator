@@ -11,8 +11,8 @@ public class GameSettingsImpl implements GameSettings {
     private final int maxRounds;
 
     public GameSettingsImpl() {
-        this.bankroll = 1000;
         this.betSize = 10;
+        this.bankroll = 1000 * betSize; // 1000 betting units = ~1% risk of ruin
         this.maxRounds = (int) Math.pow(10, 5);
     }
 

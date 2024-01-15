@@ -1,16 +1,16 @@
 package com.arthur.blackjack.strategies.impl;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-
+import com.arthur.blackjack.config.GameRules;
+import com.arthur.blackjack.config.GameSettings;
+import com.arthur.blackjack.models.card.Card;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
-import com.arthur.blackjack.config.GameRules;
-import com.arthur.blackjack.models.card.Card;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 @Component
 public class CustomCountingStrategy extends AbstractStrategy {
@@ -18,8 +18,9 @@ public class CustomCountingStrategy extends AbstractStrategy {
     private final Workbook workbook;
 
     private final GameRules rules;
+    private final GameSettings settings;
 
-    public CustomCountingStrategy(GameRules rules) {
+    public CustomCountingStrategy(GameRules rules, GameSettings settings) {
         super();
         try (FileInputStream fis = new FileInputStream(getFilePath())) {
             this.workbook = new XSSFWorkbook(fis);
@@ -27,12 +28,21 @@ public class CustomCountingStrategy extends AbstractStrategy {
             throw new RuntimeException("Failed to read Excel file", e);
         }
         this.rules = rules;
+        this.settings = settings;
     }
 
     @Override
     public int getBetSize() {
-        // TODO
-        return 0;
+        // Maintain this cell location
+        double playerEdge = workbook.getSheet("ev").getRow(44).getCell(1).getNumericCellValue();
+        System.out.println("Player edge: " + playerEdge);
+
+        // Follows strategy from: https://www.countingedge.com/card-counting/true-count/
+        double betMultiple = 1000 * playerEdge + 1;
+        double betSize = betMultiple * settings.getBetSize();
+
+        // Round down to nearest multiple of 5
+        return Math.max((int) Math.floor(betSize / 5) * 5, settings.getBetSize());
     }
 
     @Override

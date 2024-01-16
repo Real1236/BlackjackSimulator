@@ -1,11 +1,5 @@
 package com.arthur.blackjack.analytics.impl;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.UUID;
-
 import com.arthur.blackjack.analytics.Analytics;
 import com.arthur.blackjack.analytics.RoundResult;
 import org.apache.commons.io.FileUtils;
@@ -13,12 +7,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.UUID;
 
 @Component
 public class AnalyticsImpl implements Analytics {
@@ -49,12 +47,14 @@ public class AnalyticsImpl implements Analytics {
         }
     }
 
+    @Override
     public void createNewResultsSheet(int gameNum, int bet) {
         sheet = workbook.cloneSheet(0, "Results" + gameNum);
-        sheet.getRow(0).createCell(14).setCellValue(bet);
+        sheet.getRow(0).createCell(16).setCellValue(bet);
     }
 
-    public void writeResults(Integer round, Integer money) {
+    @Override
+    public void recordNewRound(Integer round, Integer money) {
         Row row = sheet.getRow(round);
         if (row == null)
             row = sheet.createRow(round);
@@ -62,6 +62,15 @@ public class AnalyticsImpl implements Analytics {
         row.createCell(1).setCellValue(money);
     }
 
+    @Override
+    public void recordInitialBet(Integer round, Integer bet) {
+        Row row = sheet.getRow(round);
+        if (row == null)
+            row = sheet.createRow(round);
+        row.createCell(2).setCellValue(bet);
+    }
+
+    @Override
     public void recordRoundResult(Integer round, RoundResult result) {
         Row row = sheet.getRow(round);
         if (row == null)
@@ -77,34 +86,12 @@ public class AnalyticsImpl implements Analytics {
         }
     }
 
+    @Override
     public void evaluateFormulas() {
-        FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
-        for (int row = 1; row < 13; row++) {
-            Cell c = sheet.getRow(row).getCell(14);
-            if (c == null || c.getCellType() != CellType.FORMULA)
-                continue;
-
-            try {
-                evaluator.evaluateFormulaCell(c);
-            } catch (Throwable var4) {
-                logger.warn("Error while recalculating sheet");
-            }
-        }
-
-        Row resultDistribution = sheet.getRow(8);
-        for (int col = 13; col < 21; col++) {
-            Cell c = resultDistribution.getCell(col);
-            if (c.getCellType() != CellType.FORMULA)
-                continue;
-
-            try {
-                evaluator.evaluateFormulaCell(c);
-            } catch (Throwable var4) {
-                logger.warn("Error while recalculating sheet");
-            }
-        }
+        workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
     }
 
+    @Override
     public void saveExcel() {
         workbook.removeSheetAt(0);
         try (FileOutputStream outputStream = new FileOutputStream(OUTPUT_FILE_PATH)) {

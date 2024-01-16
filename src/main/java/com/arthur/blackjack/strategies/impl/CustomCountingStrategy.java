@@ -7,31 +7,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
-
-import java.io.FileInputStream;
-import java.io.IOException;
 
 @Component
 public class CustomCountingStrategy extends AbstractStrategy {
     private static final Logger logger = LogManager.getLogger(CustomCountingStrategy.class);
 
-    private final Workbook workbook;
-
-    private final GameRules rules;
-    private final GameSettings settings;
-
     public CustomCountingStrategy(GameRules rules, GameSettings settings) {
-        super();
-        try (FileInputStream fis = new FileInputStream(getFilePath())) {
-            this.workbook = new XSSFWorkbook(fis);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read Excel file", e);
-        }
-        this.rules = rules;
-        this.settings = settings;
+        super(rules, settings);
     }
 
     @Override
@@ -79,6 +62,11 @@ public class CustomCountingStrategy extends AbstractStrategy {
 
     @Override
     public String getFilePath() {
-        return "src/main/resources/strategies/CustomCardCounting.xlsx";
+        String path = "src/main/resources/strategies/CustomCardCounting/";
+        if (rules.isStandsOnSoft17())
+            path += "StandsSoft17_CCC.xlsx";
+        else
+            path += "HitsSoft17_CCC.xlsx";
+        return path;
     }
 }

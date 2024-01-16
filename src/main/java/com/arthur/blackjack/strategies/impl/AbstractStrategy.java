@@ -1,5 +1,7 @@
 package com.arthur.blackjack.strategies.impl;
 
+import com.arthur.blackjack.config.GameRules;
+import com.arthur.blackjack.config.GameSettings;
 import com.arthur.blackjack.models.hand.Hand;
 import com.arthur.blackjack.strategies.Action;
 import com.arthur.blackjack.strategies.Strategy;
@@ -28,11 +30,17 @@ public abstract class AbstractStrategy implements Strategy {
     protected Map<Pair<Integer, Integer>, Action> softTable;
     protected Map<Pair<Integer, Integer>, Action> splitTable;
 
-    public AbstractStrategy() {
-        String filePath = getFilePath();
-        try (FileInputStream fis = new FileInputStream(filePath);
-                Workbook workbook = new XSSFWorkbook(fis)) {
-            recalculate(workbook);
+    protected final Workbook workbook;
+
+    protected final GameRules rules;
+    protected final GameSettings settings;
+
+    public AbstractStrategy(GameRules rules, GameSettings settings) {
+        this.rules = rules;
+        this.settings = settings;
+        try (FileInputStream fis = new FileInputStream(getFilePath())) {
+            this.workbook = new XSSFWorkbook(fis);
+            recalculate(this.workbook);
         } catch (IOException e) {
             throw new RuntimeException("Failed to read Excel file", e);
         }

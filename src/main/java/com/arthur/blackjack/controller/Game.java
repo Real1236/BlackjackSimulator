@@ -113,14 +113,14 @@ public class Game {
     private void placeInitialBet() {
         this.roundBetSize = strategy.getBetSize();
         player.subtractFromBankroll(this.roundBetSize);
-        player.getHands().get(0).setBet(this.roundBetSize);
+        player.getHands().getFirst().setBet(this.roundBetSize);
         analytics.recordInitialBet(roundNumber, this.roundBetSize);
         logger.info("Player placed a bet of ${}.", this.roundBetSize);
         logger.info("Player has ${} in their bankroll.", player.getBankroll());
     }
 
     private void deal() {
-        Hand playerHand = player.getHands().get(0);
+        Hand playerHand = player.getHands().getFirst();
         playerHand.addCard(deck.dealCard());
         playerHand.addCard(deck.dealCard());
 

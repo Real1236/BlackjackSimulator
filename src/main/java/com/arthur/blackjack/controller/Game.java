@@ -65,7 +65,7 @@ public class Game {
         logger.info("Starting a game of Blackjack!");
 
         // Set strategy and analytics
-        Strategy strategy = strategyFactory.getStrategy("customCounting"); // TODO - make strategy dynamic
+        Strategy strategy = strategyFactory.getStrategy("hiLo"); // TODO - make strategy dynamic
         this.strategy = strategy;
         playerTurnManager.setStrategy(strategy);
         deck.setStrategy(strategy);

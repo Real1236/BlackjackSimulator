@@ -17,11 +17,15 @@ public class StrategyFactory {
     }
 
     public Strategy getStrategy(String strategyType) {
+        if (strategyType == null) {
+            throw new IllegalArgumentException("Strategy type cannot be null");
+        }
+
         return switch (strategyType) {
             case "basic" -> context.getBean(BasicStrategy.class);
             case "customCounting" -> context.getBean(CustomCountingStrategy.class);
             case "hiLo" -> context.getBean(HiLoStrategy.class);
-            case null, default -> throw new IllegalArgumentException("Invalid strategy type: " + strategyType);
+            default -> throw new IllegalArgumentException("Invalid strategy type: " + strategyType);
         };
     }
 }

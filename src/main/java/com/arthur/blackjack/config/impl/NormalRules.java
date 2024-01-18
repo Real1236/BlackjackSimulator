@@ -1,13 +1,10 @@
 package com.arthur.blackjack.config.impl;
 
-import org.springframework.context.annotation.Primary;
+import com.arthur.blackjack.config.GameRules;
 import org.springframework.stereotype.Component;
 
-import com.arthur.blackjack.config.GameRules;
-
 @Component
-@Primary
-public class FanDuelAmericanRules implements GameRules {
+public class NormalRules implements GameRules {
     private final int numOfDecks;
     private final boolean standsOnSoft17;
     private final boolean doubleAfterSplit;
@@ -20,18 +17,18 @@ public class FanDuelAmericanRules implements GameRules {
     private final boolean dealerPeeks;
     private final double depthToReshuffle;
 
-    public FanDuelAmericanRules() {
-        this.numOfDecks = 8;
-        this.standsOnSoft17 = false;
+    public NormalRules() {
+        this.numOfDecks = 6;
+        this.standsOnSoft17 = true;
         this.doubleAfterSplit = true;
-        this.resplitLimit = 2;
-        this.resplitAces = false;
-        this.hitSplitAces = false;
+        this.resplitLimit = Integer.MAX_VALUE;
+        this.resplitAces = true;
+        this.hitSplitAces = true;
         this.loseOnlyOGBetAgainstDealerBJ = false; // TODO
         this.surrender = false; // TODO
         this.blackjackPayout = 1.5;
         this.dealerPeeks = true;
-        this.depthToReshuffle = 0.5;
+        this.depthToReshuffle = 0.8;
     }
 
     public int getNumOfDecks() {

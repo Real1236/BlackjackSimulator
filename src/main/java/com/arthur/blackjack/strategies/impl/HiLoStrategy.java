@@ -27,16 +27,33 @@ public class HiLoStrategy extends AbstractStrategy {
         float trueCount = getTrueCount();
         logger.info("True count: " + trueCount);
 
-        // Follows strategy from: https://www.countingedge.com/card-counting/true-count/
-        double betMultiple = 0.5 * trueCount + 0.5;
-        double betSize = betMultiple * settings.getBetSize();
+        int betMultiple;
+        if (trueCount <= 1) {
+            betMultiple = 1;
+        } else if (trueCount <= 1.5) {
+            betMultiple = 2;
+        } else if (trueCount <= 2) {
+            betMultiple = 3;
+        } else if (trueCount <= 2.5) {
+            betMultiple = 4;
+        } else if (trueCount <= 3) {
+            betMultiple = 5;
+        } else if (trueCount <= 3.5) {
+            betMultiple = 6;
+        } else if (trueCount <= 4) {
+            betMultiple = 7;
+        } else {
+            betMultiple = 8;
+        }
+        float betSize = betMultiple * settings.getBetSize();
 
         // Round down to the nearest multiple of 5
         return Math.max((int) Math.floor(betSize / 5) * 5, settings.getBetSize());
     }
 
     private float getTrueCount() {
-        return count / deck.getNumOfDecksRemaining();
+        float rawCount = (float) count / Math.round(deck.getNumOfDecksRemaining());
+        return Math.round(rawCount * 2) / 2.0f;
     }
 
     @Override

@@ -1,23 +1,21 @@
 package com.arthur.blackjack.controller;
 
-import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Component;
-
 import com.arthur.blackjack.analytics.Analytics;
 import com.arthur.blackjack.analytics.RoundResult;
 import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.config.GameSettings;
-import com.arthur.blackjack.models.player.Dealer;
 import com.arthur.blackjack.models.card.Deck;
 import com.arthur.blackjack.models.hand.Hand;
 import com.arthur.blackjack.models.hand.HandFactory;
 import com.arthur.blackjack.models.hand.PlayerHand;
+import com.arthur.blackjack.models.player.Dealer;
 import com.arthur.blackjack.models.player.Player;
 import com.arthur.blackjack.strategies.Strategy;
 import com.arthur.blackjack.strategies.StrategyFactory;
 import com.arthur.blackjack.utils.GameUtils;
-
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 @Component
 public class Game {

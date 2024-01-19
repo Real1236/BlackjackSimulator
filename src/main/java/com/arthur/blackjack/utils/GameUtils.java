@@ -43,17 +43,17 @@ public final class GameUtils {
     }
 
     public static void displayHandsHiddenUpcard(DealerHand dealerHand, PlayerHand playerHand) {
-        logger.info("Dealer's hand: {} (Hidden).", dealerHand.getUpCard());
-        logger.info("Dealer's hand value: {}.", dealerHand.getUpCard().getRank().getValue());
-        logger.info(buildHand("Player", playerHand));
-        logger.info("Player's hand value: {}.", playerHand.getHandValue());
+        logger.trace("Dealer's hand: {} (Hidden).", dealerHand.getUpCard());
+        logger.trace("Dealer's hand value: {}.", dealerHand.getUpCard().getRank().getValue());
+        logger.trace(buildHand("Player", playerHand));
+        logger.trace("Player's hand value: {}.", playerHand.getHandValue());
     }
 
     public static void displayHands(Hand dealerHand, Hand playerHand) {
-        logger.info(buildHand("Dealer", dealerHand));
-        logger.info("Dealer's hand value: {}.", dealerHand.getHandValue());
-        logger.info(buildHand("Player", playerHand));
-        logger.info("Player's hand value: {}.", playerHand.getHandValue());
+        logger.trace(buildHand("Dealer", dealerHand));
+        logger.trace("Dealer's hand value: {}.", dealerHand.getHandValue());
+        logger.trace(buildHand("Player", playerHand));
+        logger.trace("Player's hand value: {}.", playerHand.getHandValue());
     }
 
     private static String buildHand(String dealerOrPlayer, Hand hand) {

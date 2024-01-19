@@ -88,8 +88,8 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
             stack.push(hand);
             player.addHand(newHand);
 
-            logger.info("Player split and placed a bet of ${}.", newHand.getBet());
-            logger.info("Player has ${} in their bankroll.", player.getBankroll());
+            logger.trace("Player split and placed a bet of ${}.", newHand.getBet());
+            logger.trace("Player has ${} in their bankroll.", player.getBankroll());
             return true;
         }
         return false;
@@ -104,7 +104,7 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
             hand.addCard(deck.dealCard());
             player.subtractFromBankroll(hand.getBet());
             hand.setBet(hand.getBet() * 2);
-            logger.info("Player doubled down and placed a bet of ${}.", hand.getBet());
+            logger.trace("Player doubled down and placed a bet of ${}.", hand.getBet());
             GameUtils.displayHandsHiddenUpcard(dealer.getHand(), hand);
             return true;
         }
@@ -117,11 +117,11 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
                 && (player.getHands().size() == 1 || rules.isHitSplitAces() || firstCardRank.equals(Rank.ACE))
                 && playStrategy.hit(hand, dealer.getHand().getUpCard().getRank().getValue())) {
             hand.addCard(deck.dealCard());
-            logger.info("Player hit.");
+            logger.trace("Player hit.");
             GameUtils.displayHandsHiddenUpcard(dealer.getHand(), hand);
         }
         if (hand.getHandValue() < 21)
-            logger.info("Player stood.");
+            logger.trace("Player stood.");
     }
 
 }

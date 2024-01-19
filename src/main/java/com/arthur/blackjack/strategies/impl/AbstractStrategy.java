@@ -61,7 +61,7 @@ public abstract class AbstractStrategy implements Strategy {
 
         long endTime = System.nanoTime();
         long duration = endTime - startTime;
-        logger.info("Recalculate took " + (double) duration / 1_000_000_000 + " seconds");
+        logger.trace("Recalculate took " + (double) duration / 1_000_000_000 + " seconds");
     }
 
     /**

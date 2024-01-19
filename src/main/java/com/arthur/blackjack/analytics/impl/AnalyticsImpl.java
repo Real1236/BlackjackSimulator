@@ -6,9 +6,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
@@ -88,7 +86,32 @@ public class AnalyticsImpl implements Analytics {
 
     @Override
     public void evaluateFormulas() {
-        workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+        FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+
+        for (int row = 1; row < 13; row++) {    // Maintain cell locations
+            Cell c = sheet.getRow(row).getCell(16); // Maintain cell locations
+            if (c == null || c.getCellType() != CellType.FORMULA)
+                continue;
+
+            try {
+                evaluator.evaluateFormulaCell(c);
+            } catch (Throwable var4) {
+                logger.warn("Error while recalculating sheet");
+            }
+        }
+
+        Row resultDistribution = sheet.getRow(8);   // Maintain cell locations
+        for (int col = 15; col < 23; col++) {   // Maintain cell locations
+            Cell c = resultDistribution.getCell(col);
+            if (c.getCellType() != CellType.FORMULA)
+                continue;
+
+            try {
+                evaluator.evaluateFormulaCell(c);
+            } catch (Throwable var4) {
+                logger.warn("Error while recalculating sheet");
+            }
+        }
     }
 
     @Override

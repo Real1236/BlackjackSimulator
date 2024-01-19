@@ -15,6 +15,7 @@ import com.arthur.blackjack.strategies.StrategyFactory;
 import com.arthur.blackjack.utils.GameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -45,7 +46,7 @@ public class Game {
             GameSettings settings,
             GameRules rules,
             StrategyFactory strategyFactory,
-            Analytics analytics) {
+            @Qualifier("csvAnalyticsImpl") Analytics analytics) {
         this.roundNumber = 1;
         this.roundBetSize = 0;
         this.player = player;

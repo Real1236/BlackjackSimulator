@@ -28,7 +28,7 @@ public class NormalRules implements GameRules {
         this.surrender = false; // TODO
         this.blackjackPayout = 1.5;
         this.dealerPeeks = true;
-        this.depthToReshuffle = 0.8;
+        this.depthToReshuffle = 0.5;
     }
 
     public int getNumOfDecks() {

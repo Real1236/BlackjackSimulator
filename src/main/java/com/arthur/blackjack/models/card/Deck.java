@@ -10,4 +10,5 @@ public interface Deck {
     Card dealCard();
 
     boolean checkReshuffle();
+    float getNumOfDecksRemaining();
 }

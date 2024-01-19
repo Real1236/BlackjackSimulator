@@ -1,23 +1,22 @@
 package com.arthur.blackjack.controller;
 
-import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Component;
-
 import com.arthur.blackjack.analytics.Analytics;
 import com.arthur.blackjack.analytics.RoundResult;
 import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.config.GameSettings;
-import com.arthur.blackjack.models.player.Dealer;
 import com.arthur.blackjack.models.card.Deck;
 import com.arthur.blackjack.models.hand.Hand;
 import com.arthur.blackjack.models.hand.HandFactory;
 import com.arthur.blackjack.models.hand.PlayerHand;
+import com.arthur.blackjack.models.player.Dealer;
 import com.arthur.blackjack.models.player.Player;
 import com.arthur.blackjack.strategies.Strategy;
 import com.arthur.blackjack.strategies.StrategyFactory;
 import com.arthur.blackjack.utils.GameUtils;
-
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 @Component
 public class Game {
@@ -47,7 +46,7 @@ public class Game {
             GameSettings settings,
             GameRules rules,
             StrategyFactory strategyFactory,
-            Analytics analytics) {
+            @Qualifier("csvAnalyticsImpl") Analytics analytics) {
         this.roundNumber = 1;
         this.roundBetSize = 0;
         this.player = player;
@@ -65,7 +64,7 @@ public class Game {
         logger.info("Starting a game of Blackjack!");
 
         // Set strategy and analytics
-        Strategy strategy = strategyFactory.getStrategy("customCounting"); // TODO - make strategy dynamic
+        Strategy strategy = strategyFactory.getStrategy("hiLo"); // TODO - make strategy dynamic
         this.strategy = strategy;
         playerTurnManager.setStrategy(strategy);
         deck.setStrategy(strategy);
@@ -113,14 +112,14 @@ public class Game {
     private void placeInitialBet() {
         this.roundBetSize = strategy.getBetSize();
         player.subtractFromBankroll(this.roundBetSize);
-        player.getHands().get(0).setBet(this.roundBetSize);
+        player.getHands().getFirst().setBet(this.roundBetSize);
         analytics.recordInitialBet(roundNumber, this.roundBetSize);
         logger.info("Player placed a bet of ${}.", this.roundBetSize);
         logger.info("Player has ${} in their bankroll.", player.getBankroll());
     }
 
     private void deal() {
-        Hand playerHand = player.getHands().get(0);
+        Hand playerHand = player.getHands().getFirst();
         playerHand.addCard(deck.dealCard());
         playerHand.addCard(deck.dealCard());
 

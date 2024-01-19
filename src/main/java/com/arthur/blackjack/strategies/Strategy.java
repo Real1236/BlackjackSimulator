@@ -10,6 +10,11 @@ import com.arthur.blackjack.models.hand.Hand;
 public interface Strategy {
 
     /**
+     * Recalculates the strategy based on the current deck composition.
+     */
+    void recalculate();
+
+    /**
      * Returns the bet size for the current hand.
      *
      * @return the bet size

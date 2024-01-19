@@ -19,6 +19,8 @@ public class CustomCountingStrategy extends AbstractStrategy {
 
     @Override
     public int getBetSize() {
+        recalculate();
+
         // Maintain this cell location
         double playerEdge = workbook.getSheet("ev").getRow(44).getCell(1).getNumericCellValue();
         logger.info("Player edge: " + playerEdge);
@@ -44,7 +46,6 @@ public class CustomCountingStrategy extends AbstractStrategy {
                 break;
             }
         }
-        recalculate(workbook);
     }
 
     @Override
@@ -57,7 +58,6 @@ public class CustomCountingStrategy extends AbstractStrategy {
             if (i == 10) // Face cards
                 quantityRow.getCell(i).setCellValue(rules.getNumOfDecks() * 16);
         }
-        recalculate(workbook);
     }
 
     @Override

@@ -7,6 +7,8 @@ import com.arthur.blackjack.strategies.Action;
 import com.arthur.blackjack.strategies.Strategy;
 import com.arthur.blackjack.utils.GameUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -19,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class AbstractStrategy implements Strategy {
+    private static final Logger logger = LogManager.getLogger(AbstractStrategy.class);
 
     /**
      * Each hashmap represents a table of decisions for a particular hand.
@@ -40,17 +43,25 @@ public abstract class AbstractStrategy implements Strategy {
         this.settings = settings;
         try (FileInputStream fis = new FileInputStream(getFilePath())) {
             this.workbook = new XSSFWorkbook(fis);
-            recalculate(this.workbook);
+            recalculate();
         } catch (IOException e) {
             throw new RuntimeException("Failed to read Excel file", e);
         }
     }
 
-    protected void recalculate(Workbook workbook) {
+    @Override
+    public void recalculate() {
+        // Calculate time to recalculate{
+        long startTime = System.nanoTime();
+
         workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
         this.hardTable = getTable(workbook, "Hard");
         this.softTable = getTable(workbook, "Soft");
         this.splitTable = getTable(workbook, "Split");
+
+        long endTime = System.nanoTime();
+        long duration = endTime - startTime;
+        logger.info("Recalculate took " + (double) duration / 1_000_000_000 + " seconds");
     }
 
     /**

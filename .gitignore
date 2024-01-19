@@ -39,3 +39,4 @@ logs/
 ### Analytics ###
 /*.xlsx
 src/main/resources/analytics/Results.xlsx
+/src/main/resources/analytics/Results.csv

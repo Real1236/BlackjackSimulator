@@ -52,7 +52,7 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
                 PlayerHand hand = stack.pop();
                 GameUtils.displayHandsHiddenUpcard(dealer.getHand(), hand);
 
-                playStrategy.recalculate();
+                playStrategy.recalculate(); // Recalculate strategy tables if necessary
                 if (split(hand, stack))
                     continue;
                 if (doubleDown(hand))

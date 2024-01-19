@@ -12,8 +12,8 @@ public class GameSettingsImpl implements GameSettings {
 
     public GameSettingsImpl() {
         this.betSize = 10;
-        this.bankroll = 1000 * betSize; // 1000 betting units = ~1% risk of ruin
-        this.maxRounds = (int) Math.pow(10, 4);
+        this.bankroll = 10000 * betSize; // 10000 betting units = <1% risk of ruin
+        this.maxRounds = (int) Math.pow(10, 6);
     }
 
     @Override

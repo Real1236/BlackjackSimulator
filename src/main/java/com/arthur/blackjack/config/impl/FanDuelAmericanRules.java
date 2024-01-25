@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import com.arthur.blackjack.config.GameRules;
 
 @Component
-@Primary
 public class FanDuelAmericanRules implements GameRules {
     private final int numOfDecks;
     private final boolean standsOnSoft17;

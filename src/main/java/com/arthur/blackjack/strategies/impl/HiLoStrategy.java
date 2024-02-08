@@ -25,7 +25,7 @@ public class HiLoStrategy extends AbstractStrategy {
     @Override
     public int getBetSize() {
         float trueCount = getTrueCount();
-        logger.info("True count: " + trueCount);
+        logger.trace("True count: " + trueCount);
 
         int betMultiple;
         if (trueCount <= 1) {

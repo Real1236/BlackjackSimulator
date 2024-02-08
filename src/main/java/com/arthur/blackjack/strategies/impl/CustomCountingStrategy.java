@@ -21,7 +21,7 @@ public class CustomCountingStrategy extends AbstractStrategy {
     public int getBetSize() {
         // Maintain this cell location
         double playerEdge = workbook.getSheet("ev").getRow(44).getCell(1).getNumericCellValue();
-        logger.info("Player edge: " + playerEdge);
+        logger.trace("Player edge: " + playerEdge);
 
         // Follows strategy from: https://www.countingedge.com/card-counting/true-count/
         double betMultiple = 1000 * playerEdge + 1;

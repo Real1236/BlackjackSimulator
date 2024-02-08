@@ -61,7 +61,7 @@ public class Game {
     }
 
     public void play() {
-        logger.info("Starting a game of Blackjack!");
+        logger.trace("Starting a game of Blackjack!");
 
         // Set strategy and analytics
         Strategy strategy = strategyFactory.getStrategy("basic"); // TODO - make strategy dynamic
@@ -75,7 +75,7 @@ public class Game {
         // Loop to play game
         while (GameUtils.playCondition(player.getBankroll(), roundNumber, settings.getMaxRounds())) {
             logger.info("Starting round {}.\n---------------------------------", roundNumber);
-            logger.info("Player has ${} in their bankroll.", player.getBankroll());
+            logger.trace("Player has ${} in their bankroll.", player.getBankroll());
 
             // Analytics
             analytics.recordNewRound(roundNumber, (int) player.getBankroll());
@@ -99,7 +99,7 @@ public class Game {
 
     private void checkReshuffle() {
         if (deck.checkReshuffle()) {
-            logger.info("Reshuffling deck.");
+            logger.trace("Reshuffling deck.");
             deck.reshuffleDeck();
         }
     }
@@ -114,8 +114,8 @@ public class Game {
         player.subtractFromBankroll(this.roundBetSize);
         player.getHands().getFirst().setBet(this.roundBetSize);
         analytics.recordInitialBet(roundNumber, this.roundBetSize);
-        logger.info("Player placed a bet of ${}.", this.roundBetSize);
-        logger.info("Player has ${} in their bankroll.", player.getBankroll());
+        logger.trace("Player placed a bet of ${}.", this.roundBetSize);
+        logger.trace("Player has ${} in their bankroll.", player.getBankroll());
     }
 
     private void deal() {
@@ -138,7 +138,7 @@ public class Game {
     private void payout() {
         int handNumber = 1;
         for (PlayerHand hand : player.getHands()) {
-            logger.info("Comparing player hand {} to dealer's hand.", handNumber);
+            logger.trace("Comparing player hand {} to dealer's hand.", handNumber);
             GameUtils.displayHands(dealer.getHand(), hand);
 
             // Analytics
@@ -146,43 +146,43 @@ public class Game {
 
             // Bust
             if (hand.getHandValue() > 21) {
-                logger.info("Hand {} busted with a hand value of {}.", handNumber, hand.getHandValue());
+                logger.trace("Hand {} busted with a hand value of {}.", handNumber, hand.getHandValue());
                 result = hand.getBet() == this.roundBetSize ? RoundResult.BUST : RoundResult.DOUBLE_BUST;
             }
 
             // Blackjack
             else if (GameUtils.isBlackjack(hand)) {
-                logger.info("Hand {} has a blackjack!", handNumber);
+                logger.trace("Hand {} has a blackjack!", handNumber);
                 if (GameUtils.isBlackjack(dealer.getHand())) {
-                    logger.info("Dealer also has a blackjack. Player pushed.");
+                    logger.trace("Dealer also has a blackjack. Player pushed.");
                     player.addToBankroll(hand.getBet());
                     result = RoundResult.PUSH;
                 } else {
                     player.addToBankroll(hand.getBet() * (rules.getBlackjackPayout() + 1));
-                    logger.info("Player won ${}.", hand.getBet() * (rules.getBlackjackPayout() + 1));
+                    logger.trace("Player won ${}.", hand.getBet() * (rules.getBlackjackPayout() + 1));
                     result = RoundResult.BLACKJACK;
                 }
             }
 
             // Dealer bust
             else if (dealer.getHand().getHandValue() > 21) {
-                logger.info("Dealer busted with a hand value of {}.", dealer.getHand().getHandValue());
+                logger.trace("Dealer busted with a hand value of {}.", dealer.getHand().getHandValue());
                 player.addToBankroll(hand.getBet() * 2);
-                logger.info("Player hand {} won ${}.", handNumber, hand.getBet() * 2);
+                logger.trace("Player hand {} won ${}.", handNumber, hand.getBet() * 2);
                 result = hand.getBet() == this.roundBetSize ? RoundResult.WIN : RoundResult.DOUBLE_WIN;
             }
 
             // Compare hands
             else if (hand.getHandValue() > dealer.getHand().getHandValue()) {
                 player.addToBankroll(hand.getBet() * 2);
-                logger.info("Player hand {} won ${}.", handNumber, hand.getBet() * 2);
+                logger.trace("Player hand {} won ${}.", handNumber, hand.getBet() * 2);
                 result = hand.getBet() == this.roundBetSize ? RoundResult.WIN : RoundResult.DOUBLE_WIN;
             } else if (hand.getHandValue() == dealer.getHand().getHandValue()) {
                 player.addToBankroll(hand.getBet());
-                logger.info("Player hand {} pushed.", handNumber);
+                logger.trace("Player hand {} pushed.", handNumber);
                 result = RoundResult.PUSH;
             } else {
-                logger.info("Player hand {} lost ${}.", handNumber, hand.getBet());
+                logger.trace("Player hand {} lost ${}.", handNumber, hand.getBet());
                 result = hand.getBet() == this.roundBetSize ? RoundResult.LOSE : RoundResult.DOUBLE_LOSE;
             }
 

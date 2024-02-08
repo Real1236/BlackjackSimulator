@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Component
-@Primary
 public class NormalRules implements GameRules {
     private final int numOfDecks;
     private final boolean standsOnSoft17;

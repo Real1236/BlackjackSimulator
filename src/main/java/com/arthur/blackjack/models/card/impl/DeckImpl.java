@@ -53,10 +53,4 @@ public class DeckImpl implements Deck {
         double depth = 1 - ((double) cards.size()) / (rules.getNumOfDecks() * 52);
         return (depth >= rules.getDepthToReshuffle());
     }
-
-    @Override
-    public float getNumOfDecksRemaining() {
-        return (float) cards.size() / 52;
-    }
-
 }

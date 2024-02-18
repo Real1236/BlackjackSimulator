@@ -2,6 +2,7 @@ package com.arthur.blackjack.controller.impl;
 
 import java.util.Stack;
 
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +25,14 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
 
     private final HandFactory handFactory;
 
-    private final Strategy playStrategy;
+    @Setter
+    private Strategy strategy;
     private final GameRules rules;
 
     @Autowired
-    public PlayerTurnManagerImpl(HandFactory handFactory, GameRules rules, Strategy strategy) {
+    public PlayerTurnManagerImpl(HandFactory handFactory, GameRules rules) {
         this.handFactory = handFactory;
         this.rules = rules;
-        this.playStrategy = strategy;
     }
 
     public void playerTurn(Dealer dealer, Player player, Deck deck) {
@@ -66,7 +67,7 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
                 && player.getBankroll() >= hand.getBet()
                 && player.getHands().size() < rules.getResplitLimit()
                 && (player.getHands().size() == 1 || rules.isResplitAces() || playerHandFirstCardValue != 11)
-                && playStrategy.split(playerHandFirstCardValue, dealerUpcardValue)) {
+                && strategy.split(playerHandFirstCardValue, dealerUpcardValue)) {
             // Create new hand and add card from original hand
             PlayerHand newHand = handFactory.createPlayerHand();
             newHand.addCard(hand.getCards().remove(1));
@@ -92,7 +93,7 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
         if (player.getBankroll() >= hand.getBet()
                 && hand.getCards().size() == 2
                 && (rules.isDoubleAfterSplit() || player.getHands().size() == 1)
-                && playStrategy.doubleDown(hand, dealer.getHand().getUpCard().getRank().getValue())) {
+                && strategy.doubleDown(hand, dealer.getHand().getUpCard().getRank().getValue())) {
             hand.addCard(deck.dealCard());
             player.subtractFromBankroll(hand.getBet());
             hand.setBet(hand.getBet() * 2);
@@ -107,7 +108,7 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
         Rank firstCardRank = hand.getCards().getFirst().getRank();
         while (hand.getHandValue() < 21
                 && (player.getHands().size() == 1 || rules.isHitSplitAces() || firstCardRank.equals(Rank.ACE))
-                && playStrategy.hit(hand, dealer.getHand().getUpCard().getRank().getValue())) {
+                && strategy.hit(hand, dealer.getHand().getUpCard().getRank().getValue())) {
             hand.addCard(deck.dealCard());
             logger.trace("Player hit.");
             GameUtils.displayHandsHiddenUpcard(dealer.getHand(), hand);

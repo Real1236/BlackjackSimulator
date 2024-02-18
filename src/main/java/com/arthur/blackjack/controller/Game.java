@@ -1,7 +1,6 @@
 package com.arthur.blackjack.controller;
 
 import com.arthur.blackjack.analytics.Analytics;
-import com.arthur.blackjack.analytics.AnalyticsFactory;
 import com.arthur.blackjack.analytics.RoundResult;
 import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.config.GameSettings;
@@ -15,6 +14,7 @@ import com.arthur.blackjack.models.player.Player;
 import com.arthur.blackjack.models.player.PlayerFactory;
 import com.arthur.blackjack.strategies.Strategy;
 import com.arthur.blackjack.utils.GameUtils;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,8 +35,11 @@ public class Game extends Thread {
 
     private final GameSettings settings;
     private final GameRules rules;
-    private final Analytics analytics;
-    private final Strategy strategy;
+
+    @Setter
+    private Analytics analytics;
+    @Setter
+    private Strategy strategy;
 
     public Game(int gameNum,
                 PlayerFactory playerFactory,
@@ -44,9 +47,7 @@ public class Game extends Thread {
                 HandFactory handFactory,
                 PlayerTurnManager playerTurnManager,
                 GameSettings settings,
-                GameRules rules,
-                Strategy strategy,
-                AnalyticsFactory analyticsFactory) {
+                GameRules rules) {
         this.gameNum = gameNum;
         this.roundNumber = 1;
         this.roundBetSize = 0;
@@ -57,8 +58,6 @@ public class Game extends Thread {
         this.handFactory = handFactory;
         this.rules = rules;
         this.settings = settings;
-        this.strategy = strategy;
-        this.analytics = analyticsFactory.createCsvAnalytics(gameNum);  // TOOD - make this dynamic
     }
 
     @Override
@@ -67,6 +66,10 @@ public class Game extends Thread {
     }
 
     public void play() {
+        // Initialize deck and playerTurn strategy (not best practice but idk how to fix it)
+        deck.setStrategy(strategy);
+        playerTurnManager.setStrategy(strategy);
+
         logger.trace("Starting a game of Blackjack!");
 
         // Set analytics

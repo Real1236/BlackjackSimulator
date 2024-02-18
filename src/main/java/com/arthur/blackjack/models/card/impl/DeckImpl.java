@@ -10,6 +10,7 @@ import com.arthur.blackjack.models.card.CardFactory;
 import com.arthur.blackjack.models.card.Deck;
 import com.arthur.blackjack.models.card.Rank;
 import com.arthur.blackjack.strategies.Strategy;
+import lombok.Setter;
 
 public class DeckImpl implements Deck {
 
@@ -18,12 +19,12 @@ public class DeckImpl implements Deck {
     private final CardFactory cardFactory;
 
     private final GameRules rules;
-    private final Strategy strategy;
+    @Setter
+    private Strategy strategy;
 
-    public DeckImpl(CardFactory cardFactory, GameRules rules, Strategy strategy) {
+    public DeckImpl(CardFactory cardFactory, GameRules rules) {
         this.cardFactory = cardFactory;
         this.rules = rules;
-        this.strategy = strategy;
     }
 
     @Override

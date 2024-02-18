@@ -14,6 +14,8 @@ public class BlackjackApplication implements CommandLineRunner {
 
 	public BlackjackApplication(GameFactory gameFactory) {
 		this.gameFactory = gameFactory;
+		this.gameFactory.setStrategyType("customCounting");
+		this.gameFactory.setAnalyticsType("csv");
 	}
 
 	public static void main(String[] args) {

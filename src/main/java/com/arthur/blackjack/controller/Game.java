@@ -16,19 +16,18 @@ import com.arthur.blackjack.strategies.Strategy;
 import com.arthur.blackjack.utils.GameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
-public class Game {
+public class Game extends Thread {
     private static final Logger logger = LogManager.getLogger(Game.class);
 
+    private int gameNum;
     private int roundNumber;
     private int roundBetSize;
 
     private final Player player;
     private final Dealer dealer;
     private final Deck deck;
+
     private final HandFactory handFactory;
 
     private final PlayerTurnManager playerTurnManager;
@@ -38,8 +37,8 @@ public class Game {
     private final Analytics analytics;
     private final Strategy strategy;
 
-    @Autowired
-    public Game(PlayerFactory playerFactory,
+    public Game(int gameNum,
+                PlayerFactory playerFactory,
                 DeckFactory deckFactory,
                 HandFactory handFactory,
                 PlayerTurnManager playerTurnManager,
@@ -47,6 +46,7 @@ public class Game {
                 GameRules rules,
                 Strategy strategy,
                 Analytics analytics) {
+        this.gameNum = gameNum;
         this.roundNumber = 1;
         this.roundBetSize = 0;
         this.player = playerFactory.createPlayer();
@@ -60,7 +60,12 @@ public class Game {
         this.analytics = analytics;
     }
 
-    public void play(int gameNum) {
+    @Override
+    public void run() {
+        play();
+    }
+
+    public void play() {
         logger.trace("Starting a game of Blackjack!");
 
         // Set analytics
@@ -70,7 +75,7 @@ public class Game {
 
         // Loop to play game
         while (GameUtils.playCondition(player.getBankroll(), roundNumber, settings.getMaxRounds())) {
-            logger.info("Starting round {}.\n---------------------------------", roundNumber);
+            logger.info("Thread " + gameNum + ": Starting round {}.\n---------------------------------", roundNumber);
             logger.trace("Player has ${} in their bankroll.", player.getBankroll());
 
             // Analytics

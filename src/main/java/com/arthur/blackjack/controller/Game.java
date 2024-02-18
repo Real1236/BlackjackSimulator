@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Game {
+public class Game extends Thread {
     private static final Logger logger = LogManager.getLogger(Game.class);
 
     private int roundNumber;
@@ -60,7 +60,13 @@ public class Game {
         this.analytics = analytics;
     }
 
-    public void play() {
+    @Override
+    public void run() {
+        // TODO
+//        play(1);
+    }
+
+    public void play(int gameNum) {
         logger.trace("Starting a game of Blackjack!");
 
         // Set strategy and analytics
@@ -68,7 +74,7 @@ public class Game {
         this.strategy = strategy;
         playerTurnManager.setStrategy(strategy);
         deck.setStrategy(strategy);
-        analytics.createNewResultsSheet(1, settings.getBetSize()); // TODO - make game number dynamic
+        analytics.createNewResultsSheet(gameNum, settings.getBetSize()); // TODO - make game number dynamic
 
         deck.reshuffleDeck(); // Initialize Deck
 

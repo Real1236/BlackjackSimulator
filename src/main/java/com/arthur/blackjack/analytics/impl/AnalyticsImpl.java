@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,17 +15,20 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.UUID;
 
-@Component
 public class AnalyticsImpl implements Analytics {
     private static final Logger logger = LogManager.getLogger(AnalyticsImpl.class);
 
+    private final int gameNum;
+
     private static final String FILE_PATH = "src/main/resources/analytics/ResultTracker.xlsx"; // Excel file path
-    private static final String OUTPUT_FILE_PATH = "src/main/resources/analytics/Results.xlsx";
+    private static final String OUTPUT_FILE_PATH = "src/main/resources/analytics/Results";
 
     private final XSSFWorkbook workbook;
     private Sheet sheet;
 
-    public AnalyticsImpl() {
+    public AnalyticsImpl(int gameNum) {
+        this.gameNum = gameNum;
+
         // Creating a copy of the spreadsheet for file exporting purposes
         File originalSpreadsheet = new File(FILE_PATH);
         File copySpreadsheet = new File(UUID.randomUUID() + ".xlsx");
@@ -46,7 +48,7 @@ public class AnalyticsImpl implements Analytics {
     }
 
     @Override
-    public void createNewResultsSheet(int gameNum, int bet) {
+    public void createNewResultsSheet(int bet) {
         sheet = workbook.cloneSheet(0, "Results" + gameNum);
         sheet.getRow(0).createCell(16).setCellValue(bet);
     }
@@ -117,7 +119,7 @@ public class AnalyticsImpl implements Analytics {
     @Override
     public void saveExcel() {
         workbook.removeSheetAt(0);
-        try (FileOutputStream outputStream = new FileOutputStream(OUTPUT_FILE_PATH)) {
+        try (FileOutputStream outputStream = new FileOutputStream(OUTPUT_FILE_PATH + gameNum + ".xlsx")) {
             workbook.write(outputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);

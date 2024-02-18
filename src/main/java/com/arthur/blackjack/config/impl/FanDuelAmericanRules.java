@@ -1,10 +1,12 @@
 package com.arthur.blackjack.config.impl;
 
+import lombok.Getter;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import com.arthur.blackjack.config.GameRules;
 
+@Getter
 @Component
 @Primary
 public class FanDuelAmericanRules implements GameRules {
@@ -34,47 +36,4 @@ public class FanDuelAmericanRules implements GameRules {
         this.depthToReshuffle = 0.5;
     }
 
-    public int getNumOfDecks() {
-        return numOfDecks;
-    }
-
-    public boolean isStandsOnSoft17() {
-        return standsOnSoft17;
-    }
-
-    public boolean isDoubleAfterSplit() {
-        return doubleAfterSplit;
-    }
-
-    public int getResplitLimit() {
-        return resplitLimit;
-    }
-
-    public boolean isResplitAces() {
-        return resplitAces;
-    }
-
-    public boolean isHitSplitAces() {
-        return hitSplitAces;
-    }
-
-    public boolean isLoseOnlyOGBetAgainstDealerBJ() {
-        return loseOnlyOGBetAgainstDealerBJ;
-    }
-
-    public boolean isSurrender() {
-        return surrender;
-    }
-
-    public double getBlackjackPayout() {
-        return blackjackPayout;
-    }
-
-    public boolean isDealerPeeks() {
-        return dealerPeeks;
-    }
-
-    public double getDepthToReshuffle() {
-        return depthToReshuffle;
-    }
 }

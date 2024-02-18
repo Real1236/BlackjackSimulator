@@ -5,76 +5,81 @@ import com.arthur.blackjack.analytics.RoundResult;
 import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.config.GameSettings;
 import com.arthur.blackjack.models.card.Deck;
+import com.arthur.blackjack.models.card.DeckFactory;
 import com.arthur.blackjack.models.hand.Hand;
 import com.arthur.blackjack.models.hand.HandFactory;
 import com.arthur.blackjack.models.hand.PlayerHand;
 import com.arthur.blackjack.models.player.Dealer;
 import com.arthur.blackjack.models.player.Player;
+import com.arthur.blackjack.models.player.PlayerFactory;
 import com.arthur.blackjack.strategies.Strategy;
-import com.arthur.blackjack.strategies.StrategyFactory;
 import com.arthur.blackjack.utils.GameUtils;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
-@Component
-public class Game {
+public class Game extends Thread {
     private static final Logger logger = LogManager.getLogger(Game.class);
 
+    private final int gameNum;
     private int roundNumber;
     private int roundBetSize;
 
     private final Player player;
     private final Dealer dealer;
     private final Deck deck;
+
     private final HandFactory handFactory;
 
     private final PlayerTurnManager playerTurnManager;
 
     private final GameSettings settings;
     private final GameRules rules;
-    private final StrategyFactory strategyFactory;
-    private final Analytics analytics;
+
+    @Setter
+    private Analytics analytics;
+    @Setter
     private Strategy strategy;
 
-    public Game(Player player,
-            Dealer dealer,
-            Deck deck,
-            HandFactory handFactory,
-            PlayerTurnManager playerTurnManager,
-            GameSettings settings,
-            GameRules rules,
-            StrategyFactory strategyFactory,
-            @Qualifier("csvAnalyticsImpl") Analytics analytics) {
+    public Game(int gameNum,
+                PlayerFactory playerFactory,
+                DeckFactory deckFactory,
+                HandFactory handFactory,
+                PlayerTurnManager playerTurnManager,
+                GameSettings settings,
+                GameRules rules) {
+        this.gameNum = gameNum;
         this.roundNumber = 1;
         this.roundBetSize = 0;
-        this.player = player;
-        this.dealer = dealer;
-        this.deck = deck;
+        this.player = playerFactory.createPlayer();
+        this.dealer = playerFactory.createDealer();
+        this.deck = deckFactory.createDeck();
         this.playerTurnManager = playerTurnManager;
         this.handFactory = handFactory;
         this.rules = rules;
         this.settings = settings;
-        this.strategyFactory = strategyFactory;
-        this.analytics = analytics;
+    }
+
+    @Override
+    public void run() {
+        play();
     }
 
     public void play() {
+        // Initialize deck and playerTurn strategy (not best practice but idk how to fix it)
+        deck.setStrategy(strategy);
+        playerTurnManager.setStrategy(strategy);
+
         logger.trace("Starting a game of Blackjack!");
 
-        // Set strategy and analytics
-        Strategy strategy = strategyFactory.getStrategy("customCounting"); // TODO - make strategy dynamic
-        this.strategy = strategy;
-        playerTurnManager.setStrategy(strategy);
-        deck.setStrategy(strategy);
-        analytics.createNewResultsSheet(1, settings.getBetSize()); // TODO - make game number dynamic
+        // Set analytics
+        analytics.createNewResultsSheet(settings.getBetSize()); // TODO - make game number dynamic
 
         deck.reshuffleDeck(); // Initialize Deck
 
         // Loop to play game
         while (GameUtils.playCondition(player.getBankroll(), roundNumber, settings.getMaxRounds())) {
-            logger.info("Starting round {}.\n---------------------------------", roundNumber);
+            logger.info("Thread " + gameNum + ": Starting round {}.\n---------------------------------", roundNumber);
             logger.trace("Player has ${} in their bankroll.", player.getBankroll());
 
             // Analytics
@@ -85,7 +90,7 @@ public class Game {
             initializeHands();
             placeInitialBet();
             deal();
-            playerTurnManager.playerTurn();
+            playerTurnManager.playerTurn(dealer, player, deck);
             dealerTurn();
             payout();
             player.clearHands();
@@ -131,7 +136,7 @@ public class Game {
     private void dealerTurn() {
         // Player if at least one player hand didn't bust
         if (player.getHands().stream().anyMatch(hand -> hand.getHandValue() <= 21)) {
-            dealer.play();
+            dealer.play(deck);
         }
     }
 

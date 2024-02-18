@@ -8,10 +8,8 @@ import com.arthur.blackjack.models.card.Rank;
 
 @Component
 public class CardFactoryImpl implements CardFactory {
-
     @Override
     public Card createCard(Rank rank) {
         return new CardImpl(rank);
     }
-    
 }

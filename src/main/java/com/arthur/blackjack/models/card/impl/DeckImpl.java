@@ -4,36 +4,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.springframework.stereotype.Component;
-
 import com.arthur.blackjack.config.GameRules;
-import com.arthur.blackjack.config.GameSettings;
 import com.arthur.blackjack.models.card.Card;
 import com.arthur.blackjack.models.card.CardFactory;
 import com.arthur.blackjack.models.card.Deck;
 import com.arthur.blackjack.models.card.Rank;
 import com.arthur.blackjack.strategies.Strategy;
+import lombok.Setter;
 
-@Component
 public class DeckImpl implements Deck {
 
-    List<Card> cards;
+    private List<Card> cards;
 
-    CardFactory cardFactory;
+    private final CardFactory cardFactory;
 
-    GameSettings settings;
-    GameRules rules;
-    Strategy strategy;
+    private final GameRules rules;
+    @Setter
+    private Strategy strategy;
 
-    public DeckImpl(CardFactory cardFactory, GameSettings settings, GameRules rules) {
+    public DeckImpl(CardFactory cardFactory, GameRules rules) {
         this.cardFactory = cardFactory;
-        this.settings = settings;
         this.rules = rules;
-    }
-
-    @Override
-    public void setStrategy(Strategy strategy) {
-        this.strategy = strategy;
     }
 
     @Override
@@ -63,10 +54,4 @@ public class DeckImpl implements Deck {
         double depth = 1 - ((double) cards.size()) / (rules.getNumOfDecks() * 52);
         return (depth >= rules.getDepthToReshuffle());
     }
-
-    @Override
-    public float getNumOfDecksRemaining() {
-        return (float) cards.size() / 52;
-    }
-
 }

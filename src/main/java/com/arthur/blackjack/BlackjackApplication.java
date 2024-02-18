@@ -1,5 +1,6 @@
 package com.arthur.blackjack;
 
+import com.arthur.blackjack.controller.GameFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,10 +10,12 @@ import com.arthur.blackjack.controller.Game;
 @SpringBootApplication
 public class BlackjackApplication implements CommandLineRunner {
 
-	private final Game game;
+	private final GameFactory gameFactory;
 
-	public BlackjackApplication(Game game) {
-		this.game = game;
+	public BlackjackApplication(GameFactory gameFactory) {
+		this.gameFactory = gameFactory;
+		this.gameFactory.setStrategyType("customCounting");
+		this.gameFactory.setAnalyticsType("csv");
 	}
 
 	public static void main(String[] args) {
@@ -21,7 +24,10 @@ public class BlackjackApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		game.play();
+		for (int i = 1; i <= 5; i++) {
+			Game game = gameFactory.createGame(i);
+			game.start();
+		}
 	}
 
 }

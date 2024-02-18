@@ -1,24 +1,19 @@
 package com.arthur.blackjack.models.player.impl;
 
-import org.springframework.stereotype.Component;
-
 import com.arthur.blackjack.models.player.Dealer;
 import com.arthur.blackjack.utils.GameUtils;
 import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.models.card.Deck;
 import com.arthur.blackjack.models.hand.DealerHand;
 
-@Component
 public class DealerImpl implements Dealer {
 
     private DealerHand hand;
-    private final Deck deck;
 
     private final GameRules gameRules;
 
-    public DealerImpl(Deck deck, GameRules gameRules) {
+    public DealerImpl(GameRules gameRules) {
         this.hand = null;
-        this.deck = deck;
         this.gameRules = gameRules;
     }
 
@@ -33,7 +28,7 @@ public class DealerImpl implements Dealer {
     }
 
     @Override
-    public void play() {
+    public void play(Deck deck) {
         if (gameRules.isStandsOnSoft17()) {
             while (hand.getHandValue() < 17)
                 hand.addCard(deck.dealCard());

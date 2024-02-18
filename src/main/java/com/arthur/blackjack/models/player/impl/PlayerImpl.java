@@ -3,13 +3,10 @@ package com.arthur.blackjack.models.player.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.stereotype.Component;
-
 import com.arthur.blackjack.config.GameSettings;
 import com.arthur.blackjack.models.hand.PlayerHand;
 import com.arthur.blackjack.models.player.Player;
 
-@Component
 public class PlayerImpl implements Player {
 
     private double bankroll;

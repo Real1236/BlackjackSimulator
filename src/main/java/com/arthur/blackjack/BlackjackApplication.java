@@ -21,7 +21,7 @@ public class BlackjackApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		game.play();
+		game.play(1);
 	}
 
 }

@@ -21,18 +21,12 @@ import com.arthur.blackjack.utils.GameUtils;
 public class PlayerTurnManagerImpl implements PlayerTurnManager {
     private static final Logger logger = LogManager.getLogger(PlayerTurnManagerImpl.class);
 
-    private final Player player;
-    private final Dealer dealer;
-    private final Deck deck;
     private final HandFactory handFactory;
 
     private Strategy playStrategy;
     private final GameRules rules;
 
-    public PlayerTurnManagerImpl(Player player, Dealer dealer, Deck deck, HandFactory handFactory, GameRules rules) {
-        this.player = player;
-        this.dealer = dealer;
-        this.deck = deck;
+    public PlayerTurnManagerImpl(HandFactory handFactory, GameRules rules) {
         this.handFactory = handFactory;
         this.rules = rules;
     }
@@ -41,9 +35,9 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
         this.playStrategy = strategy;
     }
 
-    public void playerTurn() {
+    public void playerTurn(Dealer dealer, Player player, Deck deck) {
         // Only play turn if dealer and player both don't have blackjack
-        if (!GameUtils.isOpen10Blackjack(dealer.getHand()) && !GameUtils.isBlackjack(player.getHands().get(0))) {
+        if (!GameUtils.isOpen10Blackjack(dealer.getHand()) && !GameUtils.isBlackjack(player.getHands().getFirst())) {
             Stack<PlayerHand> stack = new Stack<>();
             stack.addAll(player.getHands());
 
@@ -52,19 +46,19 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
                 PlayerHand hand = stack.pop();
                 GameUtils.displayHandsHiddenUpcard(dealer.getHand(), hand);
 
-                if (split(hand, stack))
+                if (split(dealer, player, deck, hand, stack))
                     continue;
-                if (doubleDown(hand))
+                if (doubleDown(dealer, player, deck, hand))
                     continue;
-                hitOrStand(hand);
+                hitOrStand(dealer, player, deck, hand);
             }
         }
     }
 
-    private boolean split(PlayerHand hand, Stack<PlayerHand> stack) {
+    private boolean split(Dealer dealer, Player player, Deck deck, PlayerHand hand, Stack<PlayerHand> stack) {
         int playerHandFirstCardValue = hand.getCards().get(0).getRank().getValue();
         int playerHandSecondCardValue = hand.getCards().get(1).getRank().getValue();
-        int dealerUpcardValue = dealer.getHand().getCards().get(0).getRank().getValue();
+        int dealerUpcardValue = dealer.getHand().getCards().getFirst().getRank().getValue();
 
         // Must have pair, only 2 cards, enough money, not exceed resplit limit, and
         // resplitting ace is allowed
@@ -94,7 +88,7 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
         return false;
     }
 
-    private boolean doubleDown(PlayerHand hand) {
+    private boolean doubleDown(Dealer dealer, Player player, Deck deck, PlayerHand hand) {
         // Must have enough money, only 2 cards, and double after split or only 1 hand
         if (player.getBankroll() >= hand.getBet()
                 && hand.getCards().size() == 2
@@ -110,8 +104,8 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
         return false;
     }
 
-    private void hitOrStand(PlayerHand hand) {
-        Rank firstCardRank = hand.getCards().get(0).getRank();
+    private void hitOrStand(Dealer dealer, Player player, Deck deck, PlayerHand hand) {
+        Rank firstCardRank = hand.getCards().getFirst().getRank();
         while (hand.getHandValue() < 21
                 && (player.getHands().size() == 1 || rules.isHitSplitAces() || firstCardRank.equals(Rank.ACE))
                 && playStrategy.hit(hand, dealer.getHand().getUpCard().getRank().getValue())) {

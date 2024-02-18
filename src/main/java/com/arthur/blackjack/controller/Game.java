@@ -10,16 +10,18 @@ import com.arthur.blackjack.models.hand.HandFactory;
 import com.arthur.blackjack.models.hand.PlayerHand;
 import com.arthur.blackjack.models.player.Dealer;
 import com.arthur.blackjack.models.player.Player;
+import com.arthur.blackjack.models.player.PlayerFactory;
 import com.arthur.blackjack.strategies.Strategy;
 import com.arthur.blackjack.strategies.StrategyFactory;
 import com.arthur.blackjack.utils.GameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Game extends Thread {
+public class Game {
     private static final Logger logger = LogManager.getLogger(Game.class);
 
     private int roundNumber;
@@ -38,19 +40,19 @@ public class Game extends Thread {
     private final Analytics analytics;
     private Strategy strategy;
 
-    public Game(Player player,
-            Dealer dealer,
-            Deck deck,
-            HandFactory handFactory,
-            PlayerTurnManager playerTurnManager,
-            GameSettings settings,
-            GameRules rules,
-            StrategyFactory strategyFactory,
-            @Qualifier("csvAnalyticsImpl") Analytics analytics) {
+    @Autowired
+    public Game(PlayerFactory playerFactory,
+                Deck deck,
+                HandFactory handFactory,
+                PlayerTurnManager playerTurnManager,
+                GameSettings settings,
+                GameRules rules,
+                StrategyFactory strategyFactory,
+                @Qualifier("analyticsImpl") Analytics analytics) {
         this.roundNumber = 1;
         this.roundBetSize = 0;
-        this.player = player;
-        this.dealer = dealer;
+        this.player = playerFactory.createPlayer();
+        this.dealer = playerFactory.createDealer();
         this.deck = deck;
         this.playerTurnManager = playerTurnManager;
         this.handFactory = handFactory;
@@ -58,12 +60,6 @@ public class Game extends Thread {
         this.settings = settings;
         this.strategyFactory = strategyFactory;
         this.analytics = analytics;
-    }
-
-    @Override
-    public void run() {
-        // TODO
-//        play(1);
     }
 
     public void play(int gameNum) {
@@ -91,7 +87,7 @@ public class Game extends Thread {
             initializeHands();
             placeInitialBet();
             deal();
-            playerTurnManager.playerTurn();
+            playerTurnManager.playerTurn(dealer, player, deck);
             dealerTurn();
             payout();
             player.clearHands();
@@ -137,7 +133,7 @@ public class Game extends Thread {
     private void dealerTurn() {
         // Player if at least one player hand didn't bust
         if (player.getHands().stream().anyMatch(hand -> hand.getHandValue() <= 21)) {
-            dealer.play();
+            dealer.play(deck);
         }
     }
 

@@ -23,15 +23,12 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
 
     private final HandFactory handFactory;
 
-    private Strategy playStrategy;
+    private final Strategy playStrategy;
     private final GameRules rules;
 
-    public PlayerTurnManagerImpl(HandFactory handFactory, GameRules rules) {
+    public PlayerTurnManagerImpl(HandFactory handFactory, GameRules rules, Strategy strategy) {
         this.handFactory = handFactory;
         this.rules = rules;
-    }
-
-    public void setStrategy(Strategy strategy) {
         this.playStrategy = strategy;
     }
 

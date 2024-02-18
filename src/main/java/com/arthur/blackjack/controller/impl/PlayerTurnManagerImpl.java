@@ -4,6 +4,7 @@ import java.util.Stack;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.arthur.blackjack.config.GameRules;
@@ -26,6 +27,7 @@ public class PlayerTurnManagerImpl implements PlayerTurnManager {
     private final Strategy playStrategy;
     private final GameRules rules;
 
+    @Autowired
     public PlayerTurnManagerImpl(HandFactory handFactory, GameRules rules, Strategy strategy) {
         this.handFactory = handFactory;
         this.rules = rules;

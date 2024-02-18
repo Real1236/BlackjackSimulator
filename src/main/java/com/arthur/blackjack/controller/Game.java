@@ -4,8 +4,8 @@ import com.arthur.blackjack.analytics.Analytics;
 import com.arthur.blackjack.analytics.RoundResult;
 import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.config.GameSettings;
-import com.arthur.blackjack.models.card.CardFactory;
 import com.arthur.blackjack.models.card.Deck;
+import com.arthur.blackjack.models.card.DeckFactory;
 import com.arthur.blackjack.models.hand.Hand;
 import com.arthur.blackjack.models.hand.HandFactory;
 import com.arthur.blackjack.models.hand.PlayerHand;
@@ -40,7 +40,7 @@ public class Game {
 
     @Autowired
     public Game(PlayerFactory playerFactory,
-                CardFactory cardFactory,
+                DeckFactory deckFactory,
                 HandFactory handFactory,
                 PlayerTurnManager playerTurnManager,
                 GameSettings settings,
@@ -51,7 +51,7 @@ public class Game {
         this.roundBetSize = 0;
         this.player = playerFactory.createPlayer();
         this.dealer = playerFactory.createDealer();
-        this.deck = cardFactory.createDeck();
+        this.deck = deckFactory.createDeck();
         this.playerTurnManager = playerTurnManager;
         this.handFactory = handFactory;
         this.rules = rules;

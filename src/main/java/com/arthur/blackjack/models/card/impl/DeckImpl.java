@@ -4,35 +4,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.springframework.stereotype.Component;
-
 import com.arthur.blackjack.config.GameRules;
-import com.arthur.blackjack.config.GameSettings;
 import com.arthur.blackjack.models.card.Card;
 import com.arthur.blackjack.models.card.CardFactory;
 import com.arthur.blackjack.models.card.Deck;
 import com.arthur.blackjack.models.card.Rank;
 import com.arthur.blackjack.strategies.Strategy;
 
-@Component
 public class DeckImpl implements Deck {
 
-    List<Card> cards;
+    private List<Card> cards;
 
-    CardFactory cardFactory;
+    private final CardFactory cardFactory;
 
-    GameSettings settings;
-    GameRules rules;
-    Strategy strategy;
+    private final GameRules rules;
+    private final Strategy strategy;
 
-    public DeckImpl(CardFactory cardFactory, GameSettings settings, GameRules rules) {
+    public DeckImpl(CardFactory cardFactory, GameRules rules, Strategy strategy) {
         this.cardFactory = cardFactory;
-        this.settings = settings;
         this.rules = rules;
-    }
-
-    @Override
-    public void setStrategy(Strategy strategy) {
         this.strategy = strategy;
     }
 

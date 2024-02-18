@@ -3,9 +3,11 @@ package com.arthur.blackjack.strategies.impl;
 import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.config.GameSettings;
 import com.arthur.blackjack.models.card.Card;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Component
+@Primary
 public class BasicStrategy extends AbstractStrategy {
 
     public BasicStrategy(GameRules rules, GameSettings settings) {

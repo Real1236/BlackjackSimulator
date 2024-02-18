@@ -4,6 +4,7 @@ import com.arthur.blackjack.analytics.Analytics;
 import com.arthur.blackjack.analytics.RoundResult;
 import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.config.GameSettings;
+import com.arthur.blackjack.models.card.CardFactory;
 import com.arthur.blackjack.models.card.Deck;
 import com.arthur.blackjack.models.hand.Hand;
 import com.arthur.blackjack.models.hand.HandFactory;
@@ -12,12 +13,10 @@ import com.arthur.blackjack.models.player.Dealer;
 import com.arthur.blackjack.models.player.Player;
 import com.arthur.blackjack.models.player.PlayerFactory;
 import com.arthur.blackjack.strategies.Strategy;
-import com.arthur.blackjack.strategies.StrategyFactory;
 import com.arthur.blackjack.utils.GameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -36,40 +35,35 @@ public class Game {
 
     private final GameSettings settings;
     private final GameRules rules;
-    private final StrategyFactory strategyFactory;
     private final Analytics analytics;
-    private Strategy strategy;
+    private final Strategy strategy;
 
     @Autowired
     public Game(PlayerFactory playerFactory,
-                Deck deck,
+                CardFactory cardFactory,
                 HandFactory handFactory,
                 PlayerTurnManager playerTurnManager,
                 GameSettings settings,
                 GameRules rules,
-                StrategyFactory strategyFactory,
-                @Qualifier("csvAnalyticsImpl") Analytics analytics) {
+                Strategy strategy,
+                Analytics analytics) {
         this.roundNumber = 1;
         this.roundBetSize = 0;
         this.player = playerFactory.createPlayer();
         this.dealer = playerFactory.createDealer();
-        this.deck = deck;
+        this.deck = cardFactory.createDeck();
         this.playerTurnManager = playerTurnManager;
         this.handFactory = handFactory;
         this.rules = rules;
         this.settings = settings;
-        this.strategyFactory = strategyFactory;
+        this.strategy = strategy;
         this.analytics = analytics;
     }
 
     public void play(int gameNum) {
         logger.trace("Starting a game of Blackjack!");
 
-        // Set strategy and analytics
-        Strategy strategy = strategyFactory.getStrategy("basic"); // TODO - make strategy dynamic
-        this.strategy = strategy;
-        playerTurnManager.setStrategy(strategy);
-        deck.setStrategy(strategy);
+        // Set analytics
         analytics.createNewResultsSheet(gameNum, settings.getBetSize()); // TODO - make game number dynamic
 
         deck.reshuffleDeck(); // Initialize Deck

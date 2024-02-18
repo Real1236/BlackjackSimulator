@@ -4,6 +4,7 @@ import com.arthur.blackjack.analytics.Analytics;
 import com.arthur.blackjack.analytics.RoundResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.io.FileWriter;
@@ -13,6 +14,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 @Component
+@Primary
 public class CsvAnalyticsImpl implements Analytics {
     private static final Logger logger = LogManager.getLogger(CsvAnalyticsImpl.class);
 

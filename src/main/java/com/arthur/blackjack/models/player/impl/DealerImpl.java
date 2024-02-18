@@ -1,14 +1,11 @@
 package com.arthur.blackjack.models.player.impl;
 
-import org.springframework.stereotype.Component;
-
 import com.arthur.blackjack.models.player.Dealer;
 import com.arthur.blackjack.utils.GameUtils;
 import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.models.card.Deck;
 import com.arthur.blackjack.models.hand.DealerHand;
 
-@Component
 public class DealerImpl implements Dealer {
 
     private DealerHand hand;

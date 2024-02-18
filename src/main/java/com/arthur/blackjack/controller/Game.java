@@ -1,6 +1,7 @@
 package com.arthur.blackjack.controller;
 
 import com.arthur.blackjack.analytics.Analytics;
+import com.arthur.blackjack.analytics.AnalyticsFactory;
 import com.arthur.blackjack.analytics.RoundResult;
 import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.config.GameSettings;
@@ -20,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 public class Game extends Thread {
     private static final Logger logger = LogManager.getLogger(Game.class);
 
-    private int gameNum;
+    private final int gameNum;
     private int roundNumber;
     private int roundBetSize;
 
@@ -45,7 +46,7 @@ public class Game extends Thread {
                 GameSettings settings,
                 GameRules rules,
                 Strategy strategy,
-                Analytics analytics) {
+                AnalyticsFactory analyticsFactory) {
         this.gameNum = gameNum;
         this.roundNumber = 1;
         this.roundBetSize = 0;
@@ -57,7 +58,7 @@ public class Game extends Thread {
         this.rules = rules;
         this.settings = settings;
         this.strategy = strategy;
-        this.analytics = analytics;
+        this.analytics = analyticsFactory.createCsvAnalytics(gameNum);  // TOOD - make this dynamic
     }
 
     @Override
@@ -69,7 +70,7 @@ public class Game extends Thread {
         logger.trace("Starting a game of Blackjack!");
 
         // Set analytics
-        analytics.createNewResultsSheet(gameNum, settings.getBetSize()); // TODO - make game number dynamic
+        analytics.createNewResultsSheet(settings.getBetSize()); // TODO - make game number dynamic
 
         deck.reshuffleDeck(); // Initialize Deck
 

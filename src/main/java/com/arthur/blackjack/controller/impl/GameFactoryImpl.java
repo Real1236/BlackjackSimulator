@@ -1,6 +1,7 @@
 package com.arthur.blackjack.controller.impl;
 
 import com.arthur.blackjack.analytics.Analytics;
+import com.arthur.blackjack.analytics.AnalyticsFactory;
 import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.config.GameSettings;
 import com.arthur.blackjack.controller.Game;
@@ -23,7 +24,7 @@ public class GameFactoryImpl implements GameFactory {
     private final GameSettings settings;
     private final GameRules rules;
     private final Strategy strategy;
-    private final Analytics analytics;
+    private final AnalyticsFactory analyticsFactory;
 
     @Autowired
     public GameFactoryImpl(PlayerFactory playerFactory,
@@ -33,7 +34,7 @@ public class GameFactoryImpl implements GameFactory {
                            GameSettings settings,
                            GameRules rules,
                            Strategy strategy,
-                           Analytics analytics) {
+                           AnalyticsFactory analyticsFactory) {
         this.playerFactory = playerFactory;
         this.deckFactory = deckFactory;
         this.handFactory = handFactory;
@@ -41,7 +42,7 @@ public class GameFactoryImpl implements GameFactory {
         this.settings = settings;
         this.rules = rules;
         this.strategy = strategy;
-        this.analytics = analytics;
+        this.analyticsFactory = analyticsFactory;
     }
 
     @Override
@@ -55,7 +56,7 @@ public class GameFactoryImpl implements GameFactory {
                 settings,
                 rules,
                 strategy,
-                analytics
+                analyticsFactory
         );
     }
 }

@@ -1,7 +1,6 @@
 package com.arthur.blackjack.models.hand.impl;
 
 import java.util.ArrayList;
-import com.arthur.blackjack.models.card.Card;
 import com.arthur.blackjack.models.hand.PlayerHand;
 
 public class PlayerHandImpl extends AbstractHand implements PlayerHand {
@@ -9,7 +8,7 @@ public class PlayerHandImpl extends AbstractHand implements PlayerHand {
     private int bet;
 
     public PlayerHandImpl() {
-        super(new ArrayList<Card>());
+        super(new ArrayList<>());
         this.bet = 0;
     }
 

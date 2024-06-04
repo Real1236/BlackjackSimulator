@@ -6,15 +6,9 @@ import com.arthur.blackjack.config.GameSettings;
 
 @Component
 public class GameSettingsImpl implements GameSettings {
-    private final int bankroll;
-    private final int betSize;
-    private final int maxRounds;
-
-    public GameSettingsImpl() {
-        this.betSize = 10;
-        this.bankroll = 10000 * betSize; // 10000 betting units = <1% risk of ruin
-        this.maxRounds = (int) Math.pow(10, 5) * 2;
-    }
+    private int bankroll;
+    private int betSize;
+    private int maxRounds;
 
     @Override
     public int getBankroll() {
@@ -29,6 +23,21 @@ public class GameSettingsImpl implements GameSettings {
     @Override
     public int getMaxRounds() {
         return this.maxRounds;
+    }
+
+    @Override
+    public void setBankroll(int bankroll) {
+        this.bankroll = bankroll;
+    }
+
+    @Override
+    public void setBetSize(int betSize) {
+        this.betSize = betSize;
+    }
+
+    @Override
+    public void setMaxRounds(int maxRounds) {
+        this.maxRounds = maxRounds;
     }
 
 }

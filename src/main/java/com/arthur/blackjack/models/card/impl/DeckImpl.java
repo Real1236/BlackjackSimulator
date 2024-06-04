@@ -16,14 +16,11 @@ public class DeckImpl implements Deck {
 
     private List<Card> cards;
 
-    private final CardFactory cardFactory;
-
     private final GameRules rules;
     @Setter
     private Strategy strategy;
 
-    public DeckImpl(CardFactory cardFactory, GameRules rules) {
-        this.cardFactory = cardFactory;
+    public DeckImpl(GameRules rules) {
         this.rules = rules;
     }
 
@@ -32,7 +29,7 @@ public class DeckImpl implements Deck {
         List<Card> oneDeck = new ArrayList<>();
         for (Rank rank : Rank.values())
             for (int i = 0; i < 4; i++)
-                oneDeck.add(cardFactory.createCard(rank));
+                oneDeck.add(CardFactory.createCard(rank));
 
         cards = new ArrayList<>(oneDeck);
         for (int i = 0; i < rules.getNumOfDecks() - 1; i++)

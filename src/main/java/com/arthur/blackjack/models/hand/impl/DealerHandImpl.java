@@ -8,12 +8,12 @@ import com.arthur.blackjack.models.hand.DealerHand;
 public class DealerHandImpl extends AbstractHand implements DealerHand {
 
     public DealerHandImpl() {
-        super(new ArrayList<Card>());
+        super(new ArrayList<>());
     }
 
     @Override
     public Card getUpCard() {
-        return cards.get(0);
+        return cards.getFirst();
     }
     
 }

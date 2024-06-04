@@ -10,6 +10,7 @@ import com.arthur.blackjack.models.card.DeckFactory;
 import com.arthur.blackjack.models.hand.HandFactory;
 import com.arthur.blackjack.models.player.PlayerFactory;
 import com.arthur.blackjack.strategies.StrategyFactory;
+import com.arthur.blackjack.strategies.StrategyType;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,7 +27,7 @@ public class GameFactoryImpl implements GameFactory {
     private final StrategyFactory strategyFactory;
     private final AnalyticsFactory analyticsFactory;
     @Setter
-    private String strategyType;
+    private StrategyType strategyType;
     @Setter
     private String analyticsType;
 
@@ -62,9 +63,9 @@ public class GameFactoryImpl implements GameFactory {
         );
 
         switch (strategyType) {
-            case "basic" -> game.setStrategy(strategyFactory.getBasicStrategy());
-            case "customCounting" -> game.setStrategy(strategyFactory.getCustomCountingStrategy());
-            case "hiLo" -> game.setStrategy(strategyFactory.getHiLoStrategy());
+            case StrategyType.BASIC -> game.setStrategy(strategyFactory.getBasicStrategy());
+            case StrategyType.CUSTOM_COUNTING -> game.setStrategy(strategyFactory.getCustomCountingStrategy());
+            case StrategyType.HILO -> game.setStrategy(strategyFactory.getHiLoStrategy());
             case null, default -> throw new IllegalArgumentException("Invalid strategy type");
         }
 

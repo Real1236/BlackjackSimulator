@@ -1,7 +1,9 @@
 package com.arthur.blackjack.controller;
 
+import com.arthur.blackjack.strategies.StrategyType;
+
 public interface GameFactory {
     Game createGame(int gameNum);
-    void setStrategyType(String strategyType);
+    void setStrategyType(StrategyType strategyType);
     void setAnalyticsType(String analyticsType);
 }

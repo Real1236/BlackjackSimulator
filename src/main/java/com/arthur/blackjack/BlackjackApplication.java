@@ -4,6 +4,7 @@ import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.config.GameSettings;
 import com.arthur.blackjack.config.Rule;
 import com.arthur.blackjack.controller.GameFactory;
+import com.arthur.blackjack.strategies.StrategyType;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -30,7 +31,7 @@ public class BlackjackApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		// Configure game factory settings
-		this.gameFactory.setStrategyType("customCounting");	// TODO Change these to enums
+		this.gameFactory.setStrategyType(StrategyType.BASIC);	// TODO Change these to enums
 		this.gameFactory.setAnalyticsType("csv");
 
 		// Configure game settings

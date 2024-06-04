@@ -1,6 +1,8 @@
 package com.arthur.blackjack;
 
+import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.config.GameSettings;
+import com.arthur.blackjack.config.Rule;
 import com.arthur.blackjack.controller.GameFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -13,10 +15,12 @@ public class BlackjackApplication implements CommandLineRunner {
 
 	private final GameFactory gameFactory;
 	private final GameSettings gameSettings;
+	private final GameRules gameRules;
 
-	public BlackjackApplication(GameFactory gameFactory, GameSettings gameSettings) {
+	public BlackjackApplication(GameFactory gameFactory, GameSettings gameSettings, GameRules gameRules) {
 		this.gameFactory = gameFactory;
 		this.gameSettings = gameSettings;
+		this.gameRules = gameRules;
 	}
 
 	public static void main(String[] args) {
@@ -26,13 +30,16 @@ public class BlackjackApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		// Configure game factory settings
-		this.gameFactory.setStrategyType("customCounting");
+		this.gameFactory.setStrategyType("customCounting");	// TODO Change these to enums
 		this.gameFactory.setAnalyticsType("csv");
 
 		// Configure game settings
 		this.gameSettings.setBetSize(10);
 		this.gameSettings.setBankroll(10000 * this.gameSettings.getBetSize()); // 10000 betting units = <1% risk of ruin
 		this.gameSettings.setMaxRounds(5); // (int) Math.pow(10, 5) * 2);
+
+		// Configure game rules
+		this.gameRules.setRule(Rule.FANDUEL_AMERICAN);
 
 		// Configure number of games to run
 		int numGames = 1;

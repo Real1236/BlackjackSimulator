@@ -1,5 +1,6 @@
 package com.arthur.blackjack;
 
+import com.arthur.blackjack.analytics.AnalyticsType;
 import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.config.GameSettings;
 import com.arthur.blackjack.config.Rule;
@@ -31,16 +32,16 @@ public class BlackjackApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		// Configure game factory settings
-		this.gameFactory.setStrategyType(StrategyType.BASIC);	// TODO Change these to enums
-		this.gameFactory.setAnalyticsType("csv");
+		this.gameFactory.setStrategyType(StrategyType.BASIC);
+		this.gameFactory.setAnalyticsType(AnalyticsType.EXCEL);
 
 		// Configure game settings
 		this.gameSettings.setBetSize(10);
 		this.gameSettings.setBankroll(10000 * this.gameSettings.getBetSize()); // 10000 betting units = <1% risk of ruin
-		this.gameSettings.setMaxRounds(5); // (int) Math.pow(10, 5) * 2);
+		this.gameSettings.setMaxRounds((int) Math.pow(10, 5) * 2);
 
 		// Configure game rules
-		this.gameRules.setRule(Rule.FANDUEL_AMERICAN);
+		this.gameRules.setRule(Rule.NORMAL);
 
 		// Configure number of games to run
 		int numGames = 1;

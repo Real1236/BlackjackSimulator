@@ -91,6 +91,9 @@ public class AnalyticsImpl implements Analytics {
         FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 
         for (int row = 1; row < 13; row++) {    // Maintain cell locations
+            if (sheet.getRow(row) == null)
+                continue;
+
             Cell c = sheet.getRow(row).getCell(16); // Maintain cell locations
             if (c == null || c.getCellType() != CellType.FORMULA)
                 continue;

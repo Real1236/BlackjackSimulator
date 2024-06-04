@@ -1,6 +1,7 @@
 package com.arthur.blackjack.controller.impl;
 
 import com.arthur.blackjack.analytics.AnalyticsFactory;
+import com.arthur.blackjack.analytics.AnalyticsType;
 import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.config.GameSettings;
 import com.arthur.blackjack.controller.Game;
@@ -29,7 +30,7 @@ public class GameFactoryImpl implements GameFactory {
     @Setter
     private StrategyType strategyType;
     @Setter
-    private String analyticsType;
+    private AnalyticsType analyticsType;
 
     @Autowired
     public GameFactoryImpl(PlayerFactory playerFactory,
@@ -70,8 +71,8 @@ public class GameFactoryImpl implements GameFactory {
         }
 
         switch (analyticsType) {
-            case "csv" -> game.setAnalytics(analyticsFactory.createCsvAnalytics(gameNum));
-            case "excel" -> game.setAnalytics(analyticsFactory.createAnalytics(gameNum));
+            case AnalyticsType.CSV -> game.setAnalytics(analyticsFactory.createCsvAnalytics(gameNum));
+            case AnalyticsType.EXCEL -> game.setAnalytics(analyticsFactory.createAnalytics(gameNum));
             case null, default -> throw new IllegalArgumentException("Invalid analytics type");
         }
 

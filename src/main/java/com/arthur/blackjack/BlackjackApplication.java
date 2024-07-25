@@ -24,7 +24,7 @@ public class BlackjackApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		for (int i = 1; i <= 5; i++) {
+		for (int i = 1; i <= 100; i++) {
 			Game game = gameFactory.createGame(i);
 			game.start();
 		}

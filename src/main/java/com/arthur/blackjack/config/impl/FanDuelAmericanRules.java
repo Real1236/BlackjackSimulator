@@ -24,8 +24,8 @@ public class FanDuelAmericanRules implements GameRules {
 
     public FanDuelAmericanRules() {
         this.numOfDecks = 8;
-        this.standsOnSoft17 = false;
-        this.doubleAfterSplit = true;
+        this.standsOnSoft17 = true;
+        this.doubleAfterSplit = false;
         this.resplitLimit = 2;
         this.resplitAces = false;
         this.hitSplitAces = false;

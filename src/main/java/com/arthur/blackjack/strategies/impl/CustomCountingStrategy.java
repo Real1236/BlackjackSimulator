@@ -25,8 +25,8 @@ public class CustomCountingStrategy extends AbstractStrategy {
         double betMultiple = 1000 * playerEdge + 1;
         double betSize = betMultiple * settings.getBetSize();
 
-        // Round down to the nearest multiple of 5
-        return Math.max((int) Math.floor(betSize / 5) * 5, settings.getBetSize());
+        // Round down to the nearest multiple of the minBetSize
+        return Math.max((int) Math.floor(betSize / settings.getBetSize()) * settings.getBetSize(), settings.getBetSize());
     }
 
     @Override

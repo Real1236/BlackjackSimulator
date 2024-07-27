@@ -88,35 +88,7 @@ public class AnalyticsImpl implements Analytics {
 
     @Override
     public void evaluateFormulas() {
-        FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
-
-        for (int row = 1; row < 13; row++) {    // Maintain cell locations
-            if (sheet.getRow(row) == null)
-                continue;
-
-            Cell c = sheet.getRow(row).getCell(16); // Maintain cell locations
-            if (c == null || c.getCellType() != CellType.FORMULA)
-                continue;
-
-            try {
-                evaluator.evaluateFormulaCell(c);
-            } catch (Throwable var4) {
-                logger.warn("Error while recalculating sheet");
-            }
-        }
-
-        Row resultDistribution = sheet.getRow(8);   // Maintain cell locations
-        for (int col = 15; col < 23; col++) {   // Maintain cell locations
-            Cell c = resultDistribution.getCell(col);
-            if (c.getCellType() != CellType.FORMULA)
-                continue;
-
-            try {
-                evaluator.evaluateFormulaCell(c);
-            } catch (Throwable var4) {
-                logger.warn("Error while recalculating sheet");
-            }
-        }
+        workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
     }
 
     @Override

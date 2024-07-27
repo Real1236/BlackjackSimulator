@@ -4,6 +4,7 @@ import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.config.GameSettings;
 import com.arthur.blackjack.models.card.Card;
 import com.arthur.blackjack.models.card.Rank;
+import com.arthur.blackjack.utils.GameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,32 +21,14 @@ public class HiLoStrategy extends AbstractStrategy {
     }
 
     @Override
-    public int getBetSize() {
+    public float getBetSize() {
         float trueCount = getTrueCount();
         logger.trace("True count: " + trueCount);
 
-        int betMultiple;
-        if (trueCount <= 1) {
-            betMultiple = 1;
-        } else if (trueCount <= 1.5) {
-            betMultiple = 2;
-        } else if (trueCount <= 2) {
-            betMultiple = 3;
-        } else if (trueCount <= 2.5) {
-            betMultiple = 4;
-        } else if (trueCount <= 3) {
-            betMultiple = 5;
-        } else if (trueCount <= 3.5) {
-            betMultiple = 6;
-        } else if (trueCount <= 4) {
-            betMultiple = 7;
-        } else {
-            betMultiple = 8;
-        }
-        float betSize = betMultiple * settings.getBetSize();
+        float bettingUnits = GameUtils.getBettingUnits(settings.getBetSpread(), trueCount);
+        float betSize = bettingUnits * settings.getBetSize();
 
-        // Round down to the nearest multiple of 5
-        return Math.max((int) Math.floor(betSize / 5) * 5, settings.getBetSize());
+        return GameUtils.roundDownToMinChipSize(betSize, settings.getBetSize(), settings.getMinChipSize());
     }
 
     private float getTrueCount() {

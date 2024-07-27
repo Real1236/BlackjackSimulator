@@ -3,6 +3,7 @@ package com.arthur.blackjack.strategies.impl;
 import com.arthur.blackjack.config.GameRules;
 import com.arthur.blackjack.config.GameSettings;
 import com.arthur.blackjack.models.card.Card;
+import com.arthur.blackjack.utils.GameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Row;
@@ -16,17 +17,28 @@ public class CustomCountingStrategy extends AbstractStrategy {
     }
 
     @Override
-    public int getBetSize() {
+    public float getBetSize() {
         // Maintain this cell location
         double playerEdge = workbook.getSheet("ev").getRow(44).getCell(1).getNumericCellValue();
         logger.trace("Player edge: " + playerEdge);
 
-        // Follows strategy from: https://www.countingedge.com/card-counting/true-count/
-        double betMultiple = 1000 * playerEdge + 1;
-        double betSize = betMultiple * settings.getBetSize();
+        float trueCount = convertPlayerEdgeToTrueCount(playerEdge);
+        float bettingUnits = GameUtils.getBettingUnits(settings.getBetSpread(), trueCount);
+        float betSize = bettingUnits * settings.getBetSize();
 
-        // Round down to the nearest multiple of 5
-        return Math.max((int) Math.floor(betSize / 5) * 5, settings.getBetSize());
+        return GameUtils.roundDownToMinChipSize(betSize, settings.getBetSize(), settings.getMinChipSize());
+    }
+
+    private float convertPlayerEdgeToTrueCount(double playerEdge) {
+        // Created a linear function (y = 133.71x + 0.7228) according to the following points:
+        // Player Edge  True Count
+        // 0.002476     1.019608
+        // 0.010137     2.08
+        // 0.017127     3.043257
+        // 0.024656     4.041451
+        // 0.032351     5.076517
+        // 0.039783     5.994638
+        return (float) (133.71 * playerEdge + 0.7228);
     }
 
     @Override

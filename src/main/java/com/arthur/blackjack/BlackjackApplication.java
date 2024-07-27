@@ -30,15 +30,17 @@ public class BlackjackApplication implements CommandLineRunner {
 	}
 
 	@Override
-	public void run(String... args) throws Exception {
+	public void run(String... args) {
 		// Configure game factory settings
-		this.gameFactory.setStrategyType(StrategyType.BASIC);
-		this.gameFactory.setAnalyticsType(AnalyticsType.EXCEL);
+		this.gameFactory.setStrategyType(StrategyType.HILO);
+		this.gameFactory.setAnalyticsType(AnalyticsType.CSV);
 
 		// Configure game settings
-		this.gameSettings.setBetSize(10);
-		this.gameSettings.setBankroll(10000 * this.gameSettings.getBetSize()); // 10000 betting units = <1% risk of ruin
-		this.gameSettings.setMaxRounds((int) Math.pow(10, 5) * 2);
+		this.gameSettings.setBetSize(5);
+		this.gameSettings.setMinChipSize(1);
+		this.gameSettings.setBetSpread(12);
+		this.gameSettings.setBankroll(1000 * this.gameSettings.getBetSize()); // 10000 betting units = <1% risk of ruin
+		this.gameSettings.setMaxRounds(1000000);
 
 		// Configure game rules
 		this.gameRules.setRule(Rule.NORMAL);

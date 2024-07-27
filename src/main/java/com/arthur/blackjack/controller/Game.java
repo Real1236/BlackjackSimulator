@@ -23,7 +23,7 @@ public class Game extends Thread {
 
     private final int gameNum;
     private int roundNumber;
-    private int roundBetSize;
+    private float roundBetSize;
 
     private final Player player;
     private final Dealer dealer;

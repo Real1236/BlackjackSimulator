@@ -11,7 +11,7 @@ public class BasicStrategy extends AbstractStrategy {
     }
 
     @Override
-    public int getBetSize() {
+    public float getBetSize() {
         return settings.getBetSize();
     }
 

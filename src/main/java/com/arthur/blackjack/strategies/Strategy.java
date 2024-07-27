@@ -14,7 +14,7 @@ public interface Strategy {
      *
      * @return the bet size
      */
-    int getBetSize();
+    float getBetSize();
 
     /**
      * Determines whether to hit (draw another card) on the current hand.

@@ -63,7 +63,7 @@ public class AnalyticsImpl implements Analytics {
     }
 
     @Override
-    public void recordInitialBet(Integer round, Integer bet) {
+    public void recordInitialBet(Integer round, float bet) {
         Row row = sheet.getRow(round);
         if (row == null)
             row = sheet.createRow(round);

@@ -56,6 +56,15 @@ public final class GameUtils {
         logger.trace("Player's hand value: {}.", playerHand.getHandValue());
     }
 
+    public static float getBettingUnits(int betSpread, float trueCount) {
+        // Create a linear function for bet spread (highest bet at true count of 6)
+        return (float) (betSpread - 1) / 5 * (trueCount - 1) + 1;
+    }
+
+    public static float roundDownToMinChipSize(float betSize, float minBetSize, int minChipSize) {
+        return Math.max((float) Math.floor(betSize / minChipSize) * minChipSize, minBetSize);
+    }
+
     private static String buildHand(String dealerOrPlayer, Hand hand) {
         StringBuilder handString = new StringBuilder(dealerOrPlayer + "'s hand: ");
         for (int i = 0; i < hand.getCards().size(); i++) {

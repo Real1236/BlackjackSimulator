@@ -5,7 +5,7 @@ import com.arthur.blackjack.models.hand.PlayerHand;
 
 public class PlayerHandImpl extends AbstractHand implements PlayerHand {
 
-    private int bet;
+    private float bet;
 
     public PlayerHandImpl() {
         super(new ArrayList<>());
@@ -13,12 +13,12 @@ public class PlayerHandImpl extends AbstractHand implements PlayerHand {
     }
 
     @Override
-    public Integer getBet() {
+    public float getBet() {
         return bet;
     }
 
     @Override
-    public void setBet(Integer bet) {
+    public void setBet(float bet) {
         this.bet = bet;
     }
     

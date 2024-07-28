@@ -83,7 +83,7 @@ public class Game extends Thread {
             logger.trace("Player has ${} in their bankroll.", player.getBankroll());
 
             // Analytics
-            analytics.recordNewRound(roundNumber, (int) player.getBankroll());
+            analytics.recordNewRound(roundNumber, (float) player.getBankroll());
 
             // Round flow
             checkReshuffle();

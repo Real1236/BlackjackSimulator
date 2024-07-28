@@ -54,7 +54,7 @@ public class AnalyticsImpl implements Analytics {
     }
 
     @Override
-    public void recordNewRound(Integer round, Integer money) {
+    public void recordNewRound(Integer round, float money) {
         Row row = sheet.getRow(round);
         if (row == null)
             row = sheet.createRow(round);

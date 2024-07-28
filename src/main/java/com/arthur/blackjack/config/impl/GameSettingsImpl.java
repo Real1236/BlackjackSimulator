@@ -6,14 +6,14 @@ import com.arthur.blackjack.config.GameSettings;
 
 @Component
 public class GameSettingsImpl implements GameSettings {
-    private int bankroll;
+    private float bankroll;
     private int betSize;
     private int minChipSize;
     private int betSpread;
     private int maxRounds;
 
     @Override
-    public int getBankroll() {
+    public float getBankroll() {
         return this.bankroll;
     }
 
@@ -38,7 +38,7 @@ public class GameSettingsImpl implements GameSettings {
     }
 
     @Override
-    public void setBankroll(int bankroll) {
+    public void setBankroll(float bankroll) {
         this.bankroll = bankroll;
     }
 

@@ -34,7 +34,7 @@ public class CsvAnalyticsImpl implements Analytics {
     }
 
     @Override
-    public void recordNewRound(Integer round, Integer money) {
+    public void recordNewRound(Integer round, float money) {
         // Write the results of the previous round to the CSV file
         if (!roundResults.isEmpty()) {
             StringBuilder sb = new StringBuilder();

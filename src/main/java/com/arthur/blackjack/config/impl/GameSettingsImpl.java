@@ -8,7 +8,7 @@ import com.arthur.blackjack.config.GameSettings;
 public class GameSettingsImpl implements GameSettings {
     private float bankroll;
     private int betSize;
-    private int minChipSize;
+    private float minChipSize;
     private int betSpread;
     private int maxRounds;
 
@@ -23,7 +23,7 @@ public class GameSettingsImpl implements GameSettings {
     }
 
     @Override
-    public int getMinChipSize() {
+    public float getMinChipSize() {
         return this.minChipSize;
     }
 
@@ -48,7 +48,7 @@ public class GameSettingsImpl implements GameSettings {
     }
 
     @Override
-    public void setMinChipSize(int minChipSize) {
+    public void setMinChipSize(float minChipSize) {
         this.minChipSize = minChipSize;
     }
 

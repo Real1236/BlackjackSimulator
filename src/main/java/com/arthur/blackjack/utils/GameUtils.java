@@ -61,7 +61,7 @@ public final class GameUtils {
         return (float) (betSpread - 1) / 5 * (trueCount - 1) + 1;
     }
 
-    public static float roundDownToMinChipSize(float betSize, float minBetSize, int minChipSize) {
+    public static float roundDownToMinChipSize(float betSize, float minBetSize, float minChipSize) {
         return Math.max((float) Math.floor(betSize / minChipSize) * minChipSize, minBetSize);
     }
 

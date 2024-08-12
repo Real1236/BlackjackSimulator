@@ -32,7 +32,7 @@ public class BlackjackApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) {
 		// Configure game factory settings
-		this.gameFactory.setStrategyType(StrategyType.BASIC);
+		this.gameFactory.setStrategyType(StrategyType.CUSTOM_COUNTING);
 		this.gameFactory.setAnalyticsType(AnalyticsType.CSV);
 
 		// Configure game settings
@@ -43,10 +43,10 @@ public class BlackjackApplication implements CommandLineRunner {
 		this.gameSettings.setMaxRounds(1000000);
 
 		// Configure game rules
-		this.gameRules.setRule(Rule.NORMAL);
+		this.gameRules.setRule(Rule.FANDUEL_AMERICAN);
 
 		// Configure number of games to run
-		int numGames = 1;
+		int numGames = 10;
 		for (int i = 1; i <= numGames; i++) {
 			Game game = gameFactory.createGame(i);
 			game.start();

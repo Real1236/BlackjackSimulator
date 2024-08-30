@@ -65,8 +65,10 @@ public class GameFactoryImpl implements GameFactory {
 
         switch (strategyType) {
             case StrategyType.BASIC -> game.setStrategy(strategyFactory.getBasicStrategy());
-            case StrategyType.CUSTOM_COUNTING -> game.setStrategy(strategyFactory.getCustomCountingStrategy());
             case StrategyType.HILO -> game.setStrategy(strategyFactory.getHiLoStrategy());
+            case StrategyType.CUSTOM_COUNTING -> game.setStrategy(strategyFactory.getCustomCountingStrategy());
+            case StrategyType.HILO2TC -> game.setStrategy(strategyFactory.getHiLoStrategy2TC());
+            case StrategyType.CUSTOM_COUNTING2TC -> game.setStrategy(strategyFactory.getCustomCountingStrategy2TC());
             case null, default -> throw new IllegalArgumentException("Invalid strategy type");
         }
 

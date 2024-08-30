@@ -22,26 +22,11 @@ public class CustomCountingStrategy extends AbstractStrategy {
         double playerEdge = workbook.getSheet("ev").getRow(44).getCell(1).getNumericCellValue();
         logger.trace("Player edge: " + playerEdge);
 
-        float trueCount = convertPlayerEdgeToTrueCount(playerEdge);
-        if (trueCount < 2)
-            return 0;
-
+        float trueCount = GameUtils.convertPlayerEdgeToTrueCount(playerEdge);
         float bettingUnits = GameUtils.getBettingUnits(settings.getBetSpread(), trueCount);
         float betSize = bettingUnits * settings.getBetSize();
 
         return GameUtils.roundDownToMinChipSize(betSize, settings.getBetSize(), settings.getMinChipSize());
-    }
-
-    private float convertPlayerEdgeToTrueCount(double playerEdge) {
-        // Created a linear function (y = 133.71x + 0.7228) according to the following points:
-        // Player Edge  True Count
-        // 0.002476     1.019608
-        // 0.010137     2.08
-        // 0.017127     3.043257
-        // 0.024656     4.041451
-        // 0.032351     5.076517
-        // 0.039783     5.994638
-        return (float) (133.71 * playerEdge + 0.7228);
     }
 
     @Override

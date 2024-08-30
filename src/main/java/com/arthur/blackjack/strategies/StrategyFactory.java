@@ -1,11 +1,11 @@
 package com.arthur.blackjack.strategies;
 
-import com.arthur.blackjack.strategies.impl.BasicStrategy;
-import com.arthur.blackjack.strategies.impl.CustomCountingStrategy;
-import com.arthur.blackjack.strategies.impl.HiLoStrategy;
+import com.arthur.blackjack.strategies.impl.*;
 
 public interface StrategyFactory {
     BasicStrategy getBasicStrategy();
-    CustomCountingStrategy getCustomCountingStrategy();
     HiLoStrategy getHiLoStrategy();
+    CustomCountingStrategy getCustomCountingStrategy();
+    HiLoStrategy2TC getHiLoStrategy2TC();
+    CustomCountingStrategy2TC getCustomCountingStrategy2TC();
 }

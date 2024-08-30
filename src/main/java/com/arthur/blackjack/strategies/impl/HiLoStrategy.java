@@ -22,21 +22,13 @@ public class HiLoStrategy extends AbstractStrategy {
 
     @Override
     public float getBetSize() {
-        float trueCount = getTrueCount();
+        float trueCount = GameUtils.getTrueCount(rules.getNumOfDecks(), numberOfCardsDealt, count);
         logger.trace("True count: " + trueCount);
 
         float bettingUnits = GameUtils.getBettingUnits(settings.getBetSpread(), trueCount);
         float betSize = bettingUnits * settings.getBetSize();
 
         return GameUtils.roundDownToMinChipSize(betSize, settings.getBetSize(), settings.getMinChipSize());
-    }
-
-    private float getTrueCount() {
-        int cardsRemainingInDeck = rules.getNumOfDecks() * 52 - numberOfCardsDealt;
-        float numOfDecksRemaining = (float) cardsRemainingInDeck / 52;
-
-        float rawCount = (float) count / Math.round(numOfDecksRemaining);
-        return Math.round(rawCount * 2) / 2.0f;
     }
 
     @Override

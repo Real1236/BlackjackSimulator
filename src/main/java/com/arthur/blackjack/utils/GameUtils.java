@@ -74,4 +74,24 @@ public final class GameUtils {
         }
         return handString.toString();
     }
+
+    public static float getTrueCount(int numOfDecks, int numberOfCardsDealt, int count) {
+        int cardsRemainingInDeck = numOfDecks * 52 - numberOfCardsDealt;
+        float numOfDecksRemaining = (float) cardsRemainingInDeck / 52;
+
+        float rawCount = (float) count / Math.round(numOfDecksRemaining);
+        return Math.round(rawCount * 2) / 2.0f;
+    }
+
+    public static float convertPlayerEdgeToTrueCount(double playerEdge) {
+        // Created a linear function (y = 133.71x + 0.7228) according to the following points:
+        // Player Edge  True Count
+        // 0.002476     1.019608
+        // 0.010137     2.08
+        // 0.017127     3.043257
+        // 0.024656     4.041451
+        // 0.032351     5.076517
+        // 0.039783     5.994638
+        return (float) (133.71 * playerEdge + 0.7228);
+    }
 }

@@ -29,7 +29,17 @@ public class StrategyFactoryImpl implements StrategyFactory {
     }
 
     @Override
+    public HiLoStrategy2TC getHiLoStrategy2TC() {
+        return new HiLoStrategy2TC(rules, settings);
+    }
+
+    @Override
     public HiLoStrategy getHiLoStrategy() {
         return new HiLoStrategy(rules, settings);
+    }
+
+    @Override
+    public CustomCountingStrategy2TC getCustomCountingStrategy2TC() {
+        return new CustomCountingStrategy2TC(rules, settings);
     }
 }

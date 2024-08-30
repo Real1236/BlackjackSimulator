@@ -43,10 +43,10 @@ public class BlackjackApplication implements CommandLineRunner {
 		this.gameSettings.setMaxRounds(100000);
 
 		// Configure game rules
-		this.gameRules.setRule(Rule.FANDUEL_AMERICAN);
+		this.gameRules.setRule(Rule.NORMAL);
 
 		// Configure number of games to run
-		int numGames = 10;
+		int numGames = 3;
 		for (int i = 1; i <= numGames; i++) {
 			Game game = gameFactory.createGame(i);
 			game.start();

@@ -9,13 +9,8 @@ import org.apache.logging.log4j.Logger;
 public class HiLoStrategy2TC extends HiLoStrategy {
     private static final Logger logger = LogManager.getLogger(HiLoStrategy2TC.class);
 
-    private final int count;
-    private final int numberOfCardsDealt;
-
     public HiLoStrategy2TC(GameRules rules, GameSettings settings) {
         super(rules, settings);
-        this.count = 0;
-        this.numberOfCardsDealt = 0;
     }
 
     @Override

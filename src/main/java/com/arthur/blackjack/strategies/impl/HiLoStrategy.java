@@ -11,8 +11,8 @@ import org.apache.logging.log4j.Logger;
 public class HiLoStrategy extends AbstractStrategy {
     private static final Logger logger = LogManager.getLogger(HiLoStrategy.class);
 
-    private int count;
-    private int numberOfCardsDealt;
+    protected int count;
+    protected int numberOfCardsDealt;
 
     public HiLoStrategy(GameRules rules, GameSettings settings) {
         super(rules, settings);

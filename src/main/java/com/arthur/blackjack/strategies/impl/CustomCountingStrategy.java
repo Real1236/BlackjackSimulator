@@ -23,6 +23,9 @@ public class CustomCountingStrategy extends AbstractStrategy {
         logger.trace("Player edge: " + playerEdge);
 
         float trueCount = convertPlayerEdgeToTrueCount(playerEdge);
+        if (trueCount < 2)
+            return 0;
+
         float bettingUnits = GameUtils.getBettingUnits(settings.getBetSpread(), trueCount);
         float betSize = bettingUnits * settings.getBetSize();
 
